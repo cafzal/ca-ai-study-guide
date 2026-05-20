@@ -1302,7 +1302,7 @@ const LESSONS = [
     title: 'Lesson 5 — Use cases & value',
     spine: 'Converting the research lineage into a defensible ranking of use cases. Arrive at a framework and a map — not a recital of the four named use cases — by reasoning from the lineage.',
     takeaway: 'Three axes (immediate value · durability · feasibility) + one 4-factor scoring function + a use-case map (coding/editing top bet) + competitive reality (diffusion validated, speed contested) + the structural-edge adjacency (constrained optimization).',
-    bridge: 'Framework + map in hand. The Appendix has the three load-bearing claims of the argument and the full scorecard for any dimension the debate hinges on.',
+    bridge: 'Framework + map in hand. Lesson 6 covers the operational layer — how you actually measure whether the model is delivering on any of these use cases.',
     sections: [
       {
         kind: 'idea',
@@ -1432,6 +1432,116 @@ const LESSONS = [
       { id: '5c', q: 'Why does speed/cost belong to axis 1 (enabler) but NOT axis 2 (durability)?', a: 'Speed/cost make the use case viable now (relieve the latency/cost pain → drives current demand = axis 1), but every lab is chasing tokens per second, so a speed lead erodes — it is not a durable competitive moat (axis 2). Durability comes from structural edges (both-sided conditioning, near-free control) competitors can\'t cheaply copy.' },
       { id: '5d', q: 'Describe the constrained-optimization adjacency in two sentences: the demand, and why it\'s a structural (durable) edge not a speed play.', a: 'Demand: vast latent/locked-up market in operations/scheduling/allocation where buyers currently need operations-research specialists — natural-language → solver → agent-refinement removes that gatekeeper. Durable because it\'s the structural-edge archetype (controllable, schema-constrained, both-sided iterative refinement), not a speed race — a competitor matching the model\'s tokens per second doesn\'t replicate the controllability that makes it work.' },
       { id: '5e', q: 'Diffusion language models are now externally validated by Google (Gemini Diffusion), ByteDance (Seed Diffusion), and open-weight models (LLaDA 2.0) — why is that simultaneously <em>good</em> and <em>dangerous</em> for Inception, and what does it imply for how you\'d weight the prioritization function?', a: 'Good: the field is validated, the technical bet is no longer "lone bet" — easier customer education, easier recruiting, easier capital. Dangerous: speed alone is contested (ByteDance Seed Diffusion already faster on paper than Mercury), Google has shipped a research model, open-weights pressure from below. Strategic asymmetry: Inception has no conflict (frontier labs would cannibalize their frontier-autoregressive revenue) and full focus — but well-funded entrants could narrow the speed gap (Google launched Gemini 3.5 Flash at 289 tokens/sec on May 19, 2026 — a 4× speed-up over prior frontier autoregressive models) and big labs may build their own diffusion variants. Implication for the prioritization function: weight toward use cases where structural edges (controllability + both-sided conditioning, Lesson 4) are the moat, not raw tokens per second. Use cases where structure dominates — coding/editing, long-horizon planning, constrained optimization — become higher priority; pure-speed use cases (voice) become more contested and need vertical execution speed (ship product while labs ship demos) as a defensive moat.' },
+    ]
+  },
+
+  {
+    id: 'L6',
+    short: 'L6 · Evals',
+    title: 'Lesson 6 — Evaluating AI agents',
+    spine: 'Agent evals are the operational layer where research meets product — multi-turn, stateful, non-deterministic. The grammar for measuring capability, catching regressions, and turning user signals into model improvements.',
+    takeaway: 'Three grader types (code-based / model-based / human), capability vs regression evals, pass@k vs pass^k for stochastic outputs, and a Swiss-cheese stack (evals + monitoring + A/B + feedback + human review). The eval harness measures the model AND the agent harness wrapped around it.',
+    bridge: 'The Appendix has the three load-bearing claims and the full scorecard for any dimension the debate hinges on.',
+    sections: [
+      {
+        kind: 'idea',
+        title: 'The Idea',
+        html: `<p>Evaluating an AI agent is harder than evaluating a model: multi-turn, stateful, non-deterministic, with outputs that don\'t have a single right answer. Vocabulary first:</p>
+        <ul>
+          <li><strong>Task</strong> — a single test with defined inputs and success criteria</li>
+          <li><strong>Trial</strong> — one attempt at a task (run multiple per task because outputs vary)</li>
+          <li><strong>Grader</strong> — logic that scores some aspect of agent performance</li>
+          <li><strong>Transcript</strong> (trace, trajectory) — complete record of a trial: outputs, tool calls, reasoning, intermediate results</li>
+          <li><strong>Outcome</strong> — the final environment state after the trial (vs. what the agent <em>said</em> happened)</li>
+          <li><strong>Eval harness</strong> — infrastructure that runs evals end-to-end: provides tools/instructions, runs concurrently, records, grades, aggregates</li>
+          <li><strong>Agent harness</strong> (scaffold) — the system that lets the model act as an agent (orchestrates tool calls, processes inputs)</li>
+        </ul>
+        <div class="callout good"><strong>The load-bearing distinction:</strong> when you "evaluate the agent," you\'re evaluating the <em>harness + model together</em>. Either can be the source of an issue — read transcripts to tell which.</div>`
+      },
+      {
+        kind: 'mechanism',
+        title: 'Mechanism — Three grader types',
+        html: `<table class="ucase-table" style="margin-top:8px;">
+          <thead><tr><th>Type</th><th>What it does</th><th>Strengths</th><th>Weaknesses</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Code-based</strong><br/><span style="font-size:11px;color:var(--ink-fainter);">deterministic</span></td><td>String match, regex, binary tests, static analysis, outcome verification, tool-call inspection</td><td>Fast, cheap, objective, reproducible, easy to debug</td><td>Brittle to valid variations; lacks nuance</td></tr>
+            <tr><td><strong>Model-based</strong><br/><span style="font-size:11px;color:var(--ink-fainter);">LLM-as-judge</span></td><td>Rubric scoring, pairwise comparison, multi-judge consensus</td><td>Flexible, scalable, captures nuance, handles freeform output</td><td>Non-deterministic, needs calibration vs. humans, judge biases</td></tr>
+            <tr><td><strong>Human</strong></td><td>SME review, crowdsourced judgment, A/B, spot-check sampling</td><td>Gold standard, matches expert intuition, used to calibrate model graders</td><td>Expensive, slow, requires expert access</td></tr>
+          </tbody>
+        </table>
+        <div class="callout good"><strong>The mature setup:</strong> deterministic where possible, model-based where flexibility is needed, human judiciously for calibration.</div>`
+      },
+      {
+        kind: 'mechanism',
+        title: 'Mechanism — Capability vs. regression evals',
+        html: `<ul>
+          <li><strong>Capability evals</strong> ask <em>"what can this agent do well?"</em> — start at a low pass rate, give a hill to climb</li>
+          <li><strong>Regression evals</strong> ask <em>"does it still handle what it used to?"</em> — should sit near 100%, protect against backsliding</li>
+        </ul>
+        <div class="callout good"><strong>The lifecycle:</strong> capability evals that saturate "graduate" into the regression suite, run continuously. Saturated capability eval → build a harder one to give the team a new hill.</div>`
+      },
+      {
+        kind: 'mechanism',
+        title: 'Mechanism — Non-determinism: pass@k vs. pass^k',
+        html: `<p>Agent behavior varies between runs. Two metrics for stochastic outputs:</p>
+        <ul>
+          <li><strong>pass@k</strong> — probability of ≥1 success in k attempts. <em>Rises with k.</em> Use when one valid solution is enough (e.g., code-completion variants).</li>
+          <li><strong>pass^k</strong> — probability ALL k trials succeed. <em>Falls with k.</em> Use when consistency matters (customer-facing agents).</li>
+        </ul>
+        <p>At k=1 they\'re identical. By k=10 they diverge: pass@k → near 100%, pass^k → near 0% for typical agents.</p>
+        <div class="callout good"><strong>Which to optimize depends on the product:</strong> consistency for customer agents → pass^k; "best of n" for code completion → pass@k.</div>`
+      },
+      {
+        kind: 'mechanism',
+        title: 'Mechanism — Building an eval suite (0→1)',
+        html: `<ol>
+          <li><strong>Start early, start small.</strong> 20–50 simple tasks from real failures beats waiting for the "perfect 200-task suite." Cost is upfront; benefits compound.</li>
+          <li><strong>Mine manual tests + bug tracker.</strong> Convert real user-reported failures into tasks. Prioritize by user impact.</li>
+          <li><strong>Unambiguous tasks with reference solutions.</strong> Two domain experts should reach the same pass/fail verdict. Ambiguity = noise in metrics.</li>
+          <li><strong>Balanced problem sets.</strong> Test where behavior <em>should</em> occur AND where it <em>shouldn\'t</em>. One-sided evals create one-sided optimization.</li>
+          <li><strong>Robust harness + stable environment.</strong> Each trial isolated; no shared state between runs (leftover files, cached data, git history) — that causes correlated failures from infrastructure flakiness, not agent performance.</li>
+          <li><strong>Thoughtful graders.</strong> Grade output, not the path. Partial credit for multi-component tasks. Calibrate LLM-as-judge against human review. Give the judge a "Return Unknown" escape.</li>
+          <li><strong>Read transcripts.</strong> A failing eval might be a grading bug, ambiguous spec, or harness limitation — not agent failure.</li>
+          <li><strong>Monitor saturation.</strong> 100% pass rate = the eval stops measuring improvement. Graduate to regression, build harder.</li>
+        </ol>`
+      },
+      {
+        kind: 'analogy',
+        title: 'Analogy — Swiss cheese',
+        html: `<p>No single eval method catches everything. The reliable stack layers multiple imperfect filters:</p>
+        <table class="ucase-table" style="margin-top:8px;font-size:13px;">
+          <thead><tr><th>Method</th><th>When it fits</th><th>Limitations</th></tr></thead>
+          <tbody>
+            <tr><td>Automated evals</td><td>Pre-launch, CI/CD, model upgrades</td><td>Built up-front; can drift from real usage</td></tr>
+            <tr><td>Production monitoring</td><td>Post-launch ground truth</td><td>Reactive; problems reach users first</td></tr>
+            <tr><td>A/B testing</td><td>Validating significant changes with real traffic</td><td>Slow; only tests what you deploy</td></tr>
+            <tr><td>User feedback</td><td>Surfacing unanticipated problems</td><td>Sparse, self-selected</td></tr>
+            <tr><td>Manual transcript review</td><td>Building intuition for failure modes</td><td>Doesn\'t scale</td></tr>
+            <tr><td>Systematic human studies</td><td>Calibrating LLM graders, subjective domains</td><td>Expensive, slow turnaround</td></tr>
+          </tbody>
+        </table>
+        <div class="callout good"><strong>Combine.</strong> Each layer has holes; the holes don\'t line up.</div>`
+      },
+      {
+        kind: 'impact',
+        title: 'Use-case / impact — per-workload patterns',
+        html: `<table class="ucase-table" style="margin-top:8px;font-size:13px;">
+          <thead><tr><th>Workload</th><th>Eval anchor</th><th>Primary graders</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Coding</strong></td><td>Code runs + tests pass</td><td>Deterministic (unit tests, compile rate), edit distance, acceptance rate, LLM rubric for code quality. <em>Benchmarks: SWE-bench Verified, Terminal-Bench, LiveCodeBench, CoPilot Arena.</em></td></tr>
+            <tr><td><strong>Conversational / agentic</strong></td><td>End-state outcomes + interaction quality</td><td>LLM rubric for tone, state check for resolution, transcript constraints (turn limits), tool-call verification. <em>Benchmarks: 𝜏-Bench, τ²-Bench.</em></td></tr>
+            <tr><td><strong>Research / search / RAG</strong></td><td>Groundedness + coverage + source quality</td><td>Citation accuracy, retrieval precision/recall, LLM rubric for synthesis, exact match for objective facts. <em>Benchmark: BrowseComp.</em></td></tr>
+            <tr><td><strong>Computer use / voice</strong></td><td>Outcome verification + token efficiency</td><td>Environment state, trajectory quality, p95 latency, tool-use accuracy. DOM vs. screenshot tradeoff for browser agents. <em>Benchmarks: WebArena, OSWorld.</em></td></tr>
+          </tbody>
+        </table>
+        <div class="callout good"><strong>The product frame:</strong> evals are the highest-bandwidth communication channel between product and research — they define the metrics research can optimize against. Eval-driven development = encoding expected behavior before the agent can deliver it. Capability evals at low pass rates are <em>bets on what models can do in 3 months</em>.</div>`
+      }
+    ],
+    quiz: [
+      { id: '6a', q: 'Name the three grader types and one example use case for each.', a: 'Code-based (unit tests, regex, schema validation — code and structured outputs). Model-based (LLM-as-judge rubrics — subjective quality at scale). Human (SME review — calibration and subjective gold standard for ambiguous tasks).' },
+      { id: '6b', q: 'When do pass@k and pass^k diverge most — and how do you decide which to optimize?', a: 'They diverge as k grows: pass@k rises (any success counts), pass^k falls (all must succeed). Choose based on product: pass^k for customer-facing agents where consistency matters; pass@k for tools where one valid solution is enough.' },
+      { id: '6c', q: 'You\'re handed a capability eval at 100% pass rate. What\'s the right next move?', a: 'Saturation — graduate the eval to the regression suite (run continuously to catch drift), then build a harder capability eval to give the team a new hill. Don\'t keep optimizing a saturated metric.' },
+      { id: '6d', q: 'The eval harness vs the agent harness — what\'s the difference, and why does it matter?', a: 'Eval harness = infrastructure that runs evals (instructions, tools, recording, grading, aggregation). Agent harness = the scaffold that lets the model act as an agent (tool orchestration, input processing). When you evaluate "the agent" you\'re really evaluating both together — either can be the source of an issue, and reading transcripts is how you tell which.' }
     ]
   },
 
