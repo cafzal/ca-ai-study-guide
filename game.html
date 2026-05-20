@@ -1607,6 +1607,81 @@ const LESSONS = [
         <p>= a tractable <strong>product tier</strong>, not a research engagement. Mercury 2 ships "schema-aligned JSON output."</p>
         <div class="callout good"><strong>This is a moat</strong> because it's near-free for diffusion and expensive/brittle for autoregression.</div>`
       },
+      {
+        kind: 'mechanism',
+        title: 'Honest scorecard — every dimension the debate hinges on',
+        html: `<p style="font-size:13px;color:var(--ink-soft);margin-bottom:10px;">Including where autoregression wins. The autoregression-wins rows are the load-bearing concessions that make the argument honest.</p>
+        <div style="overflow-x:auto;">
+        <table class="ucase-table scorecard" style="font-size:12px;">
+          <thead>
+            <tr><th style="width:18%">Dimension</th><th style="width:26%">Autoregressive</th><th style="width:26%">Diffusion</th><th style="width:30%">Verdict / nuance to say</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Generation latency</strong></td>
+              <td>Serial chain of N forward passes; Key/Value cache patches redundant compute, not the chain</td>
+              <td>A few parallel refine-all-tokens steps (~10–20)</td>
+              <td><span class="verdict-diff">Diffusion, structurally.</span> ~1,009 vs ~89 tokens/sec (Haiku 4.5), ~71 (GPT-5 Mini). Not "optimized faster" — a different generation loop.</td>
+            </tr>
+            <tr>
+              <td><strong>Cost / token</strong></td>
+              <td>Scales with serial passes + Key/Value-cache memory bandwidth at long context / high concurrency</td>
+              <td>Fewer steps, parallelizable; no growing Key/Value chain</td>
+              <td><span class="verdict-diff">Diffusion.</span> ~$0.25 / $0.75 per 1 million in/out. Same root cause as the latency one.</td>
+            </tr>
+            <tr>
+              <td><strong>Peak quality, hardest reasoning</strong></td>
+              <td>Frontier models are all autoregressive; most mature training/eval ecosystem. <em>Gemini 3.5 Flash (May 2026) beats Gemini 3.1 Pro on agentic benchmarks at 289 tokens/sec — the AR side is now racing on quality-at-speed too.</em></td>
+              <td>Competitive with the speed-optimized tier on Mercury's headline benchmarks, but trails frontier-max</td>
+              <td><span class="verdict-ar">Autoregression at the frontier.</span> Be candid about this — Mercury is 91 AIME / ~74 GPQA but competes in the fast tier, not frontier-max. Gemini 3.5 Flash specifically narrows the quality-at-speed gap.</td>
+            </tr>
+            <tr>
+              <td><strong>Both-sided conditioning</strong> (infill / edit / plan)</td>
+              <td>Left-to-right only — cannot natively condition on tokens after the cursor</td>
+              <td>Holds the whole sequence; conditions on both sides by construction</td>
+              <td><span class="verdict-diff">Diffusion, structurally.</span> The durable moat — code next-edit, infill, whole-plan refinement.</td>
+            </tr>
+            <tr>
+              <td><strong>Self-correction / hallucination</strong></td>
+              <td>Commits each token irrevocably; errors cascade forward</td>
+              <td>Re-touches all positions every step; early errors editable</td>
+              <td><span class="verdict-diff">Diffusion.</span> A consequence of the loop, not a feature.</td>
+            </tr>
+            <tr>
+              <td><strong>Controllability</strong> (schema / JSON / safety)</td>
+              <td>Decode-time constraints — brittle, bolted-on</td>
+              <td>Masked projection + conditional generation from one model, near-free</td>
+              <td><span class="verdict-diff">Diffusion.</span> But placement matters (Masked Temporal Interpolation Diffusion: init-mask 40 success rate vs mid-iteration 3 success rate collapse).</td>
+            </tr>
+            <tr>
+              <td><strong>Alignment / fine-tuning maturity</strong></td>
+              <td>Huge ecosystem — Reinforcement Learning from Human Feedback, Direct Preference Optimization, tooling, known recipes</td>
+              <td>Direct-Preference-Optimization-style cheap alignment applies in principle; Scores as Actions (diffusion-native reinforcement learning) is framework-stage, experiments deferred</td>
+              <td><span class="verdict-ar">Autoregression today.</span> Honest gap — diffusion-language-model custom-tuning is roadmap, not shipped.</td>
+            </tr>
+            <tr>
+              <td><strong>Quality/latency tunability</strong></td>
+              <td>Fixed serial cost; quality bought with more tokens = more latency (the reasoning tax)</td>
+              <td>Step-count is a continuous dial on one model</td>
+              <td><span class="verdict-diff">Diffusion.</span> A pricing/packaging lever autoregression can't replicate.</td>
+            </tr>
+            <tr>
+              <td><strong>Ecosystem / drop-in risk</strong></td>
+              <td>Universal — every tool, every integration assumes autoregression</td>
+              <td>OpenAI-API compatible (technical drop-in); commercially still a "why diffusion" education cost</td>
+              <td><span class="verdict-split">Autoregression for inertia.</span> Diffusion de-risks the technical switch but not the commercial one.</td>
+            </tr>
+            <tr>
+              <td><strong>Serving engineering</strong></td>
+              <td>Mature, well-understood (vLLM, etc.)</td>
+              <td>Bespoke kernels (FlashAttention's "new CUDA kernel per variant"); fewer off-the-shelf tools</td>
+              <td><span class="verdict-ar">Autoregression.</span> Real engineering-cost and talent constraint — name it.</td>
+            </tr>
+          </tbody>
+        </table>
+        </div>
+        <div class="callout good" style="font-size:13px;margin-top:14px;"><strong>Tally:</strong> 6 diffusion wins (latency, cost, both-sided conditioning, self-correction, controllability, tunability), 3 autoregression wins (peak quality, alignment maturity, serving), 1 inertial autoregression lead (ecosystem). <em>Both-sided conditioning + controllability are the structural ones — what makes the moat durable.</em></div>`
+      }
     ],
     quiz: [
       { id: '4a', q: 'Walk the Direct Preference Optimization collapse: what cancels, and why does that matter operationally?', a: 'The Kullback-Leibler-constrained Reinforcement Learning from Human Feedback optimum rearranges to reward = β·log(π/π_ref) + β·log Z(x); Bradley-Terry uses only reward differences, so the intractable partition function Z(x) cancels → a pure policy cross-entropy loss. Operationally it removes the reward model, the reinforcement learning loop, and in-loop sampling — alignment becomes a stable supervised loss.' },
@@ -1743,81 +1818,6 @@ const LESSONS = [
           <li>Flag the feasibility-gated upside (long-horizon agents)</li>
           <li>Close with the unnamed adjacency the framework surfaces (constrained optimization)</li>
         </ol>`
-      },
-      {
-        kind: 'mechanism',
-        title: 'Honest scorecard — every dimension the debate hinges on',
-        html: `<p style="font-size:13px;color:var(--ink-soft);margin-bottom:10px;">Including where autoregression wins. The autoregression-wins rows are the load-bearing concessions that make the argument honest.</p>
-        <div style="overflow-x:auto;">
-        <table class="ucase-table scorecard" style="font-size:12px;">
-          <thead>
-            <tr><th style="width:18%">Dimension</th><th style="width:26%">Autoregressive</th><th style="width:26%">Diffusion</th><th style="width:30%">Verdict / nuance to say</th></tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td><strong>Generation latency</strong></td>
-              <td>Serial chain of N forward passes; Key/Value cache patches redundant compute, not the chain</td>
-              <td>A few parallel refine-all-tokens steps (~10–20)</td>
-              <td><span class="verdict-diff">Diffusion, structurally.</span> ~1,009 vs ~89 tokens/sec (Haiku 4.5), ~71 (GPT-5 Mini). Not "optimized faster" — a different generation loop.</td>
-            </tr>
-            <tr>
-              <td><strong>Cost / token</strong></td>
-              <td>Scales with serial passes + Key/Value-cache memory bandwidth at long context / high concurrency</td>
-              <td>Fewer steps, parallelizable; no growing Key/Value chain</td>
-              <td><span class="verdict-diff">Diffusion.</span> ~$0.25 / $0.75 per 1 million in/out. Same root cause as the latency one.</td>
-            </tr>
-            <tr>
-              <td><strong>Peak quality, hardest reasoning</strong></td>
-              <td>Frontier models are all autoregressive; most mature training/eval ecosystem. <em>Gemini 3.5 Flash (May 2026) beats Gemini 3.1 Pro on agentic benchmarks at 289 tokens/sec — the AR side is now racing on quality-at-speed too.</em></td>
-              <td>Competitive with the speed-optimized tier on Mercury's headline benchmarks, but trails frontier-max</td>
-              <td><span class="verdict-ar">Autoregression at the frontier.</span> Be candid about this — Mercury is 91 AIME / ~74 GPQA but competes in the fast tier, not frontier-max. Gemini 3.5 Flash specifically narrows the quality-at-speed gap.</td>
-            </tr>
-            <tr>
-              <td><strong>Both-sided conditioning</strong> (infill / edit / plan)</td>
-              <td>Left-to-right only — cannot natively condition on tokens after the cursor</td>
-              <td>Holds the whole sequence; conditions on both sides by construction</td>
-              <td><span class="verdict-diff">Diffusion, structurally.</span> The durable moat — code next-edit, infill, whole-plan refinement.</td>
-            </tr>
-            <tr>
-              <td><strong>Self-correction / hallucination</strong></td>
-              <td>Commits each token irrevocably; errors cascade forward</td>
-              <td>Re-touches all positions every step; early errors editable</td>
-              <td><span class="verdict-diff">Diffusion.</span> A consequence of the loop, not a feature.</td>
-            </tr>
-            <tr>
-              <td><strong>Controllability</strong> (schema / JSON / safety)</td>
-              <td>Decode-time constraints — brittle, bolted-on</td>
-              <td>Masked projection + conditional generation from one model, near-free</td>
-              <td><span class="verdict-diff">Diffusion.</span> But placement matters (Masked Temporal Interpolation Diffusion: init-mask 40 success rate vs mid-iteration 3 success rate collapse).</td>
-            </tr>
-            <tr>
-              <td><strong>Alignment / fine-tuning maturity</strong></td>
-              <td>Huge ecosystem — Reinforcement Learning from Human Feedback, Direct Preference Optimization, tooling, known recipes</td>
-              <td>Direct-Preference-Optimization-style cheap alignment applies in principle; Scores as Actions (diffusion-native reinforcement learning) is framework-stage, experiments deferred</td>
-              <td><span class="verdict-ar">Autoregression today.</span> Honest gap — diffusion-language-model custom-tuning is roadmap, not shipped.</td>
-            </tr>
-            <tr>
-              <td><strong>Quality/latency tunability</strong></td>
-              <td>Fixed serial cost; quality bought with more tokens = more latency (the reasoning tax)</td>
-              <td>Step-count is a continuous dial on one model</td>
-              <td><span class="verdict-diff">Diffusion.</span> A pricing/packaging lever autoregression can't replicate.</td>
-            </tr>
-            <tr>
-              <td><strong>Ecosystem / drop-in risk</strong></td>
-              <td>Universal — every tool, every integration assumes autoregression</td>
-              <td>OpenAI-API compatible (technical drop-in); commercially still a "why diffusion" education cost</td>
-              <td><span class="verdict-split">Autoregression for inertia.</span> Diffusion de-risks the technical switch but not the commercial one.</td>
-            </tr>
-            <tr>
-              <td><strong>Serving engineering</strong></td>
-              <td>Mature, well-understood (vLLM, etc.)</td>
-              <td>Bespoke kernels (FlashAttention's "new CUDA kernel per variant"); fewer off-the-shelf tools</td>
-              <td><span class="verdict-ar">Autoregression.</span> Real engineering-cost and talent constraint — name it.</td>
-            </tr>
-          </tbody>
-        </table>
-        </div>
-        <div class="callout good" style="font-size:13px;margin-top:14px;"><strong>Tally:</strong> 6 diffusion wins (latency, cost, both-sided conditioning, self-correction, controllability, tunability), 3 autoregression wins (peak quality, alignment maturity, serving), 1 inertial autoregression lead (ecosystem). <em>Both-sided conditioning + controllability are the structural ones — what makes the moat durable.</em></div>`
       }
     ],
     quiz: [
@@ -1889,7 +1889,8 @@ const LESSONS = [
           <li><strong>pass^k</strong> — probability ALL k trials succeed. <em>Falls with k.</em> Use when consistency matters (customer-facing agents).</li>
         </ul>
         <p>At k=1 they\'re identical. By k=10 they diverge: pass@k → near 100%, pass^k → near 0% for typical agents.</p>
-        <div class="callout good"><strong>Which to optimize depends on the product:</strong> consistency for customer agents → pass^k; "best of n" for code completion → pass@k.</div>`
+        <div class="callout good"><strong>Which to optimize depends on the product:</strong> consistency for customer agents → pass^k; "best of n" for code completion → pass@k.</div>`,
+        visual: 'passk'
       },
       {
         kind: 'mechanism',
@@ -2337,6 +2338,7 @@ function buildVisual(type) {
     case 'walks': return buildWalks(wrap, title);
     case 'dial': return buildDial(wrap, title);
     case 'control4': return buildControl4(wrap, title);
+    case 'passk': return buildPassK(wrap, title);
     case 'dpo': return buildDPO(wrap, title);
     case 'mask': return buildMask(wrap, title);
     case 'axes': return buildAxes(wrap, title);
@@ -3457,6 +3459,185 @@ document.addEventListener('keydown', e => {
    INIT
    ========================================================= */
 render();
+
+
+/* ----------- VISUAL: pass@k vs pass^k (L6) ----------- */
+function buildPassK(wrap, title) {
+  title.textContent = 'Interactive — pass@k vs. pass^k';
+
+  const desc = document.createElement('div');
+  desc.style.fontSize = '13px';
+  desc.style.color = 'var(--ink-soft)';
+  desc.style.marginBottom = '12px';
+  desc.innerHTML = 'Adjust per-trial success rate <em>p</em>. The two metrics diverge as k grows: pass@k (≥1 success) climbs toward 1; pass^k (all k succeed) collapses toward 0.';
+  wrap.appendChild(desc);
+
+  // Controls
+  const ctrls = document.createElement('div');
+  ctrls.className = 'v-controls';
+  ctrls.style.marginBottom = '12px';
+  const pLabel = document.createElement('span');
+  pLabel.style.fontFamily = '"SF Mono", monospace';
+  pLabel.style.minWidth = '80px';
+  pLabel.textContent = 'p = 0.70';
+  const slider = document.createElement('input');
+  slider.type = 'range';
+  slider.min = '5';
+  slider.max = '99';
+  slider.value = '70';
+  slider.step = '1';
+  slider.style.flex = '1';
+  ctrls.appendChild(pLabel);
+  ctrls.appendChild(slider);
+  wrap.appendChild(ctrls);
+
+  // SVG chart
+  const svgNS = 'http://www.w3.org/2000/svg';
+  const svg = document.createElementNS(svgNS, 'svg');
+  svg.setAttribute('viewBox', '0 0 480 240');
+  svg.style.width = '100%';
+  svg.style.maxWidth = '560px';
+  svg.style.display = 'block';
+  svg.style.margin = '0 auto';
+  svg.style.background = '#fdfcf8';
+  svg.style.border = '1px solid var(--line)';
+  svg.style.borderRadius = '6px';
+  wrap.appendChild(svg);
+
+  // Readouts
+  const readouts = document.createElement('div');
+  readouts.style.display = 'grid';
+  readouts.style.gridTemplateColumns = 'repeat(2, 1fr)';
+  readouts.style.gap = '10px';
+  readouts.style.marginTop = '12px';
+  readouts.innerHTML = `
+    <div class="depth-cell" style="border-left:4px solid var(--accent);text-align:left;padding-left:12px;">
+      <div class="label">pass@k at k=10</div>
+      <div class="val" id="pk-passat10" style="font-size:18px;">—</div>
+    </div>
+    <div class="depth-cell" style="border-left:4px solid var(--bad);text-align:left;padding-left:12px;">
+      <div class="label">pass^k at k=10</div>
+      <div class="val" id="pk-passcaret10" style="font-size:18px;color:var(--bad);">—</div>
+    </div>
+  `;
+  wrap.appendChild(readouts);
+
+  const callout = document.createElement('div');
+  callout.className = 'callout';
+  callout.style.fontSize = '13px';
+  callout.style.marginTop = '14px';
+  callout.innerHTML = '<strong>Try p = 0.85 with k = 10:</strong> pass@k ≈ 99.97% (a customer would think the agent is great); pass^k ≈ 19.7% (one in five users hits at least one failure across 10 turns). Both are "true" — they answer different product questions.';
+  wrap.appendChild(callout);
+
+  // Chart geometry
+  const W = 480, H = 240;
+  const padL = 50, padR = 16, padT = 20, padB = 36;
+  const chartW = W - padL - padR;
+  const chartH = H - padT - padB;
+  const maxK = 20;
+  const xAt = k => padL + (k - 1) / (maxK - 1) * chartW;
+  const yAt = prob => padT + (1 - prob) * chartH;
+
+  function drawChart(p) {
+    svg.innerHTML = '';
+
+    // Axes
+    function line(x1, y1, x2, y2, stroke, sw) {
+      const l = document.createElementNS(svgNS, 'line');
+      l.setAttribute('x1', x1); l.setAttribute('y1', y1);
+      l.setAttribute('x2', x2); l.setAttribute('y2', y2);
+      l.setAttribute('stroke', stroke || '#888');
+      l.setAttribute('stroke-width', sw || 1);
+      svg.appendChild(l);
+    }
+    function text(x, y, s, opts) {
+      const t = document.createElementNS(svgNS, 'text');
+      t.setAttribute('x', x); t.setAttribute('y', y);
+      t.setAttribute('font-size', (opts && opts.size) || 10);
+      t.setAttribute('fill', (opts && opts.fill) || '#555');
+      t.setAttribute('text-anchor', (opts && opts.anchor) || 'start');
+      t.textContent = s;
+      svg.appendChild(t);
+    }
+
+    // Gridlines
+    for (let i = 0; i <= 4; i++) {
+      const y = padT + (i / 4) * chartH;
+      line(padL, y, W - padR, y, '#eee', 1);
+      text(padL - 8, y + 3, (1 - i / 4).toFixed(2), { anchor: 'end', size: 9 });
+    }
+    // X axis
+    line(padL, H - padB, W - padR, H - padB, '#555', 1.5);
+    line(padL, padT, padL, H - padB, '#555', 1.5);
+    for (let k = 1; k <= maxK; k += 2) {
+      const x = xAt(k);
+      line(x, H - padB, x, H - padB + 3, '#555', 1);
+      text(x, H - padB + 14, k.toString(), { anchor: 'middle', size: 9 });
+    }
+    text(W / 2, H - 4, 'k (number of trials)', { anchor: 'middle', size: 11 });
+    text(padL - 36, padT - 6, 'probability', { size: 11 });
+
+    // pass@k curve
+    let d1 = '';
+    let d2 = '';
+    for (let k = 1; k <= maxK; k++) {
+      const passAt = 1 - Math.pow(1 - p, k);
+      const passCar = Math.pow(p, k);
+      d1 += (k === 1 ? 'M' : 'L') + xAt(k) + ',' + yAt(passAt).toFixed(2) + ' ';
+      d2 += (k === 1 ? 'M' : 'L') + xAt(k) + ',' + yAt(passCar).toFixed(2) + ' ';
+    }
+    const c1 = document.createElementNS(svgNS, 'path');
+    c1.setAttribute('d', d1);
+    c1.setAttribute('stroke', '#5b3fa8');
+    c1.setAttribute('stroke-width', '2.5');
+    c1.setAttribute('fill', 'none');
+    svg.appendChild(c1);
+
+    const c2 = document.createElementNS(svgNS, 'path');
+    c2.setAttribute('d', d2);
+    c2.setAttribute('stroke', '#c0392b');
+    c2.setAttribute('stroke-width', '2.5');
+    c2.setAttribute('fill', 'none');
+    svg.appendChild(c2);
+
+    // Legend
+    text(W - padR - 90, padT + 10, 'pass@k', { fill: '#5b3fa8', size: 11 });
+    text(W - padR - 90, padT + 26, 'pass^k', { fill: '#c0392b', size: 11 });
+    line(W - padR - 24, padT + 7, W - padR - 4, padT + 7, '#5b3fa8', 2.5);
+    line(W - padR - 24, padT + 23, W - padR - 4, padT + 23, '#c0392b', 2.5);
+
+    // k=10 markers
+    const k10 = 10;
+    const passAt10 = 1 - Math.pow(1 - p, k10);
+    const passCar10 = Math.pow(p, k10);
+    const x10 = xAt(k10);
+    line(x10, padT, x10, H - padB, '#999', 1);
+    text(x10, padT - 6, 'k=10', { anchor: 'middle', size: 9, fill: '#888' });
+
+    const dot1 = document.createElementNS(svgNS, 'circle');
+    dot1.setAttribute('cx', x10); dot1.setAttribute('cy', yAt(passAt10));
+    dot1.setAttribute('r', '4'); dot1.setAttribute('fill', '#5b3fa8');
+    svg.appendChild(dot1);
+    const dot2 = document.createElementNS(svgNS, 'circle');
+    dot2.setAttribute('cx', x10); dot2.setAttribute('cy', yAt(passCar10));
+    dot2.setAttribute('r', '4'); dot2.setAttribute('fill', '#c0392b');
+    svg.appendChild(dot2);
+
+    // Update readouts
+    document.getElementById('pk-passat10').textContent = (passAt10 * 100).toFixed(passAt10 > 0.999 ? 3 : 2) + '%';
+    document.getElementById('pk-passcaret10').textContent = (passCar10 * 100).toFixed(passCar10 < 0.01 ? 3 : 2) + '%';
+  }
+
+  slider.oninput = e => {
+    const p = parseInt(e.target.value) / 100;
+    pLabel.textContent = 'p = ' + p.toFixed(2);
+    drawChart(p);
+  };
+  drawChart(0.70);
+
+  return wrap;
+}
+
 </script>
 </body>
 </html>
