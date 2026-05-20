@@ -992,12 +992,6 @@ const LESSONS = [
         visual: 'depth'
       },
       {
-        kind: 'mechanism',
-        title: 'Mechanism — The cost collapse',
-        html: `<p>Cost to train a GPT-2-class model (1.5 billion parameters) — the single biggest "where the field is going" visual you can to internalize:</p>`,
-        visual: 'cost'
-      },
-      {
         kind: 'analogy',
         title: 'Analogy',
         html: `<p>A language model isn't a single brain — it's a <strong>school system</strong>:</p>
@@ -1026,7 +1020,6 @@ const LESSONS = [
       { id: '0a', q: 'Name the 5 stages of the nanochat pipeline and what each one teaches the model.', a: '(1) Tokenize — how to chunk text into reusable Byte-Pair Encoding pieces. (2) Pretrain — predict next token on raw web text → how language works. (3) Supervised fine-tuning — predict next token on chat-formatted conversations → assistant turn format. (4) Reinforcement learning (Direct Preference Optimization or Proximal Policy Optimization) — optimize against preference pairs → human taste/safety. (5) Serve — autoregressive decoding loop. Every stage is "predict next token" on increasingly-curated data; the data curriculum is the magic, not the loss.' },
       { id: '0b', q: 'Sketch the inside of a transformer block. What does each component do, and why are LayerNorm + residuals there?', a: 'Block recipe: x → LayerNorm → Attention → +residual → LayerNorm → feed-forward network → +residual. Attention mixes information across tokens (each token can look at every other). The feed-forward network (a multi-layer perceptron) does per-token "thinking" (2 layers, Gaussian Error Linear Unit activation, 4× expand). LayerNorm stabilizes activations before each sub-layer. Residuals (the +x) give gradients an "express lane" so the stack can be made very deep without signal loss.' },
       { id: '0c', q: 'Why is "depth as the only knob" a meaningful fact about the field?', a: 'It means the autoregressive recipe has converged — width, heads, learning rate, schedule, training duration can all be derived from one number to be compute-optimal. Practitioners don\'t tune, they pick a budget. For a product manager: the commodity autoregressive recipe is settled, so the place to compete has moved up the stack (model class, control surface, packaging) — exactly where Inception is playing.' },
-      { id: '0d', q: 'GPT-2 cost ~$43K to train in 2019; nanochat trains it for ~$100 in 2026. What\'s the implication for a product manager?', a: '~400× cost collapse in 7 years from compounding hardware + algorithms + data quality. Implication: the frontier doesn\'t stay frontier — last year\'s premium capability becomes this year\'s commodity, which determines when a use-case unlocks for mass deployment. Inception\'s speed/cost edge has the same dynamic: it broadens the addressable market over time, but only the structural edges (Lesson 4) stay defensible as competitors catch up on raw efficiency.' },
     ]
   },
 
@@ -1469,9 +1462,9 @@ const LESSONS = [
   {
     id: 'AP',
     short: 'Appendix',
-    title: 'Appendix — Talking points (quick-reference summary)',
-    spine: 'Quick-reference summary of the argument. No quiz; say each line in your own words to test fluency.',
-    takeaway: 'Talking points ready: three opener sentences, two open questions worth raising, the full scorecard for any dimension, technical depth checks, and Decision Transformers as one paper to read for deeper ML context.',
+    title: 'Appendix — Reference notes',
+    spine: 'Reference notes — opener sentences, the scorecard, technical depth checks, and adjacent reading. Say each in your own words to test fluency.',
+    takeaway: 'Reference internalized: three opener sentences, the full scorecard for any dimension, technical depth checks, and Decision Transformers as one paper to read for deeper ML context.',
     sections: [
       {
         kind: 'mechanism',
@@ -1482,16 +1475,6 @@ const LESSONS = [
             <li>"Control is a near-free axis for diffusion: conditional generation with no retraining, output-space masking (and <em>where</em> you mask matters — initialization-mask 40 success rate vs mid-iteration 3 success rate collapse), Direct-Preference-Optimization-cheap preference tuning. That's the defensible surface, not raw speed."</li>
             <li>"Prioritize structural edges over speed edges: editing/infilling/planning need both-sided conditioning, which autoregression can't do natively. Speed gets competed away; structure is the moat."</li>
           </ol>
-        </div>`
-      },
-      {
-        kind: 'mechanism',
-        title: 'Two open questions worth raising',
-        html: `<div class="appendix-block">
-          <ul>
-            <li>"Of the four clusters, where is the latency → realized-revenue loop tightest <em>today</em>, and is model-development investment flowing there — or to the most defensible (structural-edge) one?"</li>
-            <li>"Where's the line between selling the frontier as-is vs. co-developing a fine-tuned variant — what unit economics decides it, and is Direct-Preference-Optimization-style tuning mature enough on the diffusion-language-model side to be a product tier yet?"</li>
-          </ul>
         </div>`
       },
       {
