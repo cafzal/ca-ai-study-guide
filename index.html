@@ -1391,7 +1391,7 @@ const LESSONS = [
       {
         kind: 'mechanism',
         title: 'Scores-as-Actions\' honest status (the axis-3 reality check)',
-        html: `<p>The parallel reality check on axis 3 (Mercury feasibility): Scores as Actions is the <em>theory</em> for fine-tuning a diffusion model toward production rewards (continuous-time analogue of Direct Preference Optimization's π_ref anchoring).</p>
+        html: `<p>The parallel reality check on axis 3 (technical feasibility): Scores as Actions is the <em>theory</em> for fine-tuning a diffusion model toward production rewards (continuous-time analogue of Direct Preference Optimization's π_ref anchoring).</p>
         <p><strong>Framework-stage</strong> — experiments deferred to a forthcoming paper.</p>
         <div class="callout warn"><strong>Implication for the use-case map:</strong> custom per-customer fine-tuning is a <em>roadmap</em> feasibility item, not a current one — which is why several high-durability forks in the map below are feasibility-gated (M), not green.</div>`
       },
@@ -1409,7 +1409,7 @@ const LESSONS = [
         <ul>
           <li><strong>Customer value: M→H</strong> — huge latent/locked-up demand (operations, scheduling, allocation — buyers who currently need operations-research specialists)</li>
           <li><strong>Durability: H</strong> — this is the <em>structural-edge</em> archetype (controllable, schema-constrained, both-sided refinement; not a speed play)</li>
-          <li><strong>Mercury feasibility: M</strong> — needs reliable structured output + tool use, both of which Mercury 2 ships, but tight-constraint fidelity is unproven</li>
+          <li><strong>Technical feasibility: M</strong> — needs reliable structured output + tool use, both of which Mercury 2 ships, but tight-constraint fidelity is unproven</li>
         </ul>
         <p><em>This is a candidate's differentiated insight to bring in: a market the value prop unlocks that isn't on the current list.</em> Frame it as "here's a market your value prop unlocks that isn't on the current list," not as a tangent.</p>
         <p><strong>Other adjacencies to name lightly:</strong> structured data extraction / extract-transform-load at volume, real-time transcript and human-computer-interaction cleanup, edge / on-device given the efficiency profile.</p>`
@@ -1451,7 +1451,7 @@ const LESSONS = [
       }
     ],
     quiz: [
-      { id: '5a', q: 'Name the three prioritization axes, and for each, which value-prop dimension or technical lesson feeds it.', a: '(1) Immediate customer value/demand — fed by speed+cost (Inception\'s strengths relieve the pain) and how compounding the latency is (Lessons 1 and 3). (2) Long-term market given competition — fed by structural edge (Lessons 2 and 4): durable vs. a speed lead that erodes. (3) Mercury feasibility — fed by the quality tradeoff + step-count dial (Lesson 3), controllability (Lesson 4), and Scores as Actions being framework-stage (limits custom tuning).' },
+      { id: '5a', q: 'Name the three prioritization axes, and for each, which value-prop dimension or technical lesson feeds it.', a: '(1) Immediate customer value/demand — fed by speed+cost (Inception\'s strengths relieve the pain) and how compounding the latency is (Lessons 1 and 3). (2) Long-term market given competition — fed by structural edge (Lessons 2 and 4): durable vs. a speed lead that erodes. (3) Technical feasibility — fed by the quality tradeoff + step-count dial (Lesson 3), controllability (Lesson 4), and Scores as Actions being framework-stage (limits custom tuning).' },
       { id: '5b', q: 'Why is "coding/editing" the top bet on all three axes — and why is "agentic loops" un-scoreable until decomposed?', a: 'Coding: demand is acute (in-flow pauses intolerable, clear developer-tools willingness-to-pay), the edge is structural (infill/next-edit needs both-sided context autoregression can\'t do natively — durable), and it\'s the model\'s most validated domain — all three axes green. "Agentic loops" spans short tool-use (H/M/H), long autonomous planning (H/H/M), and multi-agent (M/H/L); the axes diverge by fork, so a single score is meaningless.' },
       { id: '5c', q: 'Why does speed/cost belong to axis 1 (enabler) but NOT axis 2 (durability)?', a: 'Speed/cost make the use case viable now (relieve the latency/cost pain → drives current demand = axis 1), but every lab is chasing tokens per second, so a speed lead erodes — it is not a durable competitive moat (axis 2). Durability comes from structural edges (both-sided conditioning, near-free control) competitors can\'t cheaply copy.' },
       { id: '5d', q: 'Describe the constrained-optimization adjacency in two sentences: the demand, and why it\'s a structural (durable) edge not a speed play.', a: 'Demand: vast latent/locked-up market in operations/scheduling/allocation where buyers currently need operations-research specialists — natural-language → solver → agent-refinement removes that gatekeeper. Durable because it\'s the structural-edge archetype (controllable, schema-constrained, both-sided iterative refinement), not a speed race — a competitor matching the model\'s tokens per second doesn\'t replicate the controllability that makes it work.' },
@@ -2958,8 +2958,8 @@ function buildAxes(wrap, title) {
     },
     {
       n: '3',
-      title: 'Mercury feasibility',
-      ask: 'Can Mercury 2 deliver this now given the quality tradeoff?',
+      title: 'Technical feasibility',
+      ask: 'Can the model deliver this now given the quality tradeoff?',
       fed: 'Fed by: quality benchmarks + step-count dial (Lesson 3), controllability (Lesson 4), Scores as Actions still framework-stage.',
     }
   ];
