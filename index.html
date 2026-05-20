@@ -1446,7 +1446,13 @@ const LESSONS = [
       {
         kind: 'idea',
         title: 'The Idea',
-        html: `<p>Evaluating an AI agent is harder than evaluating a model: multi-turn, stateful, non-deterministic, with outputs that don\'t have a single right answer. Vocabulary first:</p>
+        html: `<p>Evaluating an AI agent is harder than evaluating a model, in three escalating levels of complexity:</p>
+        <ul>
+          <li><strong>Single-turn</strong> — classical prompt → response → grade. What most "LLM evals" measure.</li>
+          <li><strong>Multi-turn</strong> — the agent processes through several steps, modifying state along the way.</li>
+          <li><strong>Agent evals</strong> — the hardest variant: tools span many turns with potential error propagation; outputs don\'t have a single right answer; behavior varies between runs. <em>This lesson is about this third level.</em></li>
+        </ul>
+        <p>Vocabulary first:</p>
         <ul>
           <li><strong>Task</strong> — a single test with defined inputs and success criteria</li>
           <li><strong>Trial</strong> — one attempt at a task (run multiple per task because outputs vary)</li>
@@ -1497,13 +1503,28 @@ const LESSONS = [
         html: `<ol>
           <li><strong>Start early, start small.</strong> 20–50 simple tasks from real failures beats waiting for the "perfect 200-task suite." Cost is upfront; benefits compound.</li>
           <li><strong>Mine manual tests + bug tracker.</strong> Convert real user-reported failures into tasks. Prioritize by user impact.</li>
-          <li><strong>Unambiguous tasks with reference solutions.</strong> Two domain experts should reach the same pass/fail verdict. Ambiguity = noise in metrics.</li>
+          <li><strong>Unambiguous tasks with reference solutions.</strong> Two domain experts should reach the same pass/fail verdict. Ambiguity = noise in metrics. <em>Heuristic: a task with 0% pass@100 is more often a broken task than an incapable agent.</em></li>
           <li><strong>Balanced problem sets.</strong> Test where behavior <em>should</em> occur AND where it <em>shouldn\'t</em>. One-sided evals create one-sided optimization.</li>
           <li><strong>Robust harness + stable environment.</strong> Each trial isolated; no shared state between runs (leftover files, cached data, git history) — that causes correlated failures from infrastructure flakiness, not agent performance.</li>
           <li><strong>Thoughtful graders.</strong> Grade output, not the path. Partial credit for multi-component tasks. Calibrate LLM-as-judge against human review. Give the judge a "Return Unknown" escape.</li>
           <li><strong>Read transcripts.</strong> A failing eval might be a grading bug, ambiguous spec, or harness limitation — not agent failure.</li>
-          <li><strong>Monitor saturation.</strong> 100% pass rate = the eval stops measuring improvement. Graduate to regression, build harder.</li>
+          <li><strong>Monitor saturation.</strong> 100% pass rate = the eval stops measuring improvement. Graduate to regression, build harder. <em>And: as evals saturate, large capability improvements can appear as small score increases — read transcripts, not just deltas.</em></li>
+          <li><strong>Maintain like unit tests.</strong> Dedicate eval ownership (infrastructure + domain contributors). Practice <em>eval-driven development</em> — define evals before the agent has the capability, as bets on what models can do in 3 months.</li>
         </ol>`
+      },
+      {
+        kind: 'mechanism',
+        title: 'Mechanism — Common pitfalls',
+        html: `<p>The same patterns of failure show up across every team that builds evals. Most are subtle:</p>
+        <ul>
+          <li><strong>Hallucinating judges.</strong> LLM-as-judge graders misjudge valid outputs, especially in subjective domains. Mitigation: calibrate against human review; give the judge a "Return Unknown" escape.</li>
+          <li><strong>Grading loopholes.</strong> Agents "cheat" without solving the underlying problem — pass the letter of the grader while violating its spirit. Mitigation: outcome-based graders (check final environment state) over path-based ones.</li>
+          <li><strong>Over-rigid step-checking.</strong> Grading a fixed sequence of steps penalizes creative solutions. <em>Example: a frontier model "failed" a benchmark task by discovering a faster loophole route — the right answer, scored as wrong.</em> Mitigation: grade output, not path; allow valid alternative solutions.</li>
+          <li><strong>Specification–grader mismatches.</strong> The task as worded asks for one thing; the grader checks another. Models that follow instructions get penalized. (Real example: a benchmark told agents "optimize to threshold X," but graded "exceed X.") Mitigation: have two reviewers verify the spec and grader agree before shipping.</li>
+          <li><strong>Non-isolated trials.</strong> Leftover files, cached state, or git history from a prior trial leak into the next — correlated failures look like agent weakness when they\'re infrastructure flakiness. Mitigation: fresh environment per trial.</li>
+          <li><strong>Under-sampling.</strong> Too few trials per task to detect meaningful changes. The right N depends on per-task variance; small effect sizes need more trials.</li>
+        </ul>
+        <div class="callout warn"><strong>The discipline:</strong> never take eval scores at face value until someone digs into the details and reads some transcripts. A failing eval is at least as likely to be a grading bug, ambiguous spec, or harness limitation as it is to be agent failure.</div>`
       },
       {
         kind: 'analogy',
@@ -1541,7 +1562,8 @@ const LESSONS = [
       { id: '6a', q: 'Name the three grader types and one example use case for each.', a: 'Code-based (unit tests, regex, schema validation — code and structured outputs). Model-based (LLM-as-judge rubrics — subjective quality at scale). Human (SME review — calibration and subjective gold standard for ambiguous tasks).' },
       { id: '6b', q: 'When do pass@k and pass^k diverge most — and how do you decide which to optimize?', a: 'They diverge as k grows: pass@k rises (any success counts), pass^k falls (all must succeed). Choose based on product: pass^k for customer-facing agents where consistency matters; pass@k for tools where one valid solution is enough.' },
       { id: '6c', q: 'You\'re handed a capability eval at 100% pass rate. What\'s the right next move?', a: 'Saturation — graduate the eval to the regression suite (run continuously to catch drift), then build a harder capability eval to give the team a new hill. Don\'t keep optimizing a saturated metric.' },
-      { id: '6d', q: 'The eval harness vs the agent harness — what\'s the difference, and why does it matter?', a: 'Eval harness = infrastructure that runs evals (instructions, tools, recording, grading, aggregation). Agent harness = the scaffold that lets the model act as an agent (tool orchestration, input processing). When you evaluate "the agent" you\'re really evaluating both together — either can be the source of an issue, and reading transcripts is how you tell which.' }
+      { id: '6d', q: 'The eval harness vs the agent harness — what\'s the difference, and why does it matter?', a: 'Eval harness = infrastructure that runs evals (instructions, tools, recording, grading, aggregation). Agent harness = the scaffold that lets the model act as an agent (tool orchestration, input processing). When you evaluate "the agent" you\'re really evaluating both together — either can be the source of an issue, and reading transcripts is how you tell which.' },
+      { id: '6e', q: 'A task scores 0% pass@100. What\'s the most likely diagnosis, and what should you check before concluding the agent can\'t do it?', a: 'Most often a broken task, not an incapable agent — common causes are ambiguous specifications, a specification–grader mismatch (the spec asks one thing but the grader checks another), or missing information the agent needs to infer intent. Before concluding incapacity: confirm two domain experts agree on the pass/fail verdict, verify the grader matches the spec, and read transcripts to see whether the agent is producing reasonable outputs that the grader is rejecting.' }
     ]
   },
 
