@@ -1,0 +1,3409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="robots" content="noindex, nofollow" />
+<title>Interview Study · Game Mode</title>
+<style>
+  :root {
+    --bg: #fafaf7;
+    --panel: #ffffff;
+    --ink: #1a1a1a;
+    --ink-soft: #555;
+    --ink-fainter: #888;
+    --line: #e5e3dc;
+    --accent: #5b3fa8;
+    --accent-soft: #efeafa;
+    --good: #2f8a4e;
+    --good-soft: #e3f3e9;
+    --bad: #c0392b;
+    --bad-soft: #fbe9e7;
+    --warn: #b8860b;
+    --warn-soft: #fbf3df;
+    --code: #f1efe8;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", system-ui, sans-serif;
+    font-size: 16px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+  .shell {
+    max-width: 920px;
+    margin: 0 auto;
+    padding: 24px 24px 100px 24px;
+  }
+
+  /* Header */
+  header.app-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--line);
+    margin-bottom: 18px;
+  }
+  header.app-header h1 {
+    font-size: 18px;
+    font-weight: 600;
+    margin: 0;
+    letter-spacing: -0.01em;
+  }
+  header.app-header .sub {
+    font-size: 13px;
+    color: var(--ink-fainter);
+  }
+
+  /* Progress */
+  .progress-row {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 18px;
+  }
+  .progress-cell {
+    flex: 1;
+    height: 6px;
+    background: var(--line);
+    border-radius: 3px;
+    cursor: pointer;
+    transition: background 0.15s ease;
+  }
+  .progress-cell.read { background: #c4b8e6; }
+  .progress-cell.quizzed { background: var(--accent); }
+  .progress-cell.active {
+    box-shadow: 0 0 0 2px var(--accent-soft);
+  }
+
+  /* Tabs */
+  nav.tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-bottom: 20px;
+    border-bottom: 1px solid var(--line);
+  }
+  nav.tabs button {
+    background: none;
+    border: none;
+    padding: 10px 14px;
+    font-size: 14px;
+    color: var(--ink-soft);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    font-family: inherit;
+    margin-bottom: -1px;
+    transition: color 0.15s ease, border-color 0.15s ease;
+  }
+  nav.tabs button:hover { color: var(--ink); }
+  nav.tabs button.active {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+    font-weight: 500;
+  }
+
+  /* Lesson layout */
+  .lesson h2 {
+    font-size: 26px;
+    margin: 8px 0 4px 0;
+    letter-spacing: -0.015em;
+  }
+  .lesson .spine {
+    font-style: italic;
+    color: var(--ink-soft);
+    font-size: 14px;
+    margin-bottom: 24px;
+    padding: 10px 14px;
+    background: var(--accent-soft);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 6px 6px 0;
+  }
+  .lesson section.block {
+    margin: 26px 0;
+  }
+  .lesson section.block > h3 {
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+    margin: 0 0 10px 0;
+  }
+  .lesson p { margin: 10px 0; }
+  .lesson ul, .lesson ol { padding-left: 22px; }
+  .lesson li { margin: 6px 0; }
+  .lesson .callout {
+    padding: 12px 14px;
+    border-radius: 6px;
+    background: var(--code);
+    font-size: 14px;
+    margin: 12px 0;
+  }
+  .lesson .callout.warn { background: var(--warn-soft); }
+  .lesson .callout.good { background: var(--good-soft); }
+  .lesson .callout.bad { background: var(--bad-soft); }
+  .lesson code {
+    background: var(--code);
+    padding: 1px 5px;
+    border-radius: 3px;
+    font-family: "SF Mono", Menlo, Consolas, monospace;
+    font-size: 13px;
+  }
+  .lesson .formula {
+    text-align: center;
+    font-family: "SF Mono", Menlo, Consolas, monospace;
+    background: var(--code);
+    padding: 14px;
+    border-radius: 6px;
+    margin: 14px 0;
+    font-size: 15px;
+  }
+
+  /* Interactive visual panels */
+  .visual {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 18px;
+    margin: 16px 0;
+  }
+  .visual .v-title {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--ink-fainter);
+    margin-bottom: 12px;
+  }
+  .visual .v-controls {
+    margin-top: 14px;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+    font-size: 14px;
+  }
+  .visual .v-controls input[type="range"] {
+    flex: 1;
+    min-width: 120px;
+  }
+  .visual .v-readout {
+    font-family: "SF Mono", Menlo, monospace;
+    font-size: 13px;
+    color: var(--ink-soft);
+  }
+  .btn {
+    padding: 6px 14px;
+    border-radius: 5px;
+    border: 1px solid var(--line);
+    background: var(--panel);
+    color: var(--ink);
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 13px;
+    transition: all 0.15s ease;
+  }
+  .btn:hover { border-color: var(--accent); color: var(--accent); }
+  .btn.primary {
+    background: var(--accent);
+    color: white;
+    border-color: var(--accent);
+  }
+  .btn.primary:hover { background: #4a319a; color: white; }
+  .btn:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+
+  /* Token row (L1 doorway) */
+  .token-row {
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+    align-items: center;
+    min-height: 40px;
+    padding: 8px;
+    border: 1px dashed var(--line);
+    border-radius: 6px;
+    background: #fdfcf8;
+  }
+  .token-box {
+    padding: 4px 10px;
+    background: var(--accent-soft);
+    color: var(--accent);
+    border-radius: 4px;
+    font-family: "SF Mono", monospace;
+    font-size: 13px;
+    animation: tokenPop 0.3s ease;
+  }
+  .token-box.pending {
+    background: var(--line);
+    color: var(--ink-fainter);
+  }
+  @keyframes tokenPop {
+    from { transform: scale(0.6); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+
+  /* Attention matrix */
+  .matrix-grid {
+    display: grid;
+    gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    width: max-content;
+    margin: 12px auto;
+  }
+  .matrix-cell {
+    width: 14px;
+    height: 14px;
+    background: var(--panel);
+  }
+  .matrix-cell.lit { background: var(--accent); }
+  .matrix-cell.half { background: var(--accent-soft); }
+
+  /* Image strip for diffusion */
+  .noise-strip {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    justify-content: space-between;
+    margin: 12px 0;
+  }
+  .noise-img {
+    width: 64px;
+    height: 64px;
+    border-radius: 4px;
+    border: 1px solid var(--line);
+    image-rendering: pixelated;
+  }
+  .noise-label {
+    font-size: 11px;
+    color: var(--ink-fainter);
+    text-align: center;
+    font-family: "SF Mono", monospace;
+  }
+  .noise-cell { text-align: center; }
+  .arrow {
+    color: var(--ink-fainter);
+    font-size: 18px;
+  }
+
+  /* Walk comparison */
+  .walks-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+  .walks-row > .walk-panel {
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 12px;
+    background: #fdfcf8;
+  }
+  .walks-row .walk-title {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--ink-fainter);
+    margin-bottom: 8px;
+  }
+  .walks-row svg {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+  .walk-counter {
+    font-family: "SF Mono", monospace;
+    font-size: 12px;
+    margin-top: 6px;
+    color: var(--ink-soft);
+  }
+
+  /* DPO before/after */
+  .dpo-compare {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 14px;
+    align-items: center;
+    margin: 14px 0;
+  }
+  .dpo-side {
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 14px;
+    background: #fdfcf8;
+  }
+  .dpo-side.before { border-color: var(--bad); }
+  .dpo-side.after { border-color: var(--good); }
+  .dpo-side h4 {
+    margin: 0 0 8px 0;
+    font-size: 13px;
+    color: var(--ink-soft);
+  }
+  .dpo-side ul {
+    margin: 0;
+    padding-left: 18px;
+    font-size: 13px;
+  }
+  .dpo-arrow {
+    text-align: center;
+    color: var(--accent);
+    font-size: 26px;
+  }
+
+  /* Mask placement */
+  .mask-compare {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin: 14px 0;
+  }
+  .mask-card {
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 14px;
+  }
+  .mask-card.good { background: var(--good-soft); border-color: var(--good); }
+  .mask-card.bad { background: var(--bad-soft); border-color: var(--bad); }
+  .mask-card .big-num {
+    font-size: 36px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+  .mask-card.good .big-num { color: var(--good); }
+  .mask-card.bad .big-num { color: var(--bad); }
+  .mask-card .label {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--ink-fainter);
+  }
+  .mask-card .desc {
+    font-size: 13px;
+    margin-top: 8px;
+  }
+
+  /* Use case table */
+  .ucase-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    margin: 14px 0;
+  }
+  .ucase-table th, .ucase-table td {
+    border: 1px solid var(--line);
+    padding: 8px 10px;
+    text-align: left;
+    vertical-align: top;
+  }
+  .ucase-table th {
+    background: var(--code);
+    font-weight: 600;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--ink-soft);
+  }
+  .ucase-table tr.fork td { background: #fdfcf8; padding-left: 22px; font-size: 12px; }
+  .pill {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+  }
+  .pill.h { background: var(--good-soft); color: var(--good); }
+  .pill.m { background: var(--warn-soft); color: var(--warn); }
+  .pill.l { background: var(--bad-soft); color: var(--bad); }
+
+  /* L4 — 4 mechanisms grid */
+  .four-mech {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin: 16px 0;
+  }
+  .mech-card {
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 12px;
+    background: var(--panel);
+  }
+  .mech-card .mech-name {
+    font-weight: 600;
+    color: var(--accent);
+    font-size: 13px;
+    margin-bottom: 2px;
+  }
+  .mech-card .mech-paper {
+    font-size: 10px;
+    color: var(--ink-fainter);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 8px;
+  }
+  .mech-card .mech-does {
+    font-size: 13px;
+    margin-bottom: 8px;
+  }
+  .mech-card .mech-vs {
+    font-size: 11px;
+    padding: 6px 8px;
+    border-radius: 4px;
+    background: var(--code);
+    color: var(--ink-soft);
+  }
+  .mech-card .mech-vs strong { color: var(--bad); }
+  @media (max-width: 700px) {
+    .four-mech { grid-template-columns: 1fr; }
+  }
+
+  /* Scorecard verdict labels */
+  .verdict-diff, .verdict-ar, .verdict-split {
+    display: inline-block;
+    padding: 1px 6px;
+    border-radius: 3px;
+    font-weight: 600;
+    margin-right: 4px;
+    white-space: nowrap;
+  }
+  .verdict-diff { background: var(--accent-soft); color: var(--accent); }
+  .verdict-ar { background: var(--warn-soft); color: var(--warn); }
+  .verdict-split { background: var(--code); color: var(--ink-soft); }
+  .ucase-table.scorecard td { line-height: 1.45; }
+  .ucase-table.scorecard tr:hover td { background: #fbfaf5; }
+
+  /* Axis framework */
+  .axis-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin: 16px 0;
+  }
+  .axis-card {
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 12px;
+    background: var(--panel);
+  }
+  .axis-card .num {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--accent);
+  }
+  .axis-card .title {
+    font-weight: 600;
+    margin: 4px 0;
+    font-size: 14px;
+  }
+  .axis-card .fed {
+    font-size: 12px;
+    color: var(--ink-fainter);
+    border-top: 1px solid var(--line);
+    margin-top: 8px;
+    padding-top: 6px;
+  }
+
+  /* Quiz */
+  .quiz {
+    margin-top: 36px;
+    border: 2px solid var(--accent);
+    border-radius: 8px;
+    padding: 22px;
+    background: #fcfbff;
+  }
+  .quiz h3 {
+    margin: 0 0 4px 0;
+    color: var(--accent);
+    font-size: 16px;
+  }
+  .quiz .quiz-sub {
+    font-size: 13px;
+    color: var(--ink-soft);
+    margin-bottom: 16px;
+  }
+  .quiz-item {
+    margin: 14px 0;
+    padding: 14px;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+  }
+  .quiz-q {
+    font-weight: 500;
+    margin-bottom: 10px;
+  }
+  .quiz-q .q-label {
+    color: var(--accent);
+    font-family: "SF Mono", monospace;
+    font-weight: 600;
+    margin-right: 6px;
+  }
+  .quiz-response {
+    margin: 10px 0;
+  }
+  .quiz-response .response-label {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--ink-fainter);
+    margin-bottom: 4px;
+  }
+  .quiz-response .save-hint {
+    font-size: 10px;
+    color: var(--ink-fainter);
+    text-transform: none;
+    letter-spacing: 0;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+  }
+  .quiz-response .save-hint.visible { opacity: 1; }
+  .quiz-response textarea {
+    width: 100%;
+    min-height: 70px;
+    padding: 10px 12px;
+    border: 1px solid var(--line);
+    border-radius: 5px;
+    font-family: inherit;
+    font-size: 14px;
+    line-height: 1.5;
+    resize: vertical;
+    background: #fdfcf8;
+    color: var(--ink);
+    transition: border-color 0.15s ease, background 0.15s ease;
+    overflow: hidden;
+  }
+  .quiz-response textarea:focus {
+    outline: none;
+    border-color: var(--accent);
+    background: white;
+  }
+  .quiz-answer {
+    background: var(--accent-soft);
+    border-left: 3px solid var(--accent);
+    padding: 12px;
+    border-radius: 0 5px 5px 0;
+    font-size: 14px;
+    margin-top: 10px;
+    display: none;
+  }
+  .quiz-answer.visible { display: block; }
+  .quiz-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 10px;
+    flex-wrap: wrap;
+  }
+  .self-grade {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px dashed var(--line);
+    display: none;
+    font-size: 13px;
+  }
+  .self-grade.visible { display: block; }
+  .self-grade-row {
+    display: flex;
+    gap: 8px;
+    margin-top: 6px;
+    align-items: center;
+  }
+  .grade-btn {
+    padding: 4px 10px;
+    border-radius: 12px;
+    border: 1px solid var(--line);
+    background: var(--panel);
+    cursor: pointer;
+    font-size: 12px;
+    font-family: inherit;
+  }
+  .grade-btn.selected.got { background: var(--good); color: white; border-color: var(--good); }
+  .grade-btn.selected.partial { background: var(--warn); color: white; border-color: var(--warn); }
+  .grade-btn.selected.unsure { background: var(--ink-soft); color: white; border-color: var(--ink-soft); }
+  .quiz-controls {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 14px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--line);
+    font-size: 13px;
+    align-items: center;
+  }
+  .quiz-summary {
+    margin-top: 16px;
+    padding: 12px;
+    background: var(--accent-soft);
+    border-radius: 6px;
+    font-size: 13px;
+    text-align: center;
+    display: none;
+  }
+  .quiz-summary.visible { display: block; }
+
+  /* Footer / nav */
+  .lesson-nav {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 36px;
+    padding-top: 18px;
+    border-top: 1px solid var(--line);
+  }
+  .lesson-nav .btn { font-size: 14px; padding: 8px 16px; }
+
+  /* Appendix special styling */
+  .appendix-block {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--accent);
+    padding: 16px 20px;
+    margin: 14px 0;
+    border-radius: 0 6px 6px 0;
+  }
+  .appendix-block h4 {
+    margin: 0 0 8px 0;
+    color: var(--accent);
+    font-size: 14px;
+  }
+  .appendix-block ol, .appendix-block ul {
+    margin: 8px 0;
+    padding-left: 22px;
+  }
+  .appendix-block li { font-size: 14px; margin: 8px 0; }
+
+  /* Pipeline (L0) */
+  .pipeline {
+    display: flex;
+    margin: 16px 0;
+    flex-wrap: wrap;
+    gap: 0;
+  }
+  .pipe-stage {
+    flex: 1;
+    min-width: 90px;
+    border: 1px solid var(--line);
+    background: var(--panel);
+    padding: 10px 8px;
+    text-align: center;
+    position: relative;
+    cursor: pointer;
+    transition: background 0.15s ease;
+  }
+  .pipe-stage:not(:last-child) { border-right: none; }
+  .pipe-stage:first-child { border-radius: 6px 0 0 6px; }
+  .pipe-stage:last-child { border-radius: 0 6px 6px 0; }
+  .pipe-stage:hover { background: var(--accent-soft); }
+  .pipe-stage.active { background: var(--accent-soft); border-color: var(--accent); }
+  .pipe-stage .pipe-num {
+    font-size: 10px;
+    color: var(--ink-fainter);
+    font-family: "SF Mono", monospace;
+  }
+  .pipe-stage .pipe-name {
+    font-weight: 600;
+    font-size: 13px;
+    margin: 4px 0;
+    color: var(--ink);
+  }
+  .pipe-stage .pipe-teaches {
+    font-size: 11px;
+    color: var(--ink-soft);
+    font-style: italic;
+  }
+  .pipe-detail {
+    margin-top: 14px;
+    padding: 14px;
+    background: var(--accent-soft);
+    border-radius: 6px;
+    font-size: 13px;
+    display: none;
+  }
+  .pipe-detail.visible { display: block; }
+  .pipe-detail h5 {
+    margin: 0 0 6px 0;
+    color: var(--accent);
+    font-size: 13px;
+  }
+  .pipe-detail code { background: rgba(255,255,255,0.6); }
+
+  /* Transformer block (L0) */
+  .tblock {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 16px auto;
+    max-width: 480px;
+  }
+  .tblock-step {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    margin: 2px 0;
+  }
+  .tblock-box {
+    flex: 1;
+    padding: 8px 12px;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 5px;
+    font-size: 13px;
+    text-align: center;
+    cursor: help;
+    transition: all 0.15s ease;
+  }
+  .tblock-box:hover { border-color: var(--accent); background: var(--accent-soft); }
+  .tblock-box.ln { background: #fdf6e3; border-color: #d4b35f; }
+  .tblock-box.attn { background: #eaf4ff; border-color: #5b8fd6; }
+  .tblock-box.mlp { background: #f0eaff; border-color: var(--accent); }
+  .tblock-box.add { background: var(--good-soft); border-color: var(--good); font-family: "SF Mono", monospace; }
+  .tblock-arrow {
+    color: var(--ink-fainter);
+    font-size: 18px;
+    text-align: center;
+    line-height: 1;
+    margin: -2px 0;
+  }
+  .tblock-residual {
+    position: relative;
+    padding-left: 30px;
+    width: 100%;
+  }
+  .tblock-side {
+    font-size: 11px;
+    color: var(--ink-soft);
+    width: 70px;
+    text-align: right;
+    font-style: italic;
+  }
+  .tblock-stack {
+    background: var(--code);
+    padding: 14px;
+    border-radius: 6px;
+    margin-top: 18px;
+  }
+  .tblock-stack-row {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .tblock-unit {
+    padding: 4px 10px;
+    background: var(--accent);
+    color: white;
+    border-radius: 4px;
+    font-size: 11px;
+    font-family: "SF Mono", monospace;
+  }
+  .tblock-unit.emb { background: var(--good); }
+  .tblock-unit.head { background: var(--bad); }
+
+  /* Depth dial (L0) */
+  .depth-readout {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin-top: 14px;
+  }
+  .depth-cell {
+    padding: 10px;
+    background: var(--code);
+    border-radius: 5px;
+    text-align: center;
+  }
+  .depth-cell .label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--ink-fainter);
+  }
+  .depth-cell .val {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--accent);
+    font-family: "SF Mono", monospace;
+    margin-top: 2px;
+  }
+  .depth-tier {
+    margin-top: 12px;
+    padding: 8px 12px;
+    text-align: center;
+    border-radius: 5px;
+    font-size: 13px;
+    background: var(--accent-soft);
+    color: var(--accent);
+    font-weight: 600;
+  }
+
+  /* Cost timeline (L0) */
+  .cost-bars {
+    margin: 14px 0;
+  }
+  .cost-row {
+    display: grid;
+    grid-template-columns: 60px 1fr 110px;
+    align-items: center;
+    gap: 10px;
+    margin: 6px 0;
+    font-size: 13px;
+  }
+  .cost-year {
+    font-family: "SF Mono", monospace;
+    color: var(--ink-soft);
+    text-align: right;
+  }
+  .cost-bar {
+    height: 22px;
+    background: linear-gradient(90deg, var(--accent), #8a6fd1);
+    border-radius: 3px;
+    position: relative;
+  }
+  .cost-amount {
+    font-family: "SF Mono", monospace;
+    color: var(--ink);
+  }
+
+  /* Stat strip */
+  .stat-strip {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 12px 0;
+  }
+  .stat-chip {
+    background: var(--code);
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-family: "SF Mono", monospace;
+    font-size: 12px;
+    color: var(--ink);
+  }
+  .stat-chip strong { color: var(--accent); }
+
+  /* ============ GAME MODE ============ */
+  .game-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--line);
+    margin-bottom: 14px;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .game-header h1 {
+    font-size: 18px;
+    font-weight: 600;
+    margin: 0;
+    letter-spacing: -0.01em;
+  }
+  .score-strip {
+    display: flex;
+    gap: 14px;
+    font-size: 13px;
+    font-family: "SF Mono", Menlo, monospace;
+    color: var(--ink-soft);
+  }
+  .score-strip .score-item strong { color: var(--accent); font-size: 15px; }
+  .score-strip .score-item.streak.hot strong { color: var(--bad); }
+  .mode-toggle {
+    font-size: 12px;
+    color: var(--ink-fainter);
+  }
+  .mode-toggle a { color: var(--accent); text-decoration: none; }
+  .mode-toggle a:hover { text-decoration: underline; }
+
+  /* Game tabs with locks */
+  nav.game-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-bottom: 20px;
+    border-bottom: 1px solid var(--line);
+  }
+  nav.game-tabs button {
+    background: none;
+    border: none;
+    padding: 10px 14px;
+    font-size: 14px;
+    color: var(--ink-soft);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    font-family: inherit;
+    margin-bottom: -1px;
+    transition: color 0.15s ease, border-color 0.15s ease;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  nav.game-tabs button:hover:not(.locked) { color: var(--ink); }
+  nav.game-tabs button.active {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+    font-weight: 500;
+  }
+  nav.game-tabs button.locked {
+    color: var(--ink-fainter);
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+  nav.game-tabs button.completed {
+    color: var(--good);
+  }
+  nav.game-tabs .lock-icon, nav.game-tabs .check-icon {
+    font-size: 11px;
+  }
+
+  /* Section reveal animation */
+  .game-section {
+    animation: slideIn 0.4s ease;
+  }
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .section-pending {
+    margin: 24px 0;
+    padding: 20px;
+    border: 2px dashed var(--line);
+    border-radius: 8px;
+    text-align: center;
+    background: var(--panel);
+  }
+  .section-pending .pending-label {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--ink-fainter);
+    margin-bottom: 10px;
+  }
+  .section-pending .pending-progress {
+    font-family: "SF Mono", monospace;
+    color: var(--ink-soft);
+    font-size: 13px;
+    margin-bottom: 14px;
+  }
+  .btn-game {
+    padding: 10px 20px;
+    border-radius: 6px;
+    border: none;
+    background: var(--accent);
+    color: white;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.15s ease;
+  }
+  .btn-game:hover {
+    background: #4a319a;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(91, 63, 168, 0.25);
+  }
+  .btn-game:active { transform: translateY(0); }
+  .btn-game.success {
+    background: var(--good);
+    animation: pulse 1.5s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(47, 138, 78, 0.4); }
+    50% { box-shadow: 0 0 0 8px rgba(47, 138, 78, 0); }
+  }
+
+  /* Quiz challenge */
+  .challenge {
+    margin: 24px 0;
+    border: 2px solid var(--accent);
+    border-radius: 10px;
+    padding: 24px;
+    background: #fcfbff;
+  }
+  .challenge-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 14px;
+  }
+  .challenge-header .challenge-num {
+    font-family: "SF Mono", monospace;
+    font-size: 12px;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-weight: 600;
+  }
+  .challenge-header .challenge-progress {
+    font-size: 12px;
+    color: var(--ink-fainter);
+    font-family: "SF Mono", monospace;
+  }
+  .challenge-q {
+    font-size: 15px;
+    font-weight: 500;
+    margin-bottom: 14px;
+  }
+  .challenge textarea {
+    width: 100%;
+    min-height: 90px;
+    padding: 12px;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    font-family: inherit;
+    font-size: 14px;
+    line-height: 1.5;
+    resize: vertical;
+    background: white;
+  }
+  .challenge textarea:focus {
+    outline: none;
+    border-color: var(--accent);
+  }
+  .challenge .challenge-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 14px;
+    flex-wrap: wrap;
+  }
+  .challenge .model-answer {
+    margin-top: 16px;
+    background: var(--accent-soft);
+    border-left: 3px solid var(--accent);
+    padding: 14px;
+    border-radius: 0 6px 6px 0;
+    font-size: 14px;
+    display: none;
+  }
+  .challenge .model-answer.visible {
+    display: block;
+    animation: slideIn 0.3s ease;
+  }
+  .challenge .grade-prompt {
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px dashed var(--line);
+    display: none;
+  }
+  .challenge .grade-prompt.visible { display: block; }
+  .challenge .grade-prompt strong { display: block; margin-bottom: 8px; }
+  .grade-row {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .grade-row button {
+    padding: 8px 14px;
+    border-radius: 20px;
+    border: 1px solid var(--line);
+    background: var(--panel);
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 13px;
+    transition: all 0.15s ease;
+  }
+  .grade-row button:hover { border-color: var(--accent); }
+  .grade-row button.got:hover { background: var(--good); color: white; border-color: var(--good); }
+  .grade-row button.partial:hover { background: var(--warn); color: white; border-color: var(--warn); }
+  .grade-row button.unsure:hover { background: var(--ink-soft); color: white; border-color: var(--ink-soft); }
+
+  /* Completion celebration */
+  .lesson-complete {
+    margin: 30px 0;
+    padding: 30px;
+    background: linear-gradient(135deg, var(--accent-soft), #f3effb);
+    border: 2px solid var(--accent);
+    border-radius: 12px;
+    animation: slideIn 0.5s ease;
+  }
+  .lesson-complete .celebrate-head {
+    text-align: center;
+    margin-bottom: 18px;
+  }
+  .lesson-complete .celebrate {
+    font-size: 40px;
+    margin-bottom: 10px;
+  }
+  .lesson-complete h3 {
+    margin: 0 0 8px 0;
+    color: var(--accent);
+    font-size: 20px;
+  }
+  .lesson-complete .score-line {
+    font-size: 14px;
+    color: var(--ink-soft);
+  }
+  .lesson-complete .score-line strong { color: var(--accent); }
+  .completion-block {
+    background: rgba(255, 255, 255, 0.7);
+    padding: 14px 16px;
+    border-radius: 8px;
+    margin: 12px 0;
+    font-size: 14px;
+    line-height: 1.55;
+    text-align: left;
+  }
+  .completion-block.takeaway-block {
+    border-left: 4px solid var(--good);
+  }
+  .completion-block.bridge-block {
+    border-left: 4px solid var(--accent);
+  }
+  .completion-label {
+    display: block;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 6px;
+    font-weight: 600;
+  }
+  .completion-block.takeaway-block .completion-label { color: var(--good); }
+  .completion-block.bridge-block .completion-label { color: var(--accent); }
+  .lesson-complete .btn-game {
+    margin-top: 8px;
+    margin-left: 50%;
+    transform: translateX(-50%);
+    display: block;
+    min-width: 200px;
+  }
+
+  /* Streak progress bar */
+  .lesson-progress-bar {
+    height: 4px;
+    background: var(--line);
+    border-radius: 2px;
+    margin: 12px 0 18px 0;
+    overflow: hidden;
+  }
+  .lesson-progress-fill {
+    height: 100%;
+    background: var(--accent);
+    transition: width 0.4s ease;
+  }
+
+  /* Responsive */
+  @media (max-width: 700px) {
+    .shell { padding: 16px; }
+    .walks-row, .mask-compare, .dpo-compare { grid-template-columns: 1fr; }
+    .dpo-arrow { transform: rotate(90deg); }
+    .axis-grid { grid-template-columns: 1fr; }
+    .lesson h2 { font-size: 22px; }
+    nav.tabs button, nav.game-tabs button { padding: 8px 10px; font-size: 13px; }
+    .game-header { flex-direction: column; align-items: flex-start; }
+    .score-strip { font-size: 12px; gap: 10px; }
+  }
+</style>
+</head>
+<body>
+<div class="shell">
+
+  <header class="game-header">
+    <div>
+      <h1>Inception AI — Interview Study · Game Mode</h1>
+      <div class="mode-toggle">Reveal one concept at a time. Pass each lesson's quiz to unlock the next. · <a href="index.html">↗ Switch to free-read mode</a></div>
+    </div>
+    <div class="score-strip">
+      <div class="score-item streak" id="scoreStreak"><strong>0</strong> streak</div>
+      <div class="score-item" id="scoreGot"><strong>0</strong> got</div>
+      <div class="score-item" id="scoreLessons"><strong>0</strong> / <span id="scoreLessonsTotal">7</span> lessons</div>
+    </div>
+  </header>
+
+  <nav class="game-tabs" id="tabs"></nav>
+
+  <div id="content"></div>
+
+</div>
+
+<script>
+/* =========================================================
+   LESSON CONTENT
+   ========================================================= */
+
+const LESSONS = [
+  {
+    id: 'L0',
+    short: 'L0 · Foundations',
+    title: 'Lesson 0 — Foundations: what a language model actually is',
+    spine: 'A modern language model is two things at once — a five-stage training pipeline and a stack of identical transformer blocks. Every later lesson in this guide attacks one of these boxes.',
+    takeaway: 'A modern language model = a 5-stage training pipeline + a stack of identical transformer blocks. The model is one box; the pipeline is the product. Every later lesson attacks one box in this picture.',
+    bridge: 'Lesson 1 zooms into the <em>serve</em> stage — why autoregressive generation is a serial chain of N forward passes, and the bottleneck that defines the problem Inception exists to solve.',
+    sections: [
+      {
+        kind: 'idea',
+        title: 'The Idea',
+        html: `<p>To prioritize what Inception should build, you first need a clear picture of what a language model <em>is</em>. Two things at once:</p>
+        <ol>
+          <li>A <strong>pipeline</strong> — five stages that turn raw text into a chat assistant.</li>
+          <li>A <strong>model</strong> — a stack of identical transformer blocks doing next-token prediction.</li>
+        </ol>
+        <p>The "model" is one box in the pipeline. Both are attackable, and every other lesson in this guide takes aim at a specific box.</p>`,
+        visual: 'pipeline'
+      },
+      {
+        kind: 'mechanism',
+        title: 'Mechanism — The architecture inside the model box',
+        html: `<p>Three pieces:</p>
+        <ol>
+          <li><strong>Embeddings</strong> — turn token IDs into vectors and add their position.</li>
+          <li><strong>N stacked transformer blocks</strong> — all identical (just different learned weights).</li>
+          <li><strong>Final LayerNorm + linear head</strong> → next-token probabilities over the vocabulary.</li>
+        </ol>
+        <p>Every block has the same internal recipe:</p>
+        <div class="formula">x → LayerNorm → Attention → +residual → LayerNorm → feed-forward network → +residual</div>
+        <ul>
+          <li><strong>Attention</strong> = "mix tokens together" — every token can look at every other token. (Lesson 1 dissects this and explains why it's slow.)</li>
+          <li><strong>Feed-forward network</strong> = "think harder per token" — two layers, expand-then-contract, no token mixing.</li>
+          <li><strong>LayerNorm + residuals</strong> = plumbing that makes deep stacks trainable (gradients flow through the residual highway).</li>
+        </ul>
+        <p>Default GPT-2 (124 million parameters): 12 blocks, 12 heads, 768 embedding dimensions, 1024-token context. <strong>The frontier today is the same recipe at larger scale.</strong></p>`,
+        visual: 'tblock'
+      },
+      {
+        kind: 'mechanism',
+        title: 'Mechanism — The training pipeline',
+        html: `<p>Five stages. Every stage is still <em>"predict next token"</em> — what changes is the data curriculum:</p>
+        <table class="ucase-table" style="margin-top:8px;">
+          <thead><tr><th>Stage</th><th>What it does</th><th>What it teaches the model</th></tr></thead>
+          <tbody>
+            <tr><td><strong>1. Tokenize</strong></td><td>Train a Byte-Pair Encoding tokenizer</td><td>How to chunk text into ~50,000 reusable pieces</td></tr>
+            <tr><td><strong>2. Pretrain</strong></td><td>Predict next token on raw web text</td><td>"How language works" — grammar, facts, reasoning patterns</td></tr>
+            <tr><td><strong>3. Supervised fine-tuning</strong></td><td>Predict next token on chat-formatted conversations</td><td>"What an assistant turn looks like" — format, helpfulness</td></tr>
+            <tr><td><strong>4. Reinforcement learning</strong></td><td>Optimize against preference pairs (Direct Preference Optimization or Proximal Policy Optimization)</td><td>"Which answer humans prefer" — taste, safety</td></tr>
+            <tr><td><strong>5. Serve</strong></td><td>Autoregressive decoding loop</td><td>(the inference half — Lesson 1 owns this)</td></tr>
+          </tbody>
+        </table>
+        <div class="callout good" style="margin-top:14px;"><strong>The "magic" is the data curriculum, not the loss.</strong> Every stage is just next-token prediction on increasingly-curated data. This is why Direct Preference Optimization (Lesson 4) was a big deal: it kept the loss simple while fixing the reinforcement learning stage.</div>`,
+      },
+      {
+        kind: 'mechanism',
+        title: 'Mechanism — The recipe has converged (one knob = depth)',
+        html: `<p>For autoregressive models, the training recipe is settled enough that <strong>one number — depth — determines everything else</strong>:</p>
+        <ul>
+          <li>width ≈ 64 × depth</li>
+          <li>heads ≈ depth</li>
+          <li>learning rate, schedule, weight decay → all derived</li>
+          <li>training duration scales to be Chinchilla-optimal</li>
+        </ul>
+        <p>GPT-2 capability emerges around <strong>depth 24–26</strong>.</p>
+        <div class="callout good"><strong>Why this matters for an Inception product manager:</strong> You don't tune the autoregressive recipe anymore; you pick a budget. The commodity stage is settled, so the differentiator has moved up the stack — to model class (Inception's bet), serving, and control.</div>`,
+        visual: 'depth'
+      },
+      {
+        kind: 'mechanism',
+        title: 'Mechanism — The cost collapse',
+        html: `<p>Cost to train a GPT-2-class model (1.5 billion parameters) — the single biggest "where the field is going" visual you can carry into the interview:</p>`,
+        visual: 'cost'
+      },
+      {
+        kind: 'analogy',
+        title: 'Analogy',
+        html: `<p>A language model isn't a single brain — it's a <strong>school system</strong>:</p>
+        <ul>
+          <li><strong>Pretraining = elementary school</strong>: read everything, absorb how language works</li>
+          <li><strong>Supervised fine-tuning = vocational training</strong>: learn the format of "user asks → assistant answers"</li>
+          <li><strong>Reinforcement learning = apprenticeship</strong>: learn taste through human feedback on real work</li>
+        </ul>
+        <p>And the "brain" itself is a <strong>layer cake</strong> — N identical layers, each refining the same representation, with residual "express lanes" so the original signal isn't lost.</p>`
+      },
+      {
+        kind: 'impact',
+        title: 'Why this is Lesson 0',
+        html: `<p>Inception's Mercury 2 ran through this <em>exact same pipeline</em>, just with a <strong>diffusion</strong> model in the "predict next token" box. Every subsequent lesson attacks one specific stage:</p>
+        <ul>
+          <li><strong>Lesson 1</strong> — attacks <em>serve</em>, exposing the autoregressive bottleneck</li>
+          <li><strong>Lessons 2–3</strong> — replace the <em>model class</em> inside the box</li>
+          <li><strong>Lesson 4</strong> — collapses the <em>reinforcement learning stage</em> from a three-model pipeline to one loss</li>
+          <li><strong>Lesson 5</strong> — picks which products this pipeline should build</li>
+        </ul>
+        <div class="callout good"><strong>The frame:</strong> "Inception's bet is to swap one box — the model class — in a stack everyone else takes for granted. That swap propagates differently through training, serving, and control."</div>
+        <p style="font-size:12px;color:var(--ink-fainter);margin-top:14px;border-top:1px solid var(--line);padding-top:10px;">To see this concretely in code: Andrej Karpathy's <strong>nanoGPT</strong> implements the model in ~300 lines, and <strong>nanochat</strong> runs the full pipeline end-to-end on a single 8×H100 node for ~$48–$100.</p>`
+      }
+    ],
+    quiz: [
+      { id: '0a', q: 'Name the 5 stages of the nanochat pipeline and what each one teaches the model.', a: '(1) Tokenize — how to chunk text into reusable Byte-Pair Encoding pieces. (2) Pretrain — predict next token on raw web text → how language works. (3) Supervised fine-tuning — predict next token on chat-formatted conversations → assistant turn format. (4) Reinforcement learning (Direct Preference Optimization or Proximal Policy Optimization) — optimize against preference pairs → human taste/safety. (5) Serve — autoregressive decoding loop. Every stage is "predict next token" on increasingly-curated data; the data curriculum is the magic, not the loss.' },
+      { id: '0b', q: 'Sketch the inside of a transformer block. What does each component do, and why are LayerNorm + residuals there?', a: 'Block recipe: x → LayerNorm → Attention → +residual → LayerNorm → feed-forward network → +residual. Attention mixes information across tokens (each token can look at every other). The feed-forward network (a multi-layer perceptron) does per-token "thinking" (2 layers, Gaussian Error Linear Unit activation, 4× expand). LayerNorm stabilizes activations before each sub-layer. Residuals (the +x) give gradients an "express lane" so the stack can be made very deep without signal loss.' },
+      { id: '0c', q: 'Why is "depth as the only knob" a meaningful fact about the field?', a: 'It means the autoregressive recipe has converged — width, heads, learning rate, schedule, training duration can all be derived from one number to be compute-optimal. Practitioners don\'t tune, they pick a budget. For an Inception product manager: the commodity autoregressive recipe is settled, so the place to compete has moved up the stack (model class, control surface, packaging) — exactly where Inception is playing.' },
+      { id: '0d', q: 'GPT-2 cost ~$43K to train in 2019; nanochat trains it for ~$100 in 2026. What\'s the implication for an Inception product manager?', a: '~400× cost collapse in 7 years from compounding hardware + algorithms + data quality. Implication: the frontier doesn\'t stay frontier — last year\'s premium capability becomes this year\'s commodity, which determines when a use-case unlocks for mass deployment. Inception\'s speed/cost edge has the same dynamic: it broadens the addressable market over time, but only the structural edges (Lesson 4) stay defensible as competitors catch up on raw efficiency.' },
+    ]
+  },
+
+  {
+    id: 'L1',
+    short: 'L1 · Autoregression is slow',
+    title: 'Lesson 1 — How generation works today, and why it\'s slow',
+    spine: 'Every component here is a serial or memory bottleneck. This is the problem the entire company exists to solve — you cannot pitch the solution without owning the problem.',
+    takeaway: 'Autoregression is N serial forward passes (token N waits for N−1). Attention is N×N. The Key/Value cache fixes redundant compute but NOT the chain — and creates a memory-bandwidth bottleneck of its own. More reasoning → more latency, structurally.',
+    bridge: 'You own the problem. Lesson 2 introduces the solution Inception bets the company on: <strong>diffusion</strong>, and the single concept the whole company rests on — the score.',
+    sections: [
+      {
+        kind: 'idea',
+        title: 'The Idea',
+        html: `<p>A standard large language model generates <strong>one token at a time, left to right</strong>: predict next token, append, feed back in, repeat. An N-token answer = <strong>N sequential forward passes</strong>. Token N's computation cannot begin until token N−1 exists.</p>
+        <p>This is not an implementation detail — it is the <em>definition</em> of autoregression, and it's the root of every speed problem Inception attacks.</p>`,
+        visual: 'doorway'
+      },
+      {
+        kind: 'mechanism',
+        title: 'Mechanism — Attention, exactly',
+        html: `<p>Inside each forward pass, the transformer's core op lets every token weigh every other token. Each token gets:</p>
+        <ul>
+          <li><strong>Query (Q)</strong> — what I'm looking for</li>
+          <li><strong>Key (K)</strong> — what I offer</li>
+          <li><strong>Value (V)</strong> — what I contribute</li>
+        </ul>
+        <p>For sequence length N, head dimension d:</p>
+        <div class="formula">S = QKᵀ &nbsp;→&nbsp; P = softmax(S) &nbsp;→&nbsp; O = PV</div>
+        <p>The load-bearing fact: <strong>S and P are N×N</strong> — double the context, quadruple the matrix. That quadratic cost is what FlashAttention attacks.</p>`,
+        visual: 'attention'
+      },
+      {
+        kind: 'mechanism',
+        title: 'Mechanism — Key/Value cache, backpropagation, reasoning tax',
+        html: `<p><strong>Backprop asymmetry.</strong> Training = forward → measure error → push backward to nudge weights. The backward pass needs forward-pass intermediates to compute gradients; storing them all is a memory cost. (FlashAttention's recomputation trick exploits exactly this.)</p>
+        <p><strong>Key/Value cache.</strong> Generating token N, the model re-attends over all prior tokens. Recomputing every prior Key/Value each step is wasteful, so you cache them.</p>
+        <div class="callout warn"><strong>Critical nuance:</strong> the Key/Value cache removes redundant <em>compute</em> but <strong>NOT the serial chain</strong> (token N still waits for N−1), and it introduces a <em>new</em> bottleneck — cache size grows with context × layers × batch, so long-context high-concurrency serving becomes a <strong>memory-bandwidth</strong> problem. This is the soft underbelly of autoregressive serving.</div>
+        <p><strong>The reasoning tax.</strong> "Reasoning" models get smarter by generating more tokens before answering. More reasoning = more serial passes = <strong>directly more latency and cost</strong>. For autoregression this is unavoidable: <em>reasoning quality is bought with serial latency.</em></p>`,
+      },
+      {
+        kind: 'analogy',
+        title: 'Analogy',
+        html: `<p>Autoregression is a <strong>single-file line through one doorway</strong>: each person (token) must pass before the next can start, no matter how many staff (compute) you hire.</p>
+        <p>The Key/Value cache is giving each person a pre-filled form so the doorway moves faster — but it's still one doorway, one at a time, and now the filing cabinet (cache memory) is overflowing.</p>`,
+      },
+      {
+        kind: 'impact',
+        title: 'User Impact',
+        html: `<p>This is the lens for <em>every</em> prioritization call. The pain is felt where the serial chain is long and the user is waiting:</p>
+        <ul>
+          <li>A reasoning agent doing 30 steps</li>
+          <li>A voice assistant mid-sentence</li>
+          <li>An autocomplete that stutters</li>
+        </ul>
+        <p>Where the chain is short or batched (offline retrieval-augmented generation), nobody feels it.</p>
+        <div class="callout good"><strong>The principle:</strong> Prioritize use cases where serial-latency → user-pain → revenue is tightest.</div>`,
+      },
+    ],
+    quiz: [
+      { id: '1a', q: 'Why is autoregression <em>fundamentally</em> serial, and what does that bound — regardless of compute?', a: 'Each token is predicted from the ones before it, so generation is a dependency chain of length N — token N can\'t start until N−1 exists. This bounds latency by sequence length, not by available compute (more graphics processors don\'t shorten the chain).' },
+      { id: '1b', q: 'Give the three attention vectors, the three-line computation, and why the matrix is N×N.', a: 'Query (what I\'m looking for), Key (what I offer), Value (what I contribute). S = QKᵀ → P = softmax(S) → O = PV. S and P are N×N because every token scores against every other token — cost is quadratic in context length.' },
+      { id: '1c', q: 'What does the Key/Value cache fix, what does it <em>not</em> fix, and what new bottleneck does it create?', a: 'Fixes: redundant recomputation of past tokens\' Keys/Values (cache and reuse). Does NOT fix: the serial dependency (token N still waits for N−1). New bottleneck: cache grows with context × layers × batch → long-context, high-concurrency serving becomes memory-bandwidth-bound.' },
+      { id: '1d', q: 'Why does "more reasoning" structurally cost more for an autoregressive model?', a: 'More reasoning = more generated tokens = more sequential forward passes = directly more latency and cost; the linkage is structural, not tunable.' },
+    ]
+  },
+
+  {
+    id: 'L2',
+    short: 'L2 · Diffusion & score',
+    title: 'Lesson 2 — Diffusion: noise → data via the score',
+    spine: 'The model is the compass, not the map. This is the single concept the whole company rests on; spend the most time here.',
+    takeaway: 'The score = ∇ₓ log pₜ(x) — the compass toward "more data-like" at any noise level. Anderson\'s 1982 result: the reverse generative process depends on <em>nothing except the score</em>. One network, one job — be the compass.',
+    bridge: 'Lesson 3 shows you how to walk with the compass — why a deterministic walk takes ~10 steps instead of ~1000 wobbly ones. <strong>Speed is structural, not optimized-fast.</strong>',
+    sections: [
+      {
+        kind: 'idea',
+        title: 'The Idea',
+        html: `<p>Take a clear photo, add static, more static, until it's pure TV snow. This <strong>forward process</strong> is:</p>
+        <ol>
+          <li><strong>Trivial</strong> — no model, no training. <em>"Creating noise from data is easy; creating data from noise is generative modeling."</em></li>
+          <li><strong>Fixed in advance</strong>, zero parameters.</li>
+          <li><strong>Ends at a dumb-simple Gaussian</strong> you can sample for free.</li>
+        </ol>
+        <p>The entire field's question: the forward direction is free — <strong>can we run it backwards?</strong> If yes, generation = sample free static, reverse it, get a novel image. The reverse is the <em>only</em> thing you train.</p>`,
+        visual: 'noise-strip'
+      },
+      {
+        kind: 'mechanism',
+        title: 'Mechanism — The score',
+        html: `<p>Holding a noisy image, to denoise one step you must answer: <em>"which way do I nudge these pixels to make this slightly more data-like?"</em></p>
+        <p><strong>That direction is the score.</strong></p>
+        <div class="formula">score = ∇<sub>x</sub> log p<sub>t</sub>(x)</div>
+        <p>Plain words decomposed:</p>
+        <ul>
+          <li><strong>"density" (p)</strong> = how data-like an image is</li>
+          <li><strong>"gradient of"</strong> = the direction that increases that fastest</li>
+          <li><strong>so score</strong> = "the direction toward more data-like, at this noise level"</li>
+        </ul>
+        <p>The notation and the sentence are <em>the same thing</em> — say both.</p>
+        <div class="callout good"><strong>The punchline (why this is the whole learning problem):</strong> Anderson's 1982 result — the reverse of a noising process depends on <em>nothing except the score</em> at each noise level. So training reduces to: show noisy images, predict the compass direction, correct, repeat ("score matching"). <strong>One network, one job: be the compass.</strong></div>`,
+        visual: 'compass'
+      },
+      {
+        kind: 'mechanism',
+        title: 'Mechanism — The unification (moat narrative)',
+        html: `<p>SMLD (Song & Ermon '19) and DDPM (Ho '20) <strong>aren't rival methods</strong> — they're discretizations of two specific SDEs:</p>
+        <ul>
+          <li><strong>VE</strong> (Variance Exploding) ↔ SMLD</li>
+          <li><strong>VP</strong> (Variance Preserving) ↔ DDPM</li>
+        </ul>
+        <div class="callout"><strong>Honest caveat to quote:</strong> <em>no universally best SDE</em> — "VE typically… better sample quality… but worse likelihoods than VP/sub-VP." Practitioners experiment per domain. (Quoting this signals you read past the abstract.)</div>`
+      },
+      {
+        kind: 'analogy',
+        title: 'Analogy',
+        html: `<p>Dropped in fog on a noisy hillside, no view of the destination — but you hold a compass that always points "toward real data."</p>
+        <p>Generation = start anywhere in the fog (pure noise), read compass, step, repeat, until a coherent image.</p>
+        <div class="callout good"><strong>The model is not a map of the destination. The model is the compass.</strong> You learn the compass; the walking is mechanical.</div>`
+      },
+      {
+        kind: 'impact',
+        title: 'User Impact',
+        html: `<p>This is <em>why</em> diffusion can self-correct: it refines the whole output iteratively rather than committing left-to-right (contrast Lesson 1). Consequence, not a bolted-on feature:</p>
+        <ul>
+          <li>Fewer cascading errors in long agent chains</li>
+          <li>Native infill/edit (Lesson 4)</li>
+          <li>The basis for cheap control (Lesson 4)</li>
+        </ul>
+        <p>Inception's own claim that diffusion language models "correct hallucinations" falls directly out of this.</p>`
+      },
+    ],
+    quiz: [
+      { id: '2a', q: 'What is the score, in one sentence — and why does estimating it constitute the <em>entire</em> diffusion learning problem?', a: 'The score = ∇ₓ log p<sub>t</sub>(x), the direction that makes data more data-like at noise level t (the compass). Anderson\'s result makes the reverse generative process depend only on it, so learning the compass is sufficient to generate — there is nothing else to learn.' },
+      { id: '2b', q: 'How do SMLD and DDPM relate, and what are the two SDEs?', a: 'They are discretizations of two SDEs: SMLD ↔ Variance Exploding (VE), DDPM ↔ Variance Preserving (VP). No SDE is universally best (VE better samples, VP better likelihoods).' },
+      { id: '2c', q: 'Why does "refine the whole output iteratively" let diffusion fix mistakes when autoregression structurally can\'t?', a: 'Autoregression commits each token left-to-right and can never revisit it; diffusion holds the whole output and re-touches all of it every denoising step, so an early error gets edited out by a later pass.' },
+    ]
+  },
+
+  {
+    id: 'L3',
+    short: 'L3 · Speed & dial',
+    title: 'Lesson 3 — Sampling, determinism, and where all the speed comes from',
+    spine: 'Speed is structural (not tuned), and the step-count is a sellable product dial. This is the lesson that explains the entire business model.',
+    takeaway: 'Diffusion is a different generation loop entirely — a few parallel refine-everything steps vs N serial token-steps. Step-count is a continuous quality/latency dial on ONE model — a packaging lever autoregression cannot replicate.',
+    bridge: 'Speed is half the diffusion story. Lesson 4 is the durable half: <strong>control and alignment are near-free for diffusion</strong> — the moat autoregressive incumbents can\'t cheaply copy.',
+    sections: [
+      {
+        kind: 'idea',
+        title: 'The Idea',
+        html: `<p>"Sampling" = the procedure that walks from pure noise to a finished output by repeatedly applying the compass (Lesson 2).</p>
+        <p><strong>How</strong> you walk is where the entire Inception business lives.</p>`
+      },
+      {
+        kind: 'mechanism',
+        title: 'Mechanism — Stochastic vs. deterministic walk',
+        html: `<p>The original SDE is a <strong>noisy walk</strong>: compass direction + a bit of randomness each step — arrives, but wanders, many steps.</p>
+        <p>The key discovery: every noisy walk has a <strong>deterministic twin</strong> — the <em>probability-flow ODE</em> — visiting the <em>same distribution of destinations</em> but as a <em>straight surveyed road</em>.</p>
+        <ul>
+          <li><strong>SDE paper:</strong> >90% fewer steps, no quality loss on the road vs. the stagger.</li>
+          <li><strong>Masked Temporal Interpolation Diffusion</strong> independently uses the same idea via the <strong>Denoising Diffusion Implicit Models</strong> sampler (deterministic non-Markovian reverse): "completed in 10 steps… 20× faster sampling."</li>
+        </ul>
+        <p>Same idea, two papers.</p>`,
+        visual: 'walks'
+      },
+      {
+        kind: 'mechanism',
+        title: 'Mechanism — Why diffusion is parallel (contrast with L1)',
+        html: `<p>Autoregression = serial chain of length N.</p>
+        <p>Diffusion's walk is different <em>in kind</em>: each denoising step refines the <strong>entire output at once</strong> — all tokens together — and there are only a <em>handful</em> of steps (the road).</p>
+        <div class="callout good">So "a few parallel refine-everything steps" instead of "N serial token-steps." <strong>This is the structural reason Mercury hits ~1,000 tokens per second</strong> — not doing the work faster, not doing it serially.</div>`
+      },
+      {
+        kind: 'analogy',
+        title: 'Analogy',
+        html: `<p><strong>Drunkard's stagger home</strong> (stochastic — ~1,000 wobbly steps) <strong>vs. the same trip on a straight surveyed road</strong> (deterministic — ~20 deliberate steps).</p>
+        <p>Same house, same neighborhood of outcomes, an order of magnitude fewer steps.</p>`
+      },
+      {
+        kind: 'impact',
+        title: 'User Impact — The most important product insight',
+        html: `<p>The number of denoising steps is a <strong>continuous quality↔latency dial on ONE model</strong>. Mercury 2 ships this as "tunable reasoning."</p>
+        <p>One model family, sold at different frontier points:</p>
+        <ul>
+          <li>A <strong>voice customer</strong> buys fast/few-step</li>
+          <li>A <strong>code-review customer</strong> buys higher-step/higher-quality</li>
+        </ul>
+        <div class="callout good"><strong>This is a pricing-and-packaging lever, not a tech footnote</strong> — and a margin advantage autoregression can't replicate (you can't make autoregression's serial chain shorter by turning a knob).</div>`,
+        visual: 'dial'
+      },
+      {
+        kind: 'mechanism',
+        title: 'Recap — autoregression vs. diffusion mechanics, side by side',
+        html: `<p>Pulling Lessons 1–3 into one table for the head-to-head. <strong>Same attention primitive in both</strong> — what differs is the loop wrapped around it.</p>
+        <div style="overflow-x:auto;">
+        <table class="ucase-table" style="margin-top:8px;">
+          <thead><tr><th></th><th>Autoregressive</th><th>Diffusion</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Unit of work per forward pass</strong></td><td>one token</td><td>the whole sequence</td></tr>
+            <tr><td><strong>Passes needed for N tokens</strong></td><td>N (serial)</td><td>~10–20 (parallel-internal)</td></tr>
+            <tr><td><strong>Dependency</strong></td><td>token N needs token N−1</td><td>every step refines all positions at once</td></tr>
+            <tr><td><strong>What's learned</strong></td><td>next-token distribution</td><td>the score (denoising direction)</td></tr>
+            <tr><td><strong>Attention's role</strong></td><td colspan="2" style="text-align:center;font-style:italic;background:var(--accent-soft);">same in both — QKᵀ → softmax → PV inside every pass</td></tr>
+          </tbody>
+        </table>
+        </div>
+        <div class="callout good" style="margin-top:14px;"><strong>The line to say in the room:</strong> "Attention is not what differs — both use it identically inside each forward pass. What differs is the generation loop wrapped around the forward passes: autoregression is a serial token chain; diffusion is a few parallel whole-sequence refinements. That's why FlashAttention helps both (shared primitive), while diffusion's speed comes from a different axis entirely — eliminating the chain, not speeding up attention."</div>`
+      },
+    ],
+    quiz: [
+      { id: '3a', q: 'Why does the deterministic twin reach good outputs in far fewer steps <em>without</em> losing quality?', a: 'The deterministic twin shares the same marginal densities at every time step as the noisy walk, but having no randomness, adaptive solvers can take large deliberate steps and trade tolerance for step-count — >90% fewer evaluations, same destinations.' },
+      { id: '3b', q: 'Denoising Diffusion Implicit Models vs. probability-flow ordinary differential equation — same idea or different? Justify in one sentence.', a: 'Same core idea: a deterministic sampler reaching good outputs in few steps (Denoising Diffusion Implicit Models = deterministic non-Markovian reverse process; probability-flow ordinary differential equation = its continuous-time formulation).' },
+      { id: '3c', q: 'Why is diffusion parallel where autoregression is serial — and what does that structurally enable for pricing?', a: 'Each diffusion step refines the whole output at once and there are only a handful of steps, vs. autoregression\'s length-N serial token chain. This makes step-count a continuous quality/latency dial on one model — a packaging/pricing lever (sell different frontier points to different segments) that autoregression\'s fixed serial chain can\'t offer.' },
+      { id: '3d', q: 'In one sentence, what\'s the <em>same</em> and what\'s <em>different</em> between autoregression and diffusion at the mechanics level — and why does this distinction matter for how FlashAttention helps each one?', a: 'Same: attention (QKᵀ → softmax → PV) runs identically inside every forward pass in both. Different: the generation loop wrapped around the forward passes — autoregression is a serial token chain (N passes for N tokens, each waiting on the prior), diffusion is a few parallel whole-sequence refinements (~10–20 steps that re-touch all positions). FlashAttention helps both because it optimizes the shared attention primitive; diffusion\'s speed advantage comes from a different axis entirely — eliminating the serial chain, not speeding up attention.' },
+    ]
+  },
+
+  {
+    id: 'L4',
+    short: 'L4 · Control (moat)',
+    title: 'Lesson 4 — Control & alignment as near-free axes (the moat)',
+    spine: 'The defensible product surface autoregressive incumbents can\'t cheaply copy. Speed gets competed away; this doesn\'t.',
+    takeaway: 'Four near-free control axes — conditional generation, masked projection, Direct Preference Optimization, Scores as Actions — all reduce to "steer the compass you already learned." <em>Where</em> you apply control matters (40.45 success rate at init vs 3.38 mid-iteration).',
+    bridge: 'You\'ve earned all the technical concepts. <strong>Lesson 5 is the job</strong> — converting this lineage into a defensible ranking of use cases: framework, map, and the competitive reality of 2025–26.',
+    sections: [
+      {
+        kind: 'idea',
+        title: 'The Idea',
+        html: `<p>Diffusion gets controllability and alignment <em>cheaply</em>, from four mechanisms that all reduce to "steer the compass you already learned":</p>`,
+        visual: 'control4'
+      },
+      {
+        kind: 'mechanism',
+        title: 'Mechanism — Direct Preference Optimization (single most quotable result; know cold)',
+        html: `<p><strong>Classic Reinforcement Learning from Human Feedback (RLHF)</strong> = supervised fine-tuning → train a reward model → Proximal Policy Optimization (PPO) with a Kullback-Leibler-divergence constraint (three models, unstable, sampling in the loop).</p>
+        <p><strong>Direct Preference Optimization's move:</strong> the constrained optimum has a closed form; rearrange so:</p>
+        <div class="formula">reward = β·log(π/π_ref) + β·log Z(x)</div>
+        <p>Substitute into Bradley-Terry, which depends only on the <strong>difference</strong> of two rewards → <strong>the intractable partition function Z(x) cancels</strong> → a one-line classification loss over the policy itself.</p>
+        <div class="callout warn"><strong>Non-obvious detail:</strong> the gradient carries a built-in weight upweighting pairs the model currently ranks <em>wrong</em>; delete it and the model degenerates.</div>
+        <p><strong>Results:</strong> beats Proximal Policy Optimization on summarization/dialogue <em>even when it gets ground-truth rewards</em>; more temperature-robust; better out-of-distribution performance (Direct Preference Optimization 0.36 vs Proximal Policy Optimization 0.26 win-rate, CNN/DailyMail).</p>`,
+        visual: 'dpo'
+      },
+      {
+        kind: 'mechanism',
+        title: 'Mechanism — Masked Temporal Interpolation Diffusion\'s killer ablation (control placement)',
+        html: `<p>Mask at <strong>initialization → 40.45</strong> success rate</p>
+        <p>Mask <strong>mid-iteration → 3.38</strong> (collapse)</p>
+        <p>The generalizable lesson: constraining the output space is powerful, but doing it at the <em>wrong stage</em> destroys the diffusion dynamics.</p>
+        <div class="callout good"><strong>Where</strong> you apply control matters as much as <strong>that</strong> you do.</div>`,
+        visual: 'mask'
+      },
+      {
+        kind: 'analogy',
+        title: 'Analogy',
+        html: `<p><strong>Autoregressive control</strong> = a bouncer checking IDs one person at a time at the door (brittle decode-time filtering).</p>
+        <p><strong>Diffusion control</strong> = designing the room so only valid guests physically fit (Masked Temporal Interpolation Diffusion masking) + a cheap house-rules trainer (Direct Preference Optimization) instead of hiring a full security firm (the Proximal Policy Optimization / Reinforcement Learning from Human Feedback pipeline).</p>`
+      },
+      {
+        kind: 'impact',
+        title: 'User Impact',
+        html: `<p>The product-differentiation argument vs. autoregressive incumbents. A customer wanting house-style + safety + guaranteed-valid JSON:</p>
+        <ul>
+          <li>Schema-validity <em>structurally</em> (Masked Temporal Interpolation Diffusion–style masking)</li>
+          <li>House-style via <em>cheap</em> Direct Preference Optimization tuning</li>
+        </ul>
+        <p>= a tractable <strong>product tier</strong>, not a research engagement. Mercury 2 ships "schema-aligned JSON output."</p>
+        <div class="callout good"><strong>This is a moat</strong> because it's near-free for diffusion and expensive/brittle for autoregression.</div>`
+      },
+    ],
+    quiz: [
+      { id: '4a', q: 'Walk the Direct Preference Optimization collapse: what cancels, and why does that matter operationally?', a: 'The Kullback-Leibler-constrained Reinforcement Learning from Human Feedback optimum rearranges to reward = β·log(π/π_ref) + β·log Z(x); Bradley-Terry uses only reward differences, so the intractable partition function Z(x) cancels → a pure policy cross-entropy loss. Operationally it removes the reward model, the reinforcement learning loop, and in-loop sampling — alignment becomes a stable supervised loss.' },
+      { id: '4b', q: 'Masked Temporal Interpolation Diffusion mask placement — the two numbers and the generalizable lesson?', a: 'Mask at initialization → 40.45 success rate; mask mid-iteration → 3.38 success rate (collapse). Lesson: constraining the output space is powerful, but applying it at the wrong stage destroys the dynamics — placement of control matters as much as the control itself.' },
+      { id: '4c', q: 'Customer needs guaranteed-valid JSON + their house tone — the diffusion-native answer, and why it\'s cheaper than the autoregressive path?', a: 'Masked Temporal Interpolation Diffusion–style masked projection for structural JSON validity + lightweight Direct Preference Optimization for house tone. Cheaper because there\'s no reward-model training and no reinforcement learning pipeline (one cross-entropy loss), and validity is structural rather than brittle decode-time filtering.' },
+    ]
+  },
+
+  {
+    id: 'L5',
+    short: 'L5 · Use cases & value',
+    title: 'Lesson 5 — Use cases & value (this is the job)',
+    spine: 'Converting the research lineage into a defensible ranking of use cases. This is what they\'re hiring you to do — arrive with a framework and a map, not a recital of their four use cases.',
+    takeaway: 'Three axes (immediate value · durability · feasibility) + one 4-factor scoring function + a use-case map (coding/editing top bet) + competitive reality (diffusion validated, speed contested) + your unique adjacency (constrained optimization).',
+    bridge: 'Framework + map ready. The Appendix is the delivery — three opener sentences, two questions to ask back, full scorecard for any dimension a founder presses on. <strong>Rehearse out loud.</strong>',
+    sections: [
+      {
+        kind: 'idea',
+        title: 'The Idea',
+        html: `<p>Inception's value prop has three dimensions:</p>
+        <ul>
+          <li><strong>Speed</strong> (strong)</li>
+          <li><strong>Cost</strong> (strong)</li>
+          <li><strong>Quality</strong> (the tradeoff — the thing that bends)</li>
+        </ul>
+        <p>Diffusion breaks the historical law that reasoning quality must be bought with serial latency (Lesson 1's reasoning tax; Lessons 2–3 explain why).</p>
+        <div class="callout good"><strong>The prioritization question:</strong> of the use cases this unlocks, which should model-development investment go to?</div>`,
+        visual: 'axes'
+      },
+      {
+        kind: 'mechanism',
+        title: 'Synthesis (the one-line deliverable)',
+        html: `<div class="callout good" style="font-size: 15px;"><strong>Prioritize where</strong> immediate user demand is high <strong>AND</strong> the advantage is structurally durable (not just a speed lead) <strong>AND</strong> Mercury's current quality envelope already clears the bar — and treat the speed/cost strengths as the <em>enabler</em> of axis 1, not the differentiator (that's axis 2).</div>`
+      },
+      {
+        kind: 'mechanism',
+        title: 'The per-use-case scoring function (the multiplicative formula)',
+        html: `<p>The three axes prioritize <em>across</em> use cases. The preamble also names a four-factor function that scores any <em>single</em> use case for Inception fit:</p>
+        <div class="formula" style="font-size:13px;">score = (latency-sensitivity of value) × (reasoning quality required) × (calls per task) × (controllability need)</div>
+        <ul>
+          <li><strong>Latency-sensitivity of value</strong> — how much does user-perceived value drop with each second of wait? <em>Voice = high; offline batch = ~zero.</em></li>
+          <li><strong>Reasoning quality required</strong> — does the task need frontier-grade reasoning, or does fast-tier suffice? <em>High reasoning is harder for current Mercury.</em></li>
+          <li><strong>Calls per task</strong> — does the task make many model calls (agents, multi-hop) so latency/cost compound? <em>More calls = bigger Inception edge.</em></li>
+          <li><strong>Controllability need</strong> — schema validity, safety, format constraints? <em>High need = the structural moat applies.</em></li>
+        </ul>
+        <div class="callout good"><strong>Weighting:</strong> "weighted toward structural edges over speed edges." Controllability and many-calls are the <em>structural</em> multipliers; raw latency-sensitivity is the <em>speed</em> multiplier. Both matter — but the structural ones determine the <em>durable</em> bets (axis 2).</div>`
+      },
+      {
+        kind: 'mechanism',
+        title: 'Mechanism — The competitive reality (the missing evidence for axis 2)',
+        html: `<p>The "is the advantage durable?" axis asserts <em>structural edge wins</em>. The competitive reality of 2025–26 is what makes that assertion sayable. <strong>The premise has flipped: diffusion language models went from "lone bet" to validated field.</strong> Three external proof points to know cold:</p>
+        <table class="ucase-table" style="margin-top:8px;">
+          <thead><tr><th>Player</th><th>What they shipped</th><th>What it signals</th></tr></thead>
+          <tbody>
+            <tr>
+              <td><strong>Google DeepMind</strong><br/><span style="font-size:11px;color:var(--ink-fainter);">Gemini Diffusion</span></td>
+              <td>Experimental research model; a DeepMind principal scientist called closing the quality gap a <em>"landmark moment"</em></td>
+              <td>Framed as <em>one of several</em> latency approaches alongside Flash-Lite — a <strong>hedge, not a company bet</strong></td>
+            </tr>
+            <tr>
+              <td><strong>ByteDance</strong><br/><span style="font-size:11px;color:var(--ink-fainter);">Seed Diffusion</span></td>
+              <td>2,146 tokens/sec on H20 graphics processors; claims new state of the art on the speed-quality Pareto frontier for code</td>
+              <td>Faster than Mercury on the headline number — <strong>speed alone is now contested</strong></td>
+            </tr>
+            <tr>
+              <td><strong>LLaDA 2.0</strong><br/><span style="font-size:11px;color:var(--ink-fainter);">open-weight</span></td>
+              <td>100 billion parameters — largest text-diffusion model to date; on par with Qwen3 30B</td>
+              <td>Commoditization pressure from below — <strong>open-weight diffusion is real</strong></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="callout warn" style="margin-top:14px;font-size:13px;"><strong>And the autoregressive side is racing on speed too — Gemini 3.5 Flash (launched today, Google I/O 2026):</strong>
+        <ul style="margin-top:8px;">
+          <li><strong>289 tokens/sec</strong> — Pichai claims 4× faster than other frontier models</li>
+          <li>Beats Gemini 3.1 Pro on agentic benchmarks (76.2% Terminal-Bench, 83.6% MCP Atlas, 84.2% CharXiv Reasoning)</li>
+          <li>"Bets next AI wave on agents, not chatbots" — agentic capability is the new battleground</li>
+          <li>Pricing $1.50 in / $9.00 out per 1 million tokens</li>
+        </ul>
+        <p style="margin-bottom:0;"><strong>The numbers vs. Mercury:</strong> Mercury still ~3.5× faster on raw tokens per second (1,009 vs 289) and 6–12× cheaper ($0.25 / $0.75 vs $1.50 / $9.00). <em>But the gap is closing from the autoregressive side — and Google is now publicly framing speed as the next AI wave.</em></p></div>
+
+        <h4 style="margin:18px 0 6px 0;font-size:13px;color:var(--accent);">Why autoregression stayed dominant so long</h4>
+        <p style="font-size:13px;color:var(--ink-soft);margin-top:0;">(The rational reasons — not "everyone was wrong")</p>
+        <ul>
+          <li><strong>Quality gap was real until ~2025</strong> — autoregressive models consistently outperformed diffusion on text quality, and it wasn't clear the gap could ever close.</li>
+          <li><strong>A decade of compounding ecosystem</strong> — serving stacks, Reinforcement-Learning-from-Human-Feedback and Direct-Preference-Optimization tooling, evaluations, integrations. <em>Switching cost, not just model quality.</em></li>
+          <li><strong>Incumbents have no incentive to bet the company</strong> — full commitment to diffusion cannibalizes their frontier-autoregressive business.</li>
+        </ul>
+
+        <h4 style="margin:18px 0 6px 0;font-size:13px;color:var(--accent);">The strategic asymmetry (the actual interview thesis)</h4>
+        <div class="callout good"><strong>Inception's edge is not being the only believer — it's being the only player with no conflict and full focus.</strong> A frontier lab can't make diffusion its identity without cannibalizing frontier-autoregressive revenue and ecosystem; Inception has no such tension.</div>
+        <p style="font-size:13px;margin-top:10px;"><strong>But this cuts both ways — the honest risks (in analysts' own words):</strong></p>
+        <ul style="font-size:13px;">
+          <li>If larger providers integrate parallel decoding or hybrid diffusion into existing models, Mercury's speed advantage could <em>narrow</em>.</li>
+          <li>Open question whether big labs build their own — <em>Google already has one</em>.</li>
+        </ul>
+
+        <h4 style="margin:18px 0 6px 0;font-size:13px;color:var(--accent);">What this means for axis 2</h4>
+        <div class="callout warn" style="font-size:13px;"><strong>The takeaway specific to validation:</strong> the speed lane now has well-funded entrants on both sides — diffusion (ByteDance) and autoregressive (Gemini 3.5 Flash). Tokens-per-second alone is no longer the moat. The 4-factor function above is correctly weighted toward <em>controllability</em> for exactly this reason — that's the structural multiplier competitors can't cheaply replicate.</div>`
+      },
+      {
+        kind: 'mechanism',
+        title: 'Scores-as-Actions\' honest status (the axis-3 reality check)',
+        html: `<p>The parallel reality check on axis 3 (Mercury feasibility): Scores as Actions is the <em>theory</em> for fine-tuning a diffusion model toward production rewards (continuous-time analogue of Direct Preference Optimization's π_ref anchoring).</p>
+        <p><strong>Framework-stage</strong> — experiments deferred to a forthcoming paper.</p>
+        <div class="callout warn"><strong>Implication for your map:</strong> custom per-customer fine-tuning is a <em>roadmap</em> feasibility item, not a current one — which is why several high-durability forks in the map below are feasibility-gated (M), not green.</div>`
+      },
+      {
+        kind: 'mechanism',
+        title: 'Mechanism — The use-case map',
+        html: `<p>Inception's current four are not equally good bets, and "agents" and "search" are too coarse to score — they decompose:</p>`,
+        visual: 'ucase'
+      },
+      {
+        kind: 'mechanism',
+        title: 'The adjacency you uniquely see',
+        html: `<p>The framework's value is spotting markets Inception <em>hasn't named</em>. The strongest, and the one you own:</p>
+        <div class="callout good"><strong>Language-model-mediated constrained optimization</strong> — natural-language → solver-shaped problem → agent-guided refinement.</div>
+        <ul>
+          <li><strong>Customer value: M→H</strong> — huge latent/locked-up demand (operations, scheduling, allocation — buyers who currently need operations-research specialists)</li>
+          <li><strong>Durability: H</strong> — this is the <em>structural-edge</em> archetype (controllable, schema-constrained, both-sided refinement; not a speed play)</li>
+          <li><strong>Mercury feasibility: M</strong> — needs reliable structured output + tool use, both of which Mercury 2 ships, but tight-constraint fidelity is unproven</li>
+        </ul>
+        <p><em>This is your differentiated insight and your literal domain — Reasoning AI is agentic accessibility for optimization/graph/rules reasoners.</em> Frame it as "here's a market your value prop unlocks that isn't on the current list," not as a tangent.</p>
+        <p><strong>Other adjacencies to name lightly:</strong> structured data extraction / extract-transform-load at volume, real-time transcript and human-computer-interaction cleanup, edge / on-device given the efficiency profile.</p>`
+      },
+      {
+        kind: 'impact',
+        title: 'How to deliver this in the room',
+        html: `<ol>
+          <li>Lead with the framework (three axes)</li>
+          <li>Show you can <em>decompose</em> their coarse categories (agents/search aren't monoliths)</li>
+          <li>Name the top bet with reasoning (coding — all three axes green)</li>
+          <li>Flag the feasibility-gated upside (long-horizon agents)</li>
+          <li>Close with the unnamed adjacency you uniquely see (constrained optimization)</li>
+        </ol>
+        <p>That sequence demonstrates the exact judgment the role exists for.</p>`
+      },
+      {
+        kind: 'impact',
+        title: 'Numbers at instant recall',
+        html: `<div class="stat-strip">
+          <span class="stat-chip"><strong>~1,009</strong> tokens/sec Blackwell</span>
+          <span class="stat-chip">vs Haiku 4.5 <strong>~89</strong> tokens/sec</span>
+          <span class="stat-chip">vs GPT-5 Mini <strong>~71</strong> tokens/sec</span>
+          <span class="stat-chip">vs Gemini 3.5 Flash <strong>~289</strong> tokens/sec (May 2026)</span>
+          <span class="stat-chip"><strong>~5×</strong> faster than speed-optimized peers</span>
+          <span class="stat-chip">end-to-end <strong>1.7s</strong> vs 4.5–23s</span>
+          <span class="stat-chip">AIME <strong>91</strong></span>
+          <span class="stat-chip">GPQA <strong>~74</strong></span>
+          <span class="stat-chip">LCB <strong>67</strong></span>
+          <span class="stat-chip">IFBench <strong>71</strong></span>
+          <span class="stat-chip"><strong>128K</strong> context</span>
+          <span class="stat-chip">native tool use</span>
+          <span class="stat-chip">schema-aligned JSON</span>
+          <span class="stat-chip">OpenAI-API drop-in</span>
+          <span class="stat-chip">AWS &amp; Azure</span>
+          <span class="stat-chip"><strong>$0.25/$0.75</strong> per 1M in/out</span>
+          <span class="stat-chip">Menlo-led <strong>$50M</strong></span>
+          <span class="stat-chip">Snowflake &amp; Databricks Ventures</span>
+        </div>`
+      }
+    ],
+    quiz: [
+      { id: '5a', q: 'Name your three prioritization axes, and for each, which Inception value-prop dimension or technical lesson feeds it.', a: '(1) Immediate customer value/demand — fed by speed+cost (Inception\'s strengths relieve the pain) and how compounding the latency is (Lessons 1 and 3). (2) Long-term market given competition — fed by structural edge (Lessons 2 and 4): durable vs. a speed lead that erodes. (3) Mercury feasibility — fed by the quality tradeoff + step-count dial (Lesson 3), controllability (Lesson 4), and Scores as Actions being framework-stage (limits custom tuning).' },
+      { id: '5b', q: 'Why is "coding/editing" the top bet on all three axes — and why is "agentic loops" un-scoreable until decomposed?', a: 'Coding: demand is acute (in-flow pauses intolerable, clear developer-tools willingness-to-pay), the edge is structural (infill/next-edit needs both-sided context autoregression can\'t do natively — durable), and it\'s Mercury\'s most validated domain — all three axes green. "Agentic loops" spans short tool-use (H/M/H), long autonomous planning (H/H/M), and multi-agent (M/H/L); the axes diverge by fork, so a single score is meaningless.' },
+      { id: '5c', q: 'Why does speed/cost belong to axis 1 (enabler) but NOT axis 2 (durability)?', a: 'Speed/cost make the use case viable now (relieve the latency/cost pain → drives current demand = axis 1), but every lab is chasing tokens per second, so a speed lead erodes — it is not a durable competitive moat (axis 2). Durability comes from structural edges (both-sided conditioning, near-free control) competitors can\'t cheaply copy.' },
+      { id: '5d', q: 'Pitch the constrained-optimization adjacency in two sentences: the demand, and why it\'s a structural (durable) edge not a speed play.', a: 'Demand: vast latent/locked-up market in operations/scheduling/allocation where buyers currently need operations-research specialists — natural-language → solver → agent-refinement removes that gatekeeper. Durable because it\'s the structural-edge archetype (controllable, schema-constrained, both-sided iterative refinement), not a speed race — a competitor matching Mercury\'s tokens per second doesn\'t replicate the controllability that makes it work.' },
+      { id: '5e', q: 'Diffusion language models are now externally validated by Google (Gemini Diffusion), ByteDance (Seed Diffusion), and open-weight models (LLaDA 2.0) — why is that simultaneously <em>good</em> and <em>dangerous</em> for Inception, and what does it imply for how you\'d weight the prioritization function?', a: 'Good: the field is validated, the technical bet is no longer "lone bet" — easier customer education, easier hiring, easier capital. Dangerous: speed alone is contested (ByteDance Seed Diffusion already faster on paper than Mercury), Google has shipped a research model, open-weights pressure from below. Strategic asymmetry: Inception has no conflict (frontier labs would cannibalize their frontier-autoregressive revenue) and full focus — but well-funded entrants could narrow the speed gap (Google launched Gemini 3.5 Flash at 289 tokens/sec on May 19, 2026 — a 4× speed-up over prior frontier autoregressive models) and big labs may build their own diffusion variants. Implication for the prioritization function: weight toward use cases where structural edges (controllability + both-sided conditioning, Lesson 4) are the moat, not raw tokens per second. Use cases where structure dominates — coding/editing, long-horizon planning, constrained optimization — become higher priority; pure-speed use cases (voice) become more contested and need vertical execution speed (ship product while labs ship demos) as a defensive moat.' },
+    ]
+  },
+
+  {
+    id: 'AP',
+    short: 'Appendix',
+    title: 'Appendix — Interview Delivery (rehearse out loud)',
+    spine: 'Not a concept to internalize — a delivery script. No quiz; rehearse it out loud.',
+    takeaway: 'Delivery ready: three opener sentences memorized, two questions to ask back, the full scorecard for any dimension pressed on, engineer-round depth checks, and Decision Transformers as the one thing to skim before the founder round.',
+    sections: [
+      {
+        kind: 'mechanism',
+        title: 'Three sentences that prove you read the lineage, not the abstracts',
+        html: `<div class="appendix-block">
+          <ol>
+            <li>"FlashAttention's lesson — <em>wall-clock is the critical path, not floating-point operations</em> — is the same lesson as 'autoregression is serial': speed is a systems property. Inception already states this in the Mercury 2 post (95th-percentile latency under concurrency, not tokens per second)."</li>
+            <li>"Control is a near-free axis for diffusion: conditional generation with no retraining, output-space masking (and <em>where</em> you mask matters — initialization-mask 40 success rate vs mid-iteration 3 success rate collapse), Direct-Preference-Optimization-cheap preference tuning. That's the defensible surface, not raw speed."</li>
+            <li>"Prioritize structural edges over speed edges: editing/infilling/planning need both-sided conditioning, which autoregression can't do natively. Speed gets competed away; structure is the moat."</li>
+          </ol>
+        </div>`
+      },
+      {
+        kind: 'mechanism',
+        title: 'Two questions to ask them (signal product judgment)',
+        html: `<div class="appendix-block">
+          <ul>
+            <li>"Of the four clusters, where is the latency → realized-revenue loop tightest <em>today</em>, and is model-development investment flowing there — or to the most defensible (structural-edge) one?"</li>
+            <li>"Where's the line between selling the frontier as-is vs. co-developing a fine-tuned variant — what unit economics decides it, and is Direct-Preference-Optimization-style tuning mature enough on the diffusion-language-model side to be a product tier yet?"</li>
+          </ul>
+        </div>`
+      },
+      {
+        kind: 'mechanism',
+        title: 'Honest scorecard — every dimension a founder will press on',
+        html: `<p style="font-size:13px;color:var(--ink-soft);margin-bottom:10px;">Including where autoregression wins. <strong>State the autoregression-wins rows unprompted</strong> — that's the seniority signal. Use this as your reference for any dimension they push back on.</p>
+        <div style="overflow-x:auto;">
+        <table class="ucase-table scorecard" style="font-size:12px;">
+          <thead>
+            <tr><th style="width:18%">Dimension</th><th style="width:26%">Autoregressive</th><th style="width:26%">Diffusion</th><th style="width:30%">Verdict / nuance to say</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Generation latency</strong></td>
+              <td>Serial chain of N forward passes; Key/Value cache patches redundant compute, not the chain</td>
+              <td>A few parallel refine-all-tokens steps (~10–20)</td>
+              <td><span class="verdict-diff">Diffusion, structurally.</span> ~1,009 vs ~89 tokens/sec (Haiku 4.5), ~71 (GPT-5 Mini). Not "optimized faster" — a different generation loop.</td>
+            </tr>
+            <tr>
+              <td><strong>Cost / token</strong></td>
+              <td>Scales with serial passes + Key/Value-cache memory bandwidth at long context / high concurrency</td>
+              <td>Fewer steps, parallelizable; no growing Key/Value chain</td>
+              <td><span class="verdict-diff">Diffusion.</span> ~$0.25 / $0.75 per 1 million in/out. Same root cause as the latency one.</td>
+            </tr>
+            <tr>
+              <td><strong>Peak quality, hardest reasoning</strong></td>
+              <td>Frontier models are all autoregressive; most mature training/eval ecosystem. <em>Gemini 3.5 Flash (May 2026) beats Gemini 3.1 Pro on agentic benchmarks at 289 tokens/sec — the AR side is now racing on quality-at-speed too.</em></td>
+              <td>Competitive with the speed-optimized tier on Inception's headline benchmarks, but trails frontier-max</td>
+              <td><span class="verdict-ar">Autoregression at the frontier.</span> State this unprompted — Mercury 2 is 91 AIME / ~74 GPQA but competes in the fast tier, not frontier-max. Gemini 3.5 Flash specifically narrows the quality-at-speed gap.</td>
+            </tr>
+            <tr>
+              <td><strong>Both-sided conditioning</strong> (infill / edit / plan)</td>
+              <td>Left-to-right only — cannot natively condition on tokens after the cursor</td>
+              <td>Holds the whole sequence; conditions on both sides by construction</td>
+              <td><span class="verdict-diff">Diffusion, structurally.</span> The durable moat — code next-edit, infill, whole-plan refinement.</td>
+            </tr>
+            <tr>
+              <td><strong>Self-correction / hallucination</strong></td>
+              <td>Commits each token irrevocably; errors cascade forward</td>
+              <td>Re-touches all positions every step; early errors editable</td>
+              <td><span class="verdict-diff">Diffusion.</span> A consequence of the loop, not a feature.</td>
+            </tr>
+            <tr>
+              <td><strong>Controllability</strong> (schema / JSON / safety)</td>
+              <td>Decode-time constraints — brittle, bolted-on</td>
+              <td>Masked projection + conditional generation from one model, near-free</td>
+              <td><span class="verdict-diff">Diffusion.</span> But placement matters (Masked Temporal Interpolation Diffusion: init-mask 40 success rate vs mid-iteration 3 success rate collapse).</td>
+            </tr>
+            <tr>
+              <td><strong>Alignment / fine-tuning maturity</strong></td>
+              <td>Huge ecosystem — Reinforcement Learning from Human Feedback, Direct Preference Optimization, tooling, known recipes</td>
+              <td>Direct-Preference-Optimization-style cheap alignment applies in principle; Scores as Actions (diffusion-native reinforcement learning) is framework-stage, experiments deferred</td>
+              <td><span class="verdict-ar">Autoregression today.</span> Honest gap — diffusion-language-model custom-tuning is roadmap, not shipped.</td>
+            </tr>
+            <tr>
+              <td><strong>Quality/latency tunability</strong></td>
+              <td>Fixed serial cost; quality bought with more tokens = more latency (the reasoning tax)</td>
+              <td>Step-count is a continuous dial on one model</td>
+              <td><span class="verdict-diff">Diffusion.</span> A pricing/packaging lever autoregression can't replicate.</td>
+            </tr>
+            <tr>
+              <td><strong>Ecosystem / drop-in risk</strong></td>
+              <td>Universal — every tool, every integration assumes autoregression</td>
+              <td>OpenAI-API compatible (technical drop-in); commercially still a "why diffusion" education cost</td>
+              <td><span class="verdict-split">Autoregression for inertia.</span> Diffusion de-risks the technical switch but not the commercial one.</td>
+            </tr>
+            <tr>
+              <td><strong>Serving engineering</strong></td>
+              <td>Mature, well-understood (vLLM, etc.)</td>
+              <td>Bespoke kernels (FlashAttention's "new CUDA kernel per variant"); fewer off-the-shelf tools</td>
+              <td><span class="verdict-ar">Autoregression.</span> Real engineering-cost and hiring constraint — name it.</td>
+            </tr>
+          </tbody>
+        </table>
+        </div>
+        <div class="callout good" style="font-size:13px;margin-top:14px;"><strong>Tally:</strong> 6 diffusion wins (latency, cost, both-sided conditioning, self-correction, controllability, tunability), 3 autoregression wins (peak quality, alignment maturity, serving), 1 inertial autoregression lead (ecosystem). <em>Both-sided conditioning + controllability are the structural ones — what makes the moat durable, per Lesson 5.</em></div>`
+      },
+      {
+        kind: 'mechanism',
+        title: 'Engineer-round depth checks (from Lesson 1)',
+        html: `<div class="appendix-block">
+          <ul>
+            <li>The three-line attention computation and why it's N×N</li>
+            <li>What the Key/Value cache fixes vs. doesn't and the bandwidth bottleneck it creates</li>
+            <li>The forward/backward asymmetry FlashAttention's recomputation exploits</li>
+          </ul>
+        </div>`
+      },
+      {
+        kind: 'mechanism',
+        title: 'Gap to close on your own',
+        html: `<div class="callout warn">Decision Transformers is in Inception's founder bio but not in your uploads — reinforcement-learning-as-sequence-modeling connects to the agentic-loop thesis (Lesson 5). <strong>Skim before the founder round.</strong></div>`
+      },
+      {
+        kind: 'mechanism',
+        title: 'Paper key',
+        html: `<div class="stat-strip">
+          <span class="stat-chip"><strong>SDE</strong> Score-Based Generative Modeling via SDEs (Song, Ermon+, ICLR'21)</span>
+          <span class="stat-chip"><strong>FA</strong> FlashAttention (Dao, Ermon+, NeurIPS'22)</span>
+          <span class="stat-chip"><strong>DPO</strong> Direct Preference Optimization (Rafailov, Ermon+, NeurIPS'23)</span>
+          <span class="stat-chip"><strong>SAA</strong> Scores as Actions (Zhao, Tang+, '24)</span>
+          <span class="stat-chip"><strong>MTID</strong> Masked Temporal Interpolation Diffusion (ICLR'25)</span>
+          <span class="stat-chip"><strong>M2</strong> Mercury 2 (Inception, Feb'26)</span>
+        </div>`
+      }
+    ],
+    quiz: []
+  }
+];
+
+/* =========================================================
+   GAME STATE
+   ========================================================= */
+const STORAGE_KEY = 'inception-study-game-v1';
+let state = loadState();
+
+function loadState() {
+  const defaults = {
+    currentLesson: 0,
+    revealed: { L0: 1 },     // sections revealed per lesson (1-based: 1 = first visible)
+    quizPos: {},             // lessonId -> current quiz question index
+    completed: {},           // lessonId -> true if fully done
+    grades: {},
+    responses: {},
+    streak: 0,
+    longestStreak: 0,
+    totalGot: 0,
+  };
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) return { ...defaults, ...JSON.parse(raw) };
+  } catch(e) {}
+  return defaults;
+}
+function saveState() {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(e) {}
+}
+
+function isUnlocked(i) {
+  if (i === 0) return true;
+  // each lesson unlocks once previous is completed
+  const prev = LESSONS[i - 1];
+  return !!state.completed[prev.id];
+}
+
+function lessonHasQuiz(lesson) {
+  return lesson.quiz && lesson.quiz.length > 0;
+}
+
+/* =========================================================
+   RENDERING (game mode)
+   ========================================================= */
+
+function render() {
+  renderScore();
+  renderTabs();
+  renderLesson();
+  saveState();
+}
+
+function renderScore() {
+  const totalGraded = Object.keys(state.grades).length;
+  const completedCount = LESSONS.filter(l => state.completed[l.id]).length;
+  const streakEl = document.getElementById('scoreStreak');
+  const streakIsHot = state.streak >= 3;
+  streakEl.innerHTML = `${streakIsHot ? '🔥 ' : ''}<strong>${state.streak}</strong> streak`;
+  streakEl.classList.toggle('hot', streakIsHot);
+  document.getElementById('scoreGot').innerHTML = `<strong>${state.totalGot}</strong> / ${totalGraded} got`;
+  document.getElementById('scoreLessons').innerHTML = `<strong>${completedCount}</strong> / <span id="scoreLessonsTotal">${LESSONS.length}</span> lessons`;
+}
+
+function renderTabs() {
+  const tabs = document.getElementById('tabs');
+  tabs.innerHTML = '';
+  LESSONS.forEach((lesson, i) => {
+    const btn = document.createElement('button');
+    const unlocked = isUnlocked(i);
+    const completed = !!state.completed[lesson.id];
+    if (!unlocked) btn.classList.add('locked');
+    if (completed) btn.classList.add('completed');
+    if (i === state.currentLesson) btn.classList.add('active');
+    const icon = completed ? '<span class="check-icon">✓</span>' : (!unlocked ? '<span class="lock-icon">🔒</span>' : '');
+    btn.innerHTML = `${icon}${lesson.short}`;
+    if (unlocked) {
+      btn.onclick = () => jumpTo(i);
+    }
+    tabs.appendChild(btn);
+  });
+}
+
+function jumpTo(i) {
+  if (!isUnlocked(i)) return;
+  state.currentLesson = i;
+  // initialize revealed if needed
+  if (!state.revealed[LESSONS[i].id]) {
+    state.revealed[LESSONS[i].id] = 1;
+  }
+  render();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function renderLesson() {
+  const lesson = LESSONS[state.currentLesson];
+  const c = document.getElementById('content');
+  c.innerHTML = '';
+
+  const wrap = document.createElement('div');
+  wrap.className = 'lesson';
+
+  const h2 = document.createElement('h2');
+  h2.textContent = lesson.title;
+  wrap.appendChild(h2);
+
+  const spine = document.createElement('div');
+  spine.className = 'spine';
+  spine.textContent = lesson.spine;
+  wrap.appendChild(spine);
+
+  // Progress bar within lesson
+  const totalSections = lesson.sections.length;
+  const revealedCount = Math.min(state.revealed[lesson.id] || 1, totalSections);
+  const quizDone = !lessonHasQuiz(lesson) ? state.completed[lesson.id] : (state.quizPos[lesson.id] >= lesson.quiz.length);
+  const totalSteps = totalSections + (lessonHasQuiz(lesson) ? lesson.quiz.length : 0);
+  let stepsDone = revealedCount;
+  if (revealedCount >= totalSections && lessonHasQuiz(lesson)) {
+    stepsDone = totalSections + (state.quizPos[lesson.id] || 0);
+  }
+  const progressBar = document.createElement('div');
+  progressBar.className = 'lesson-progress-bar';
+  const fill = document.createElement('div');
+  fill.className = 'lesson-progress-fill';
+  fill.style.width = `${(stepsDone / totalSteps) * 100}%`;
+  progressBar.appendChild(fill);
+  wrap.appendChild(progressBar);
+
+  // Render revealed sections
+  lesson.sections.slice(0, revealedCount).forEach((sec, idx) => {
+    const s = document.createElement('section');
+    s.className = 'block game-section';
+    const h3 = document.createElement('h3');
+    h3.textContent = sec.title;
+    s.appendChild(h3);
+    const body = document.createElement('div');
+    body.innerHTML = sec.html;
+    s.appendChild(body);
+    if (sec.visual) {
+      const v = buildVisual(sec.visual);
+      if (v) s.appendChild(v);
+    }
+    wrap.appendChild(s);
+  });
+
+  // Show next-section reveal button OR start quiz
+  if (revealedCount < totalSections) {
+    const pending = document.createElement('div');
+    pending.className = 'section-pending';
+    pending.innerHTML = `
+      <div class="pending-label">Next concept</div>
+      <div class="pending-progress">${revealedCount} / ${totalSections} concepts revealed</div>
+    `;
+    const btn = document.createElement('button');
+    btn.className = 'btn-game';
+    btn.textContent = 'Reveal next concept →';
+    btn.onclick = () => {
+      state.revealed[lesson.id] = revealedCount + 1;
+      render();
+      setTimeout(() => window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' }), 50);
+    };
+    pending.appendChild(btn);
+    wrap.appendChild(pending);
+  } else if (lessonHasQuiz(lesson)) {
+    // Sections done — render the active challenge
+    wrap.appendChild(buildChallenge(lesson));
+  } else {
+    // Appendix-style: no quiz, mark complete
+    if (!state.completed[lesson.id]) {
+      const done = document.createElement('div');
+      done.className = 'section-pending';
+      done.innerHTML = `<div class="pending-label">All sections revealed</div><div class="pending-progress">Appendix has no quiz — just mark it as reviewed when you're ready.</div>`;
+      const btn = document.createElement('button');
+      btn.className = 'btn-game success';
+      btn.textContent = '✓ Mark complete';
+      btn.onclick = () => {
+        state.completed[lesson.id] = true;
+        render();
+      };
+      done.appendChild(btn);
+      wrap.appendChild(done);
+    } else {
+      renderCompletion(wrap, lesson);
+    }
+  }
+
+  c.appendChild(wrap);
+  setTimeout(initDeferredVisuals, 50);
+}
+
+function renderCompletion(wrap, lesson) {
+  const div = document.createElement('div');
+  div.className = 'lesson-complete';
+  const i = state.currentLesson;
+  const isLast = i === LESSONS.length - 1;
+
+  let lessonScore = '';
+  if (lessonHasQuiz(lesson)) {
+    const grades = lesson.quiz.map(q => state.grades[q.id]).filter(Boolean);
+    const got = grades.filter(g => g === 'got').length;
+    const partial = grades.filter(g => g === 'partial').length;
+    const unsure = grades.filter(g => g === 'unsure').length;
+    lessonScore = `<div class="score-line">Quiz: <strong>${got}</strong> got · ${partial} partial · ${unsure} unsure</div>`;
+  }
+
+  const allGot = lessonHasQuiz(lesson) && lesson.quiz.every(q => state.grades[q.id] === 'got');
+  const emoji = allGot ? '🏆' : '✓';
+  const headline = allGot ? 'Mastery!' : 'Lesson complete';
+
+  const takeawayBlock = lesson.takeaway
+    ? `<div class="completion-block takeaway-block"><span class="completion-label">✓ What you now own</span>${lesson.takeaway}</div>`
+    : '';
+  const bridgeBlock = (lesson.bridge && !isLast)
+    ? `<div class="completion-block bridge-block"><span class="completion-label">→ Up next: ${LESSONS[i+1].short.replace(/^L\d+ · /, '')}</span>${lesson.bridge}</div>`
+    : '';
+
+  div.innerHTML = `
+    <div class="celebrate-head">
+      <div class="celebrate">${emoji}</div>
+      <h3>${headline}</h3>
+      ${lessonScore}
+    </div>
+    ${takeawayBlock}
+    ${bridgeBlock}
+  `;
+
+  if (!isLast) {
+    const btn = document.createElement('button');
+    btn.className = 'btn-game success';
+    btn.textContent = `Unlock ${LESSONS[i+1].short.replace(/^L\d+ · /, '')} →`;
+    btn.onclick = () => jumpTo(i + 1);
+    div.appendChild(btn);
+  } else {
+    const final = document.createElement('div');
+    final.style.textAlign = 'center';
+    final.style.marginTop = '14px';
+    final.innerHTML = `<p style="font-size:14px;color:var(--ink-soft);">All ${LESSONS.length} lessons complete. Longest streak: <strong style="color:var(--accent)">${state.longestStreak}</strong>. Now rehearse out loud in <a href="index.html" style="color:var(--accent)">free-read mode</a> before the interview.</p>`;
+    div.appendChild(final);
+  }
+
+  wrap.appendChild(div);
+}
+
+/* =========================================================
+   CHALLENGE (one question at a time, gates progression)
+   ========================================================= */
+
+function buildChallenge(lesson) {
+  const wrap = document.createElement('div');
+  // If quiz fully complete, render completion instead
+  const qPos = state.quizPos[lesson.id] || 0;
+  if (qPos >= lesson.quiz.length) {
+    if (!state.completed[lesson.id]) {
+      state.completed[lesson.id] = true;
+      saveState();
+    }
+    renderCompletion(wrap, lesson);
+    return wrap;
+  }
+
+  const q = lesson.quiz[qPos];
+  const challenge = document.createElement('div');
+  challenge.className = 'challenge';
+
+  const header = document.createElement('div');
+  header.className = 'challenge-header';
+  header.innerHTML = `
+    <span class="challenge-num">Challenge ${q.id}</span>
+    <span class="challenge-progress">Question ${qPos + 1} of ${lesson.quiz.length}</span>
+  `;
+  challenge.appendChild(header);
+
+  const qDiv = document.createElement('div');
+  qDiv.className = 'challenge-q';
+  qDiv.innerHTML = q.q;
+  challenge.appendChild(qDiv);
+
+  const ta = document.createElement('textarea');
+  ta.placeholder = 'Write your answer in your own words. Be specific. "Unsure" is always a valid answer — you can grade yourself that.';
+  ta.value = state.responses[q.id] || '';
+  ta.addEventListener('input', () => {
+    state.responses[q.id] = ta.value;
+    saveState();
+    ta.style.height = 'auto';
+    ta.style.height = (ta.scrollHeight + 2) + 'px';
+  });
+  challenge.appendChild(ta);
+  setTimeout(() => { ta.style.height = 'auto'; ta.style.height = (ta.scrollHeight + 2) + 'px'; }, 0);
+
+  const actions = document.createElement('div');
+  actions.className = 'challenge-actions';
+  const reveal = document.createElement('button');
+  reveal.className = 'btn-game';
+  reveal.textContent = 'Reveal model answer';
+
+  const modelAnswer = document.createElement('div');
+  modelAnswer.className = 'model-answer';
+  modelAnswer.innerHTML = `<strong style="color:var(--accent);font-size:12px;text-transform:uppercase;letter-spacing:0.06em;display:block;margin-bottom:6px;">Model answer</strong>${q.a}`;
+  challenge.appendChild(modelAnswer);
+
+  const gradePrompt = document.createElement('div');
+  gradePrompt.className = 'grade-prompt';
+  gradePrompt.innerHTML = '<strong>How did you do? (this gates the next challenge)</strong>';
+  const gradeRow = document.createElement('div');
+  gradeRow.className = 'grade-row';
+  ['got','partial','unsure'].forEach(level => {
+    const labels = { got: '✓ Got it', partial: '~ Partial', unsure: '? Unsure' };
+    const btn = document.createElement('button');
+    btn.className = level;
+    btn.textContent = labels[level];
+    btn.onclick = () => recordGradeAndAdvance(lesson, qPos, level);
+    gradeRow.appendChild(btn);
+  });
+  gradePrompt.appendChild(gradeRow);
+  challenge.appendChild(gradePrompt);
+
+  reveal.onclick = () => {
+    modelAnswer.classList.add('visible');
+    gradePrompt.classList.add('visible');
+    reveal.disabled = true;
+    reveal.textContent = '✓ Revealed — now self-grade';
+    reveal.style.opacity = '0.5';
+  };
+
+  actions.appendChild(reveal);
+  challenge.appendChild(actions);
+
+  wrap.appendChild(challenge);
+  return wrap;
+}
+
+function recordGradeAndAdvance(lesson, qPos, level) {
+  const q = lesson.quiz[qPos];
+  // Only update streak/got if it's the first time grading this
+  const isNew = !state.grades[q.id];
+  state.grades[q.id] = level;
+  if (isNew) {
+    if (level === 'got') {
+      state.streak += 1;
+      state.totalGot += 1;
+      state.longestStreak = Math.max(state.longestStreak, state.streak);
+    } else {
+      state.streak = 0;
+    }
+  }
+  state.quizPos[lesson.id] = qPos + 1;
+  if (state.quizPos[lesson.id] >= lesson.quiz.length) {
+    state.completed[lesson.id] = true;
+  }
+  saveState();
+  render();
+}
+
+/* =========================================================
+   VISUALS
+   ========================================================= */
+
+const deferredVisuals = [];
+
+function buildVisual(type) {
+  const wrap = document.createElement('div');
+  wrap.className = 'visual';
+  const title = document.createElement('div');
+  title.className = 'v-title';
+  wrap.appendChild(title);
+
+  switch(type) {
+    case 'pipeline': return buildPipeline(wrap, title);
+    case 'tblock': return buildTransformerBlock(wrap, title);
+    case 'depth': return buildDepth(wrap, title);
+    case 'cost': return buildCostChart(wrap, title);
+    case 'doorway': return buildDoorway(wrap, title);
+    case 'attention': return buildAttention(wrap, title);
+    case 'noise-strip': return buildNoiseStrip(wrap, title);
+    case 'compass': return buildCompass(wrap, title);
+    case 'walks': return buildWalks(wrap, title);
+    case 'dial': return buildDial(wrap, title);
+    case 'control4': return buildControl4(wrap, title);
+    case 'dpo': return buildDPO(wrap, title);
+    case 'mask': return buildMask(wrap, title);
+    case 'axes': return buildAxes(wrap, title);
+    case 'ucase': return buildUseCases(wrap, title);
+    default: return null;
+  }
+}
+
+function initDeferredVisuals() {
+  // currently a placeholder for any post-mount work
+}
+
+/* ----------- VISUAL: Pipeline (L0) ----------- */
+function buildPipeline(wrap, title) {
+  title.textContent = 'Interactive — The 5-stage language-model pipeline';
+
+  const desc = document.createElement('div');
+  desc.style.fontSize = '13px';
+  desc.style.color = 'var(--ink-soft)';
+  desc.style.marginBottom = '10px';
+  desc.innerHTML = 'Click any stage. Every one is still "predict next token" — what changes is the data curriculum it sees.';
+  wrap.appendChild(desc);
+
+  const stages = [
+    { num: '1', name: 'Tokenize', teaches: '~50,000 subword pieces',
+      detail: '<h5>Tokenize</h5><p>Train a Byte-Pair Encoding tokenizer. Output: a vocabulary of ~50,000 reusable subword pieces.</p><p><code>"hello world"</code> → <code>[15496, 995]</code></p><p>The model never sees text — it sees integer IDs. Tokenizer choices propagate to every later stage.</p>' },
+    { num: '2', name: 'Pretrain', teaches: '"how language works"',
+      detail: '<h5>Pretrain</h5><p>The big one. Feed the model raw web text, ~trillions of tokens. Loss: cross-entropy on the next token.</p><p>Output: a "base model" that completes text but doesn\'t know what an assistant is. Cost dominates the pipeline.</p>' },
+    { num: '3', name: 'Supervised Fine-Tuning', teaches: '"assistant turn format"',
+      detail: '<h5>Supervised Fine-Tuning</h5><p>Same loss (predict next token), but now on curated conversations:</p><p><code>&lt;|user|&gt;hi&lt;|assistant|&gt;hello!&lt;|end|&gt;</code></p><p>Teaches the model the chat format and basic helpfulness. Small data, small compute, big behavior change.</p>' },
+    { num: '4', name: 'Reinforcement Learning', teaches: '"human taste"',
+      detail: '<h5>Reinforcement Learning</h5><p>Optimize against preference pairs (chosen vs. rejected). Two approaches:</p><ul><li><strong>Proximal Policy Optimization (the classic Reinforcement Learning from Human Feedback recipe):</strong> reward model + reinforcement learning loop (3 models, sampling in-loop, unstable)</li><li><strong>Direct Preference Optimization:</strong> one cross-entropy loss directly on the policy — no reward model, no sampling</li></ul><p><em>Lesson 4 dissects Direct Preference Optimization.</em></p>' },
+    { num: '5', name: 'Serve', teaches: '(inference loop)',
+      detail: '<h5>Serve</h5><p>Autoregressive decoding: predict token, append, feed back in, repeat. Key/Value cache to avoid recomputation.</p><p><strong>This is where the entire Lesson 1 problem lives.</strong> N tokens out = N serial forward passes. Inception replaces this stage by replacing the model class.</p>' },
+  ];
+
+  const flow = document.createElement('div');
+  flow.className = 'pipeline';
+  wrap.appendChild(flow);
+
+  const detail = document.createElement('div');
+  detail.className = 'pipe-detail';
+  wrap.appendChild(detail);
+
+  let active = null;
+  stages.forEach((s, i) => {
+    const cell = document.createElement('div');
+    cell.className = 'pipe-stage';
+    cell.innerHTML = `<div class="pipe-num">stage ${s.num}</div><div class="pipe-name">${s.name}</div><div class="pipe-teaches">${s.teaches}</div>`;
+    cell.onclick = () => {
+      if (active === i) {
+        detail.classList.remove('visible');
+        cell.classList.remove('active');
+        active = null;
+      } else {
+        flow.querySelectorAll('.pipe-stage').forEach(c => c.classList.remove('active'));
+        cell.classList.add('active');
+        detail.innerHTML = s.detail;
+        detail.classList.add('visible');
+        active = i;
+      }
+    };
+    flow.appendChild(cell);
+  });
+
+  // auto-open the first one to invite interaction
+  flow.children[0].click();
+
+  return wrap;
+}
+
+/* ----------- VISUAL: Transformer block (L0) ----------- */
+function buildTransformerBlock(wrap, title) {
+  title.textContent = 'Interactive — Inside one transformer block';
+
+  const desc = document.createElement('div');
+  desc.style.fontSize = '13px';
+  desc.style.color = 'var(--ink-soft)';
+  desc.style.marginBottom = '10px';
+  desc.innerHTML = 'Hover any box. This recipe is repeated N times in series (depth = N). That\'s the whole architecture.';
+  wrap.appendChild(desc);
+
+  const blk = document.createElement('div');
+  blk.className = 'tblock';
+  blk.innerHTML = `
+    <div class="tblock-step">
+      <div class="tblock-side">input</div>
+      <div class="tblock-box" title="A vector for each token in the sequence — shape: [seq_len × embed_dim]">x (token vectors)</div>
+      <div class="tblock-side"></div>
+    </div>
+    <div class="tblock-arrow">↓</div>
+    <div class="tblock-step">
+      <div class="tblock-side">normalize</div>
+      <div class="tblock-box ln" title="Per-token normalization. Stabilizes scale before each sub-layer. Pre-norm is the modern convention.">LayerNorm</div>
+      <div class="tblock-side"></div>
+    </div>
+    <div class="tblock-arrow">↓</div>
+    <div class="tblock-step">
+      <div class="tblock-side">mix tokens</div>
+      <div class="tblock-box attn" title="Each token computes a Query, a Key, and a Value; attends to every prior token (causal mask). The N×N matrix Lesson 1 talks about.">Multi-Head Self-Attention</div>
+      <div class="tblock-side">N×N matrix</div>
+    </div>
+    <div class="tblock-arrow">↓</div>
+    <div class="tblock-step">
+      <div class="tblock-side">residual</div>
+      <div class="tblock-box add" title="Add the block input back in. This is the express lane that lets gradients flow through deep stacks.">+ x  (residual)</div>
+      <div class="tblock-side"></div>
+    </div>
+    <div class="tblock-arrow">↓</div>
+    <div class="tblock-step">
+      <div class="tblock-side">normalize</div>
+      <div class="tblock-box ln" title="Second LayerNorm before the feed-forward network.">LayerNorm</div>
+      <div class="tblock-side"></div>
+    </div>
+    <div class="tblock-arrow">↓</div>
+    <div class="tblock-step">
+      <div class="tblock-side">think per token</div>
+      <div class="tblock-box mlp" title="Two-layer feed-forward network (a multi-layer perceptron), Gaussian Error Linear Unit activation. Expand to 4× the embedding dimension then contract. Per-token, no mixing.">Feed-Forward Network (4× expand)</div>
+      <div class="tblock-side">per-token</div>
+    </div>
+    <div class="tblock-arrow">↓</div>
+    <div class="tblock-step">
+      <div class="tblock-side">residual</div>
+      <div class="tblock-box add" title="Add the post-attention activations back in.">+ x  (residual)</div>
+      <div class="tblock-side"></div>
+    </div>
+    <div class="tblock-arrow">↓</div>
+    <div class="tblock-step">
+      <div class="tblock-side">output</div>
+      <div class="tblock-box" title="Output has the same shape as input — that's what makes blocks stackable.">x' (next block's input)</div>
+      <div class="tblock-side"></div>
+    </div>
+  `;
+  wrap.appendChild(blk);
+
+  // The stacked view
+  const stack = document.createElement('div');
+  stack.className = 'tblock-stack';
+  stack.innerHTML = `<div style="font-size:12px;text-transform:uppercase;letter-spacing:0.06em;color:var(--ink-fainter);margin-bottom:8px;">The full GPT (default = 12 blocks)</div>`;
+  const stackRow = document.createElement('div');
+  stackRow.className = 'tblock-stack-row';
+  const emb = document.createElement('div');
+  emb.className = 'tblock-unit emb';
+  emb.textContent = 'embed';
+  stackRow.appendChild(emb);
+  stackRow.appendChild(Object.assign(document.createElement('span'), { textContent: '→', style: 'color:var(--ink-fainter)' }));
+  for (let k = 1; k <= 12; k++) {
+    const b = document.createElement('div');
+    b.className = 'tblock-unit';
+    b.textContent = `block ${k}`;
+    stackRow.appendChild(b);
+  }
+  stackRow.appendChild(Object.assign(document.createElement('span'), { textContent: '→', style: 'color:var(--ink-fainter)' }));
+  const head = document.createElement('div');
+  head.className = 'tblock-unit head';
+  head.textContent = 'lm_head';
+  stackRow.appendChild(head);
+  stack.appendChild(stackRow);
+  const note = document.createElement('div');
+  note.style.fontSize = '12px';
+  note.style.color = 'var(--ink-soft)';
+  note.style.marginTop = '8px';
+  note.textContent = 'GPT-2 small (124 million parameters): 12 blocks · 12 heads · 768 embedding dimensions · 1024 token context. Frontier models are the same recipe at larger scale.';
+  stack.appendChild(note);
+  wrap.appendChild(stack);
+
+  return wrap;
+}
+
+/* ----------- VISUAL: Depth-as-only-knob dial (L0) ----------- */
+function buildDepth(wrap, title) {
+  title.textContent = 'Interactive — Depth is the only knob (compute-optimal scaling)';
+
+  const desc = document.createElement('div');
+  desc.style.fontSize = '13px';
+  desc.style.color = 'var(--ink-soft)';
+  desc.style.marginBottom = '10px';
+  desc.innerHTML = 'Slide depth. Width, heads, learning rate, schedule, training tokens — all derived from this one number to be compute-optimal.';
+  wrap.appendChild(desc);
+
+  const ctrls = document.createElement('div');
+  ctrls.className = 'v-controls';
+  const lbl = document.createElement('span');
+  lbl.style.fontFamily = '"SF Mono", monospace';
+  lbl.style.minWidth = '90px';
+  const slider = document.createElement('input');
+  slider.type = 'range'; slider.min = 4; slider.max = 36; slider.value = 12; slider.step = 1;
+  ctrls.appendChild(lbl);
+  ctrls.appendChild(slider);
+  wrap.appendChild(ctrls);
+
+  const readout = document.createElement('div');
+  readout.className = 'depth-readout';
+  wrap.appendChild(readout);
+
+  const tier = document.createElement('div');
+  tier.className = 'depth-tier';
+  wrap.appendChild(tier);
+
+  function update(d) {
+    // nanochat-style derivations (approximate)
+    const width = 64 * d;
+    const heads = d;
+    // params ~ 12 * d * width^2 + embedding overhead → roughly cubic in d
+    const params = (12 * d * width * width + 50000 * width) / 1e6; // millions
+    // Chinchilla-optimal tokens: ~20× params
+    const tokens = params * 20; // millions of tokens
+    // Cost — rough: nanochat depth=20 ≈ $100; scale ~ params × tokens / (depth=20 reference)
+    const refParams = 12 * 20 * 1280 * 1280 / 1e6;
+    const refCost = 100;
+    const cost = refCost * (params * tokens) / (refParams * refParams * 20);
+
+    lbl.textContent = `depth = ${d}`;
+    readout.innerHTML = `
+      <div class="depth-cell"><div class="label">width</div><div class="val">${width}</div></div>
+      <div class="depth-cell"><div class="label">heads</div><div class="val">${heads}</div></div>
+      <div class="depth-cell"><div class="label">parameters</div><div class="val">${params < 1000 ? params.toFixed(0)+'M' : (params/1000).toFixed(2)+'B'}</div></div>
+      <div class="depth-cell"><div class="label">estimated cost</div><div class="val">$${cost < 1000 ? cost.toFixed(0) : (cost/1000).toFixed(1)+'K'}</div></div>
+    `;
+
+    let label;
+    if (d < 8)       label = 'tiny — toy / Shakespeare-scale';
+    else if (d < 16) label = 'small — GPT-2 small territory';
+    else if (d < 22) label = 'medium — GPT-2 medium territory';
+    else if (d < 28) label = '★ GPT-2 capability emerges here';
+    else if (d < 34) label = 'large — GPT-2 extra-large territory';
+    else             label = 'frontier-base — what real labs train (still the same recipe)';
+    tier.textContent = label;
+  }
+  slider.oninput = e => update(parseInt(e.target.value));
+  update(12);
+
+  const note = document.createElement('div');
+  note.className = 'callout';
+  note.style.fontSize = '13px';
+  note.style.marginTop = '14px';
+  note.innerHTML = '<strong>What this proves:</strong> the autoregressive training recipe has <em>converged</em>. You pick a budget, you get a model. Inception\'s opportunity is exactly because this stage is now commodity — the differentiator has moved up to model class + serving + control.';
+  wrap.appendChild(note);
+
+  return wrap;
+}
+
+/* ----------- VISUAL: Cost collapse chart (L0) ----------- */
+function buildCostChart(wrap, title) {
+  title.textContent = 'GPT-2 training cost: 2019 → 2026';
+
+  const desc = document.createElement('div');
+  desc.style.fontSize = '13px';
+  desc.style.color = 'var(--ink-soft)';
+  desc.style.marginBottom = '10px';
+  desc.innerHTML = '~400× collapse in 7 years from compounding hardware + algorithms + data quality. Log-scale bars (each bar is normalized to the 2019 baseline).';
+  wrap.appendChild(desc);
+
+  const rows = [
+    { year: '2019', cost: 43000, note: 'OpenAI original' },
+    { year: '2020', cost: 12000, note: 'graphics-processor efficiency + better recipes' },
+    { year: '2022', cost: 1500, note: 'FlashAttention + Chinchilla scaling' },
+    { year: '2024', cost: 300, note: 'H100 graphics processors + open recipes' },
+    { year: '2026', cost: 100, note: 'nanochat speedrun ($48–$100)' },
+  ];
+  const maxLog = Math.log10(rows[0].cost);
+  const minLog = Math.log10(rows[rows.length - 1].cost);
+
+  const bars = document.createElement('div');
+  bars.className = 'cost-bars';
+  rows.forEach(r => {
+    const row = document.createElement('div');
+    row.className = 'cost-row';
+    // log-scaled bar width, 10% min
+    const logFrac = (Math.log10(r.cost) - minLog) / (maxLog - minLog);
+    const widthPct = 10 + logFrac * 90;
+    row.innerHTML = `
+      <div class="cost-year">${r.year}</div>
+      <div class="cost-bar" style="width:${widthPct}%"></div>
+      <div class="cost-amount">$${r.cost.toLocaleString()}<span style="color:var(--ink-fainter);font-size:11px"> · ${r.note}</span></div>
+    `;
+    bars.appendChild(row);
+  });
+  wrap.appendChild(bars);
+
+  const callout = document.createElement('div');
+  callout.className = 'callout good';
+  callout.style.fontSize = '13px';
+  callout.innerHTML = '<strong>For an Inception PM:</strong> last year\'s frontier is this year\'s commodity. Speed/cost wins broaden the addressable market but get competed away. Only the <em>structural</em> edges (Lesson 4) stay defensible.';
+  wrap.appendChild(callout);
+
+  return wrap;
+}
+
+/* ----------- VISUAL: Doorway (token-by-token generation) ----------- */
+function buildDoorway(wrap, title) {
+  title.textContent = 'Interactive — Autoregression as a single-file doorway';
+
+  const desc = document.createElement('div');
+  desc.style.fontSize = '13px';
+  desc.style.color = 'var(--ink-soft)';
+  desc.style.marginBottom = '10px';
+  desc.innerHTML = 'Watch tokens get generated one-at-a-time. Each "step" = one forward pass. No matter how much compute you throw at it, you wait through the whole chain.';
+  wrap.appendChild(desc);
+
+  const sequence = ['The','model','must','wait','for','each','token','to','finish','before','the','next','one','can','start','.'];
+  const row = document.createElement('div');
+  row.className = 'token-row';
+  wrap.appendChild(row);
+
+  const stats = document.createElement('div');
+  stats.style.marginTop = '10px';
+  stats.style.fontSize = '13px';
+  stats.style.fontFamily = '"SF Mono", monospace';
+  stats.style.color = 'var(--ink-soft)';
+  wrap.appendChild(stats);
+
+  const ctrls = document.createElement('div');
+  ctrls.className = 'v-controls';
+  const stepBtn = document.createElement('button');
+  stepBtn.className = 'btn primary';
+  stepBtn.textContent = 'Generate next token';
+  const autoBtn = document.createElement('button');
+  autoBtn.className = 'btn';
+  autoBtn.textContent = 'Auto-play';
+  const resetBtn = document.createElement('button');
+  resetBtn.className = 'btn';
+  resetBtn.textContent = 'Reset';
+  ctrls.appendChild(stepBtn);
+  ctrls.appendChild(autoBtn);
+  ctrls.appendChild(resetBtn);
+  wrap.appendChild(ctrls);
+
+  let i = 0;
+  let timer = null;
+  const tokenLatencyMs = 40; // pretend
+  function renderRow() {
+    row.innerHTML = '';
+    sequence.forEach((tok, idx) => {
+      const b = document.createElement('div');
+      b.className = 'token-box';
+      if (idx >= i) b.classList.add('pending');
+      b.textContent = idx < i ? tok : '·';
+      row.appendChild(b);
+    });
+    stats.innerHTML = `Generated <strong>${i}</strong> / ${sequence.length} tokens · simulated latency: <strong>${i * tokenLatencyMs}ms</strong> (serial: ${i} × ${tokenLatencyMs}ms)`;
+    stepBtn.disabled = i >= sequence.length;
+  }
+  function step() {
+    if (i < sequence.length) {
+      i++;
+      renderRow();
+    } else {
+      stopAuto();
+    }
+  }
+  function stopAuto() {
+    if (timer) { clearInterval(timer); timer = null; autoBtn.textContent = 'Auto-play'; }
+  }
+  stepBtn.onclick = step;
+  autoBtn.onclick = () => {
+    if (timer) { stopAuto(); return; }
+    autoBtn.textContent = 'Pause';
+    timer = setInterval(() => {
+      if (i >= sequence.length) { stopAuto(); return; }
+      step();
+    }, 200);
+  };
+  resetBtn.onclick = () => { stopAuto(); i = 0; renderRow(); };
+  renderRow();
+  return wrap;
+}
+
+/* ----------- VISUAL: Attention matrix (N×N) ----------- */
+function buildAttention(wrap, title) {
+  title.textContent = 'Interactive — Attention matrix is N×N';
+
+  const desc = document.createElement('div');
+  desc.style.fontSize = '13px';
+  desc.style.color = 'var(--ink-soft)';
+  desc.style.marginBottom = '10px';
+  desc.innerHTML = 'Drag N. Watch the cost grow <em>quadratically</em>. Doubling context quadruples the matrix.';
+  wrap.appendChild(desc);
+
+  const grid = document.createElement('div');
+  grid.className = 'matrix-grid';
+  wrap.appendChild(grid);
+
+  const readout = document.createElement('div');
+  readout.className = 'v-readout';
+  readout.style.textAlign = 'center';
+  readout.style.marginTop = '8px';
+  wrap.appendChild(readout);
+
+  const ctrls = document.createElement('div');
+  ctrls.className = 'v-controls';
+  const lbl = document.createElement('span');
+  lbl.style.fontFamily = '"SF Mono", monospace';
+  lbl.textContent = 'N = 4';
+  const slider = document.createElement('input');
+  slider.type = 'range';
+  slider.min = 2;
+  slider.max = 32;
+  slider.value = 4;
+  ctrls.appendChild(lbl);
+  ctrls.appendChild(slider);
+  wrap.appendChild(ctrls);
+
+  function renderMatrix(n) {
+    grid.innerHTML = '';
+    grid.style.gridTemplateColumns = `repeat(${n}, 14px)`;
+    grid.style.gridTemplateRows = `repeat(${n}, 14px)`;
+    for (let r = 0; r < n; r++) {
+      for (let c = 0; c < n; c++) {
+        const cell = document.createElement('div');
+        cell.className = 'matrix-cell';
+        // lower-triangular for AR causal mask + diagonal lit
+        if (c <= r) cell.classList.add('lit');
+        grid.appendChild(cell);
+      }
+    }
+    readout.innerHTML = `N=${n} → matrix = <strong>${n}×${n} = ${n*n} cells</strong> · cost grows O(N²)`;
+    lbl.textContent = `N = ${n}`;
+  }
+  slider.oninput = e => renderMatrix(parseInt(e.target.value));
+  renderMatrix(4);
+  return wrap;
+}
+
+/* ----------- VISUAL: Noise strip (diffusion forward process) ----------- */
+function buildNoiseStrip(wrap, title) {
+  title.textContent = 'Interactive — The forward process (data → noise, no training)';
+  const desc = document.createElement('div');
+  desc.style.fontSize = '13px';
+  desc.style.color = 'var(--ink-soft)';
+  desc.style.marginBottom = '10px';
+  desc.innerHTML = 'Move the slider to add noise to a "photo". This direction is <strong>free</strong> — no model. The job of diffusion is learning to <em>reverse</em> this.';
+  wrap.appendChild(desc);
+
+  const canvas = document.createElement('canvas');
+  canvas.width = 240; canvas.height = 60;
+  canvas.style.display = 'block';
+  canvas.style.margin = '0 auto';
+  canvas.style.borderRadius = '4px';
+  canvas.style.border = '1px solid var(--line)';
+  canvas.style.imageRendering = 'pixelated';
+  canvas.style.width = '240px';
+  canvas.style.height = '60px';
+  wrap.appendChild(canvas);
+
+  const lbl = document.createElement('div');
+  lbl.className = 'v-readout';
+  lbl.style.textAlign = 'center';
+  lbl.style.marginTop = '8px';
+  wrap.appendChild(lbl);
+
+  const ctrls = document.createElement('div');
+  ctrls.className = 'v-controls';
+  const tLbl = document.createElement('span');
+  tLbl.style.fontFamily = '"SF Mono", monospace';
+  tLbl.textContent = 't = 0';
+  const slider = document.createElement('input');
+  slider.type = 'range'; slider.min = 0; slider.max = 100; slider.value = 0;
+  const reverseBtn = document.createElement('button');
+  reverseBtn.className = 'btn';
+  reverseBtn.textContent = '↻ Animate reverse (denoising)';
+  ctrls.appendChild(tLbl);
+  ctrls.appendChild(slider);
+  ctrls.appendChild(reverseBtn);
+  wrap.appendChild(ctrls);
+
+  // generate a stable "clean image" — a simple gradient with a circle
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  const clean = ctx.createImageData(W, H);
+  for (let y = 0; y < H; y++) {
+    for (let x = 0; x < W; x++) {
+      const i = (y * W + x) * 4;
+      // sky-ish gradient + a "sun"
+      const sky = 200 - y * 1.5;
+      const r = Math.sqrt((x - 60)*(x-60) + (y - 20)*(y - 20));
+      const sun = r < 14 ? 230 : 0;
+      clean.data[i]   = Math.min(255, Math.max(0, sky * 0.5 + sun));
+      clean.data[i+1] = Math.min(255, Math.max(0, sky * 0.8 + sun * 0.7));
+      clean.data[i+2] = Math.min(255, Math.max(0, sky + sun * 0.3));
+      clean.data[i+3] = 255;
+    }
+  }
+
+  function draw(t) {
+    const img = ctx.createImageData(W, H);
+    for (let i = 0; i < clean.data.length; i += 4) {
+      // VP-like blend: x_t = sqrt(1-t)*x_0 + sqrt(t)*noise
+      const alpha = Math.sqrt(1 - t);
+      const beta = Math.sqrt(t);
+      const n = (Math.random() - 0.5) * 255 * 2;
+      img.data[i]   = Math.min(255, Math.max(0, clean.data[i]   * alpha + 128 + n * beta));
+      img.data[i+1] = Math.min(255, Math.max(0, clean.data[i+1] * alpha + 128 + n * beta));
+      img.data[i+2] = Math.min(255, Math.max(0, clean.data[i+2] * alpha + 128 + n * beta));
+      img.data[i+3] = 255;
+    }
+    ctx.putImageData(img, 0, 0);
+    tLbl.textContent = `t = ${t.toFixed(2)}`;
+    const stage = t < 0.05 ? 'pure data (free)' : t > 0.95 ? 'pure noise (free)' : `noise level ${(t*100).toFixed(0)}%`;
+    lbl.innerHTML = `Forward step at noise level <strong>${(t*100).toFixed(0)}%</strong> · ${stage}`;
+  }
+
+  slider.oninput = e => draw(parseInt(e.target.value) / 100);
+
+  let revTimer = null;
+  reverseBtn.onclick = () => {
+    if (revTimer) { clearInterval(revTimer); revTimer = null; reverseBtn.textContent = '↻ Animate reverse (denoising)'; return; }
+    reverseBtn.textContent = '⏸ Pause';
+    slider.value = 100;
+    draw(1);
+    let cur = 100;
+    revTimer = setInterval(() => {
+      cur -= 5;
+      if (cur <= 0) { cur = 0; clearInterval(revTimer); revTimer = null; reverseBtn.textContent = '↻ Animate reverse (denoising)'; }
+      slider.value = cur;
+      draw(cur / 100);
+    }, 100);
+  };
+
+  draw(0);
+  return wrap;
+}
+
+/* ----------- VISUAL: Compass / score ----------- */
+function buildCompass(wrap, title) {
+  title.textContent = 'Interactive — The score is the compass';
+  const desc = document.createElement('div');
+  desc.style.fontSize = '13px';
+  desc.style.color = 'var(--ink-soft)';
+  desc.style.marginBottom = '10px';
+  desc.innerHTML = 'The white dot is your noisy sample. The arrow is the <strong>score</strong> — the direction of "more data-like" at this noise level. Click anywhere to teleport, and watch the compass repoint.';
+  wrap.appendChild(desc);
+
+  const svgNS = 'http://www.w3.org/2000/svg';
+  const svg = document.createElementNS(svgNS, 'svg');
+  svg.setAttribute('viewBox', '0 0 300 200');
+  svg.style.width = '100%';
+  svg.style.maxWidth = '480px';
+  svg.style.display = 'block';
+  svg.style.margin = '0 auto';
+  svg.style.background = 'linear-gradient(180deg, #ede9d8, #d6cdb0)';
+  svg.style.borderRadius = '6px';
+  svg.style.cursor = 'crosshair';
+  wrap.appendChild(svg);
+
+  // Two "data modes" — the target distribution
+  const modes = [{ x: 80, y: 70, r: 26 }, { x: 220, y: 130, r: 26 }];
+  modes.forEach(m => {
+    const c = document.createElementNS(svgNS, 'circle');
+    c.setAttribute('cx', m.x); c.setAttribute('cy', m.y); c.setAttribute('r', m.r);
+    c.setAttribute('fill', '#5b3fa8'); c.setAttribute('opacity', '0.18');
+    svg.appendChild(c);
+    const c2 = document.createElementNS(svgNS, 'circle');
+    c2.setAttribute('cx', m.x); c2.setAttribute('cy', m.y); c2.setAttribute('r', '5');
+    c2.setAttribute('fill', '#5b3fa8');
+    svg.appendChild(c2);
+    const lbl = document.createElementNS(svgNS, 'text');
+    lbl.setAttribute('x', m.x); lbl.setAttribute('y', m.y + m.r + 14);
+    lbl.setAttribute('text-anchor', 'middle');
+    lbl.setAttribute('font-size', '10');
+    lbl.setAttribute('fill', '#5b3fa8');
+    lbl.textContent = 'data mode';
+    svg.appendChild(lbl);
+  });
+
+  // sample dot + arrow
+  let pos = { x: 150, y: 100 };
+  const sample = document.createElementNS(svgNS, 'circle');
+  sample.setAttribute('r', '7');
+  sample.setAttribute('fill', '#fff');
+  sample.setAttribute('stroke', '#1a1a1a');
+  sample.setAttribute('stroke-width', '1.5');
+  svg.appendChild(sample);
+
+  const arrow = document.createElementNS(svgNS, 'line');
+  arrow.setAttribute('stroke', '#c0392b'); arrow.setAttribute('stroke-width', '2.5');
+  arrow.setAttribute('marker-end', 'url(#arrowHead)');
+  svg.appendChild(arrow);
+
+  // arrowhead
+  const defs = document.createElementNS(svgNS, 'defs');
+  defs.innerHTML = '<marker id="arrowHead" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#c0392b"/></marker>';
+  svg.appendChild(defs);
+
+  function score(x, y) {
+    // sum of gaussian-attracted gradients toward each mode
+    let sx = 0, sy = 0;
+    modes.forEach(m => {
+      const dx = m.x - x, dy = m.y - y;
+      const d2 = dx*dx + dy*dy + 1;
+      const w = Math.exp(-d2 / 5000);
+      sx += dx * w; sy += dy * w;
+    });
+    return { sx, sy };
+  }
+  function render() {
+    sample.setAttribute('cx', pos.x);
+    sample.setAttribute('cy', pos.y);
+    const { sx, sy } = score(pos.x, pos.y);
+    const norm = Math.sqrt(sx*sx + sy*sy) || 1;
+    const len = 28;
+    arrow.setAttribute('x1', pos.x);
+    arrow.setAttribute('y1', pos.y);
+    arrow.setAttribute('x2', pos.x + sx / norm * len);
+    arrow.setAttribute('y2', pos.y + sy / norm * len);
+  }
+  svg.addEventListener('click', e => {
+    const pt = svg.getBoundingClientRect();
+    const x = (e.clientX - pt.left) / pt.width * 300;
+    const y = (e.clientY - pt.top) / pt.height * 200;
+    pos = { x, y };
+    render();
+  });
+
+  const ctrls = document.createElement('div');
+  ctrls.className = 'v-controls';
+  const stepBtn = document.createElement('button');
+  stepBtn.className = 'btn primary';
+  stepBtn.textContent = 'Step in score direction';
+  const walkBtn = document.createElement('button');
+  walkBtn.className = 'btn';
+  walkBtn.textContent = '▶ Walk toward data';
+  ctrls.appendChild(stepBtn);
+  ctrls.appendChild(walkBtn);
+  wrap.appendChild(ctrls);
+
+  stepBtn.onclick = () => {
+    const { sx, sy } = score(pos.x, pos.y);
+    const norm = Math.sqrt(sx*sx + sy*sy) || 1;
+    pos.x += sx / norm * 12;
+    pos.y += sy / norm * 12;
+    render();
+  };
+  let walkTimer = null;
+  walkBtn.onclick = () => {
+    if (walkTimer) { clearInterval(walkTimer); walkTimer = null; walkBtn.textContent = '▶ Walk toward data'; return; }
+    walkBtn.textContent = '⏸ Pause';
+    walkTimer = setInterval(() => {
+      const { sx, sy } = score(pos.x, pos.y);
+      const norm = Math.sqrt(sx*sx + sy*sy) || 1;
+      if (norm < 0.5) { clearInterval(walkTimer); walkTimer = null; walkBtn.textContent = '▶ Walk toward data'; return; }
+      pos.x += sx / norm * 6;
+      pos.y += sy / norm * 6;
+      render();
+    }, 80);
+  };
+  render();
+  return wrap;
+}
+
+/* ----------- VISUAL: Walks comparison ----------- */
+function buildWalks(wrap, title) {
+  title.textContent = 'Interactive — Stochastic vs. Deterministic walk';
+
+  const desc = document.createElement('div');
+  desc.style.fontSize = '13px';
+  desc.style.color = 'var(--ink-soft)';
+  desc.style.marginBottom = '10px';
+  desc.innerHTML = 'Both paths end at the same destination. The deterministic twin (right) reaches it in ~10× fewer steps. <em>This is where the speed comes from.</em>';
+  wrap.appendChild(desc);
+
+  const row = document.createElement('div');
+  row.className = 'walks-row';
+  wrap.appendChild(row);
+
+  const svgNS = 'http://www.w3.org/2000/svg';
+  function makePanel(label) {
+    const p = document.createElement('div');
+    p.className = 'walk-panel';
+    const t = document.createElement('div');
+    t.className = 'walk-title';
+    t.textContent = label;
+    p.appendChild(t);
+    const svg = document.createElementNS(svgNS, 'svg');
+    svg.setAttribute('viewBox', '0 0 200 100');
+    p.appendChild(svg);
+    const cnt = document.createElement('div');
+    cnt.className = 'walk-counter';
+    p.appendChild(cnt);
+    return { panel: p, svg, counter: cnt };
+  }
+  const left = makePanel('Stochastic (SDE — drunkard\'s stagger)');
+  const right = makePanel('Deterministic (ODE — surveyed road)');
+  row.appendChild(left.panel);
+  row.appendChild(right.panel);
+
+  // background — noise start and data destination
+  function setupSvg(svg) {
+    svg.innerHTML = '';
+    const start = document.createElementNS(svgNS, 'circle');
+    start.setAttribute('cx', 15); start.setAttribute('cy', 50); start.setAttribute('r', '6');
+    start.setAttribute('fill', '#888');
+    svg.appendChild(start);
+    const sLbl = document.createElementNS(svgNS, 'text');
+    sLbl.setAttribute('x', 15); sLbl.setAttribute('y', 70); sLbl.setAttribute('text-anchor', 'middle');
+    sLbl.setAttribute('font-size', '8'); sLbl.setAttribute('fill', '#888');
+    sLbl.textContent = 'noise'; svg.appendChild(sLbl);
+    const end = document.createElementNS(svgNS, 'circle');
+    end.setAttribute('cx', 185); end.setAttribute('cy', 50); end.setAttribute('r', '6');
+    end.setAttribute('fill', '#5b3fa8');
+    svg.appendChild(end);
+    const eLbl = document.createElementNS(svgNS, 'text');
+    eLbl.setAttribute('x', 185); eLbl.setAttribute('y', 70); eLbl.setAttribute('text-anchor', 'middle');
+    eLbl.setAttribute('font-size', '8'); eLbl.setAttribute('fill', '#5b3fa8');
+    eLbl.textContent = 'data'; svg.appendChild(eLbl);
+  }
+  setupSvg(left.svg);
+  setupSvg(right.svg);
+
+  const ctrls = document.createElement('div');
+  ctrls.className = 'v-controls';
+  const runBtn = document.createElement('button');
+  runBtn.className = 'btn primary';
+  runBtn.textContent = '▶ Run both walks';
+  const resetBtn = document.createElement('button');
+  resetBtn.className = 'btn';
+  resetBtn.textContent = 'Reset';
+  ctrls.appendChild(runBtn);
+  ctrls.appendChild(resetBtn);
+  wrap.appendChild(ctrls);
+
+  let leftSteps = 0, rightSteps = 0;
+  let leftPos = { x: 15, y: 50 }, rightPos = { x: 15, y: 50 };
+  let leftLine = null, rightLine = null;
+
+  function reset() {
+    setupSvg(left.svg); setupSvg(right.svg);
+    leftSteps = 0; rightSteps = 0;
+    leftPos = { x: 15, y: 50 }; rightPos = { x: 15, y: 50 };
+    leftLine = document.createElementNS(svgNS, 'polyline');
+    leftLine.setAttribute('fill', 'none'); leftLine.setAttribute('stroke', '#c0392b'); leftLine.setAttribute('stroke-width', '1.5');
+    leftLine.setAttribute('points', '15,50');
+    left.svg.appendChild(leftLine);
+    rightLine = document.createElementNS(svgNS, 'polyline');
+    rightLine.setAttribute('fill', 'none'); rightLine.setAttribute('stroke', '#2f8a4e'); rightLine.setAttribute('stroke-width', '2');
+    rightLine.setAttribute('points', '15,50');
+    right.svg.appendChild(rightLine);
+    left.counter.textContent = '0 steps';
+    right.counter.textContent = '0 steps';
+  }
+  reset();
+
+  let timer = null;
+  function step() {
+    let advanced = false;
+    if (leftSteps < 100) {
+      // stagger: small step forward + lateral noise
+      leftPos.x += 1.7;
+      leftPos.y += (Math.random() - 0.5) * 16;
+      leftPos.y = Math.max(15, Math.min(85, leftPos.y));
+      if (leftPos.x > 185) leftPos.x = 185;
+      const pts = leftLine.getAttribute('points');
+      leftLine.setAttribute('points', pts + ` ${leftPos.x.toFixed(1)},${leftPos.y.toFixed(1)}`);
+      leftSteps++;
+      left.counter.innerHTML = `<span style="color: var(--bad)">${leftSteps}</span> steps · wandering`;
+      advanced = true;
+    }
+    if (rightSteps < 10 && rightSteps * 5 <= leftSteps) {
+      rightPos.x += 17;
+      const pts = rightLine.getAttribute('points');
+      rightLine.setAttribute('points', pts + ` ${rightPos.x.toFixed(1)},50`);
+      rightSteps++;
+      right.counter.innerHTML = `<span style="color: var(--good)">${rightSteps}</span> step${rightSteps === 1 ? '' : 's'} · direct`;
+      advanced = true;
+    }
+    if (!advanced || (leftSteps >= 100 && rightSteps >= 10)) {
+      clearInterval(timer); timer = null; runBtn.textContent = '▶ Run both walks';
+    }
+  }
+  runBtn.onclick = () => {
+    if (timer) { clearInterval(timer); timer = null; runBtn.textContent = '▶ Run both walks'; return; }
+    if (leftSteps >= 100 && rightSteps >= 10) reset();
+    runBtn.textContent = '⏸ Pause';
+    timer = setInterval(step, 60);
+  };
+  resetBtn.onclick = () => { if (timer) { clearInterval(timer); timer = null; runBtn.textContent = '▶ Run both walks'; } reset(); };
+  return wrap;
+}
+
+/* ----------- VISUAL: Quality/latency dial ----------- */
+function buildDial(wrap, title) {
+  title.textContent = 'Interactive — Step-count dial (one model, many price points)';
+
+  const desc = document.createElement('div');
+  desc.style.fontSize = '13px';
+  desc.style.color = 'var(--ink-soft)';
+  desc.style.marginBottom = '10px';
+  desc.innerHTML = 'Mercury 2 ships "tunable reasoning" — the customer chooses a point on this curve. Voice → left edge, code-review → right edge. <strong>Same model.</strong>';
+  wrap.appendChild(desc);
+
+  const svgNS = 'http://www.w3.org/2000/svg';
+  const svg = document.createElementNS(svgNS, 'svg');
+  svg.setAttribute('viewBox', '0 0 400 180');
+  svg.style.width = '100%';
+  svg.style.maxWidth = '480px';
+  svg.style.display = 'block';
+  svg.style.margin = '0 auto';
+  wrap.appendChild(svg);
+
+  // axes
+  function addLine(x1,y1,x2,y2,stroke='#888', sw=1) {
+    const l = document.createElementNS(svgNS,'line');
+    l.setAttribute('x1',x1); l.setAttribute('y1',y1); l.setAttribute('x2',x2); l.setAttribute('y2',y2);
+    l.setAttribute('stroke',stroke); l.setAttribute('stroke-width',sw);
+    svg.appendChild(l); return l;
+  }
+  function addText(x,y,text,opts={}) {
+    const t = document.createElementNS(svgNS,'text');
+    t.setAttribute('x',x); t.setAttribute('y',y);
+    t.setAttribute('font-size', opts.size || 10);
+    t.setAttribute('fill', opts.fill || '#555');
+    t.setAttribute('text-anchor', opts.anchor || 'start');
+    t.textContent = text;
+    svg.appendChild(t); return t;
+  }
+  addLine(50, 20, 50, 150);
+  addLine(50, 150, 380, 150);
+  addText(45, 15, 'Quality', {anchor:'end', size: 11});
+  addText(385, 165, 'Latency →', {size: 11});
+  addText(50, 165, 'few steps', {anchor:'middle', size: 9});
+  addText(380, 165, 'many steps', {anchor:'middle', size: 9});
+
+  // curve — diminishing returns
+  const curve = document.createElementNS(svgNS,'path');
+  let d = 'M 50 145';
+  for (let x = 50; x <= 380; x += 5) {
+    const t = (x - 50) / 330;
+    const y = 145 - 110 * (1 - Math.exp(-3 * t));
+    d += ` L ${x} ${y.toFixed(1)}`;
+  }
+  curve.setAttribute('d', d);
+  curve.setAttribute('stroke', '#5b3fa8');
+  curve.setAttribute('stroke-width', '2.5');
+  curve.setAttribute('fill', 'none');
+  svg.appendChild(curve);
+
+  // segment markers
+  const segments = [
+    { x: 85, label: 'voice', desc: '~4 steps' },
+    { x: 175, label: 'chat / retrieval', desc: '~10 steps' },
+    { x: 295, label: 'code review', desc: '~25 steps' },
+    { x: 360, label: 'deep reasoning', desc: '~50+ steps' },
+  ];
+  segments.forEach(s => {
+    const t = (s.x - 50) / 330;
+    const y = 145 - 110 * (1 - Math.exp(-3 * t));
+    const c = document.createElementNS(svgNS,'circle');
+    c.setAttribute('cx', s.x); c.setAttribute('cy', y); c.setAttribute('r', 5);
+    c.setAttribute('fill', '#5b3fa8');
+    svg.appendChild(c);
+    addText(s.x, y - 10, s.label, {anchor:'middle', size: 10, fill:'#1a1a1a'});
+    addText(s.x, y + 18, s.desc, {anchor:'middle', size: 9, fill:'#888'});
+  });
+
+  addText(195, 35, 'One model. Many tiers.', {anchor:'middle', size: 13, fill:'#5b3fa8'});
+
+  const callout = document.createElement('div');
+  callout.className = 'callout';
+  callout.style.fontSize = '13px';
+  callout.style.marginTop = '14px';
+  callout.innerHTML = '<strong>You cannot do this with autoregression.</strong> Autoregression\'s serial chain length is fixed by N tokens output. There\'s no knob.';
+  wrap.appendChild(callout);
+
+  return wrap;
+}
+
+/* ----------- VISUAL: L4 — 4 control mechanisms grid ----------- */
+function buildControl4(wrap, title) {
+  title.textContent = 'The four near-free axes — what each saves vs. autoregressive equivalent';
+
+  const desc = document.createElement('div');
+  desc.style.fontSize = '13px';
+  desc.style.color = 'var(--ink-soft)';
+  desc.style.marginBottom = '10px';
+  desc.innerHTML = 'All four reduce to "steer the compass you already learned." The right-side strip in each card shows the autoregressive equivalent — and why it\'s more expensive.';
+  wrap.appendChild(desc);
+
+  const grid = document.createElement('div');
+  grid.className = 'four-mech';
+
+  const mechs = [
+    {
+      name: 'Conditional generation',
+      paper: 'Score-Based Generative Modeling via SDEs',
+      does: 'Sample p(x | y) from a <em>single unconditional</em> model by adding a likelihood steering term. Class-conditioning, inpainting, colorization — <strong>no retraining</strong>.',
+      vsAR: '<strong>vs. autoregressive:</strong> typically requires a separately conditioned/retrained model per task.'
+    },
+    {
+      name: 'Masked projection',
+      paper: 'Masked Temporal Interpolation Diffusion',
+      does: 'Seed noise <em>only</em> into valid output slots, zero the rest → output is <strong>structurally constrained to legal tokens</strong>.',
+      vsAR: '<strong>vs. autoregressive:</strong> decode-time constraint filtering — brittle, bolted-on, breaks under tight schemas.'
+    },
+    {
+      name: 'Direct Preference Optimization',
+      paper: 'Rafailov, Ermon+, NeurIPS\'23',
+      does: 'Preference alignment becomes a <em>single binary cross-entropy loss</em> — no reward model, no reinforcement learning, no sampling loop.',
+      vsAR: '<strong>vs. autoregressive (Reinforcement Learning from Human Feedback):</strong> three models (supervised-fine-tuned base + reward model + policy) + Proximal Policy Optimization loop with in-loop sampling. Unstable.'
+    },
+    {
+      name: 'Scores as Actions',
+      paper: 'Zhao, Tang+, \'24',
+      does: 'Principled way to reinforcement-learning-fine-tune a <em>diffusion</em> model, with a continuous-time regularizer anchoring it to the base.',
+      vsAR: '<strong>Status:</strong> framework-stage — experiments deferred. Roadmap, not shipped. (Affects axis 3, Lesson 5.)'
+    }
+  ];
+
+  mechs.forEach(m => {
+    const card = document.createElement('div');
+    card.className = 'mech-card';
+    card.innerHTML = `
+      <div class="mech-name">${m.name}</div>
+      <div class="mech-paper">${m.paper}</div>
+      <div class="mech-does">${m.does}</div>
+      <div class="mech-vs">${m.vsAR}</div>
+    `;
+    grid.appendChild(card);
+  });
+  wrap.appendChild(grid);
+
+  const callout = document.createElement('div');
+  callout.className = 'callout good';
+  callout.style.fontSize = '13px';
+  callout.style.marginTop = '14px';
+  callout.innerHTML = '<strong>The common pattern:</strong> all four leverage the same learned score function. You don\'t retrain a new model for each control axis — you steer the one you have. <em>This is why control is "near-free" for diffusion and bolted-on for autoregression.</em>';
+  wrap.appendChild(callout);
+
+  return wrap;
+}
+
+/* ----------- VISUAL: DPO before/after ----------- */
+function buildDPO(wrap, title) {
+  title.textContent = 'Direct Preference Optimization — From 3-model reinforcement-learning pipeline to 1 supervised loss';
+
+  const cmp = document.createElement('div');
+  cmp.className = 'dpo-compare';
+
+  const before = document.createElement('div');
+  before.className = 'dpo-side before';
+  before.innerHTML = `<h4 style="color:var(--bad)">Reinforcement Learning from Human Feedback (Proximal Policy Optimization) — the old way</h4>
+    <ul>
+      <li><strong>Supervised fine-tuning model</strong> — base policy</li>
+      <li><strong>Reward model</strong> — trained on human prefs</li>
+      <li><strong>Proximal-Policy-Optimization loop</strong> — sample, score, update with Kullback-Leibler-divergence constraint</li>
+      <li style="color:var(--bad)">3 models · unstable · sampling in loop</li>
+    </ul>`;
+
+  const arrow = document.createElement('div');
+  arrow.className = 'dpo-arrow';
+  arrow.innerHTML = '→';
+
+  const after = document.createElement('div');
+  after.className = 'dpo-side after';
+  after.innerHTML = `<h4 style="color:var(--good)">Direct Preference Optimization — the move</h4>
+    <ul>
+      <li><strong>Just π (policy)</strong> + frozen π_ref</li>
+      <li><strong>One binary cross-entropy loss</strong></li>
+      <li>Z(x) <em>cancels</em> via Bradley-Terry differences</li>
+      <li style="color:var(--good)">1 model · stable · no sampling</li>
+    </ul>`;
+
+  cmp.appendChild(before);
+  cmp.appendChild(arrow);
+  cmp.appendChild(after);
+  wrap.appendChild(cmp);
+
+  const formula = document.createElement('div');
+  formula.className = 'formula';
+  formula.style.fontSize = '13px';
+  formula.innerHTML = 'reward = β·log(π/π_ref) + β·log Z(x) &nbsp;→&nbsp; Z(x) cancels in <em>differences</em> &nbsp;→&nbsp; loss = -log σ(β·log(π_w/π_ref_w) − β·log(π_l/π_ref_l))';
+  wrap.appendChild(formula);
+
+  const note = document.createElement('div');
+  note.className = 'callout warn';
+  note.style.fontSize = '13px';
+  note.innerHTML = '<strong>Don\'t miss:</strong> the gradient has a built-in weight upweighting pairs the model currently <em>ranks wrong</em>. Delete it → model degenerates. Beats Proximal Policy Optimization even when it has ground-truth rewards (0.36 vs 0.26 win-rate, CNN/DailyMail).';
+  wrap.appendChild(note);
+
+  return wrap;
+}
+
+/* ----------- VISUAL: Mask placement ----------- */
+function buildMask(wrap, title) {
+  title.textContent = 'Masked Temporal Interpolation Diffusion — where you apply control matters as much as that you do';
+
+  const cmp = document.createElement('div');
+  cmp.className = 'mask-compare';
+
+  const good = document.createElement('div');
+  good.className = 'mask-card good';
+  good.innerHTML = `<div class="label">Mask at initialization</div>
+    <div class="big-num">40.45</div>
+    <div class="desc">Success rate — constraint baked into the noise seeding. Diffusion dynamics intact.</div>`;
+
+  const bad = document.createElement('div');
+  bad.className = 'mask-card bad';
+  bad.innerHTML = `<div class="label">Mask mid-iteration</div>
+    <div class="big-num">3.38</div>
+    <div class="desc">Collapse — constraint disrupts the in-flight denoising trajectory.</div>`;
+
+  cmp.appendChild(good);
+  cmp.appendChild(bad);
+  wrap.appendChild(cmp);
+
+  const note = document.createElement('div');
+  note.className = 'callout good';
+  note.style.fontSize = '13px';
+  note.innerHTML = '<strong>Generalizable lesson:</strong> constraining the output space is powerful, but doing it at the wrong stage destroys the dynamics. <em>Placement of control matters as much as the control itself.</em>';
+  wrap.appendChild(note);
+
+  return wrap;
+}
+
+/* ----------- VISUAL: 3-axis framework ----------- */
+function buildAxes(wrap, title) {
+  title.textContent = 'The Three Axes (the prioritization framework)';
+
+  const grid = document.createElement('div');
+  grid.className = 'axis-grid';
+
+  const axes = [
+    {
+      n: '1',
+      title: 'Immediate customer value',
+      ask: 'How acute is the pain today? How many users? Willingness to pay?',
+      fed: 'Fed by: speed + cost (Inception\'s strengths) + how compounding the latency is (Lessons 1 and 3)',
+    },
+    {
+      n: '2',
+      title: 'Long-term durability',
+      ask: 'How big does this get, and is the advantage durable?',
+      fed: 'Fed by: structural edge (Lessons 2 and 4 — both-sided conditioning, near-free control). Speed leads erode.',
+    },
+    {
+      n: '3',
+      title: 'Mercury feasibility',
+      ask: 'Can Mercury 2 deliver this now given the quality tradeoff?',
+      fed: 'Fed by: quality benchmarks + step-count dial (Lesson 3), controllability (Lesson 4), Scores as Actions still framework-stage.',
+    }
+  ];
+
+  axes.forEach(a => {
+    const card = document.createElement('div');
+    card.className = 'axis-card';
+    card.innerHTML = `<div class="num">${a.n}</div>
+      <div class="title">${a.title}</div>
+      <div style="font-size:13px; color:var(--ink-soft);">${a.ask}</div>
+      <div class="fed">${a.fed}</div>`;
+    grid.appendChild(card);
+  });
+  wrap.appendChild(grid);
+
+  return wrap;
+}
+
+/* ----------- VISUAL: Use case map ----------- */
+function buildUseCases(wrap, title) {
+  title.textContent = 'Use-Case Map — Scored on three axes';
+
+  const table = document.createElement('table');
+  table.className = 'ucase-table';
+
+  const rows = [
+    { name: 'Coding / editing', a1: 'H', a2: 'H', a3: 'H', read: '★ Top bet — all three axes green' },
+    { name: 'Agentic loops (decompose ↓)', a1: '—', a2: '—', a3: '—', read: 'Too broad to score', sep: true },
+    { name: '→ Short tool-use loops', a1: 'H', a2: 'M', a3: 'H', read: 'Strong near-term', fork: true },
+    { name: '→ Long autonomous planning', a1: 'H', a2: 'H', a3: 'M', read: 'High-upside, feasibility-gated', fork: true },
+    { name: '→ Multi-agent orchestration', a1: 'M', a2: 'H', a3: 'L', read: 'Watch, not invest-now', fork: true },
+    { name: 'Real-time voice', a1: 'H', a2: 'M', a3: 'M', read: 'Strong if quality holds; monitor axis 2 erosion' },
+    { name: 'Search / retrieval-augmented generation (decompose ↓)', a1: '—', a2: '—', a3: '—', read: 'Decompose', sep: true },
+    { name: '→ Latency-bound interactive', a1: 'H', a2: 'M', a3: 'H', read: 'Solid, speed-led', fork: true },
+    { name: '→ Reasoning-heavy multi-hop / agentic retrieval-augmented generation', a1: 'M', a2: 'H', a3: 'M', read: 'Rising; durability is the reason to invest ahead', fork: true },
+  ];
+
+  const head = document.createElement('thead');
+  head.innerHTML = `<tr><th>Use case</th><th>(1) Demand</th><th>(2) Durability</th><th>(3) Feasibility</th><th>Read</th></tr>`;
+  table.appendChild(head);
+
+  const body = document.createElement('tbody');
+  rows.forEach(r => {
+    const tr = document.createElement('tr');
+    if (r.fork) tr.className = 'fork';
+    const pill = v => v === '—' ? '—' : `<span class="pill ${v.toLowerCase()}">${v}</span>`;
+    tr.innerHTML = `<td>${r.name}</td><td>${pill(r.a1)}</td><td>${pill(r.a2)}</td><td>${pill(r.a3)}</td><td>${r.read}</td>`;
+    body.appendChild(tr);
+  });
+  table.appendChild(body);
+  wrap.appendChild(table);
+
+  // Adjacency call-out
+  const adj = document.createElement('div');
+  adj.className = 'callout good';
+  adj.style.marginTop = '14px';
+  adj.innerHTML = `<strong>+ Your adjacency:</strong> Language-model-mediated constrained optimization &nbsp;
+    <span class="pill m">M→H</span>
+    <span class="pill h">H</span>
+    <span class="pill m">M</span>
+    &nbsp;— the structural-edge archetype, your literal domain (RAI).`;
+  wrap.appendChild(adj);
+
+  return wrap;
+}
+
+/* =========================================================
+   KEYBOARD SHORTCUTS
+   ========================================================= */
+document.addEventListener('keydown', e => {
+  if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+  if (e.key === 'ArrowRight' && state.currentLesson < LESSONS.length - 1) jumpTo(state.currentLesson + 1);
+  if (e.key === 'ArrowLeft' && state.currentLesson > 0) jumpTo(state.currentLesson - 1);
+  if (e.key >= '1' && e.key <= '9') {
+    const i = parseInt(e.key) - 1;
+    if (i < LESSONS.length) jumpTo(i);
+  }
+});
+
+/* =========================================================
+   INIT
+   ========================================================= */
+render();
+</script>
+</body>
+</html>
