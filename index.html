@@ -1253,7 +1253,7 @@ const LESSONS = [
       },
       {
         kind: 'mechanism',
-        title: 'Mechanism — Direct Preference Optimization (single most quotable result; know cold)',
+        title: 'Mechanism — Direct Preference Optimization (the foundational alignment result)',
         html: `<p><strong>Classic Reinforcement Learning from Human Feedback (RLHF)</strong> = supervised fine-tuning → train a reward model → Proximal Policy Optimization (PPO) with a Kullback-Leibler-divergence constraint (three models, unstable, sampling in the loop).</p>
         <p><strong>Direct Preference Optimization's move:</strong> the constrained optimum has a closed form; rearrange so:</p>
         <div class="formula">reward = β·log(π/π_ref) + β·log Z(x)</div>
@@ -1338,7 +1338,7 @@ const LESSONS = [
       {
         kind: 'mechanism',
         title: 'Mechanism — The competitive reality (the missing evidence for axis 2)',
-        html: `<p>The "is the advantage durable?" axis asserts <em>structural edge wins</em>. The competitive reality of 2025–26 is what makes that assertion sayable. <strong>The premise has flipped: diffusion language models went from "lone bet" to validated field.</strong> The anchor (Inception's Mercury 2) plus three external proof points to know cold:</p>
+        html: `<p>The "is the advantage durable?" axis asserts <em>structural edge wins</em>. The competitive reality of 2025–26 is what makes that assertion sayable. <strong>The premise has flipped: diffusion language models went from "lone bet" to validated field.</strong> The anchor (Inception's Mercury 2), three diffusion validators, and the autoregressive-side speed race:</p>
         <table class="ucase-table" style="margin-top:8px;">
           <thead><tr><th>Player</th><th>What they shipped</th><th>What it signals</th></tr></thead>
           <tbody>
@@ -1362,17 +1362,13 @@ const LESSONS = [
               <td>100 billion parameters — largest text-diffusion model to date; on par with Qwen3 30B</td>
               <td>Commoditization pressure from below — <strong>open-weight diffusion is real</strong></td>
             </tr>
+            <tr>
+              <td><strong>Google</strong><br/><span style="font-size:11px;color:var(--ink-fainter);">Gemini 3.5 Flash (autoregressive)</span></td>
+              <td>~289 tokens/sec (Pichai: 4× faster than frontier); beats Gemini 3.1 Pro on agentic benchmarks (76% Terminal-Bench, 84% MCP Atlas); $1.50 / $9.00 per 1M; "agents, not chatbots"</td>
+              <td>Autoregressive side racing on quality-at-speed — but still <strong>~3.5× slower and 6–12× pricier than Mercury</strong>. The speed lane is now contested from both sides.</td>
+            </tr>
           </tbody>
         </table>
-
-        <div class="callout warn" style="margin-top:14px;font-size:13px;"><strong>And the autoregressive side is racing on speed too — Gemini 3.5 Flash (launched today, Google I/O 2026):</strong>
-        <ul style="margin-top:8px;">
-          <li><strong>289 tokens/sec</strong> — Pichai claims 4× faster than other frontier models</li>
-          <li>Beats Gemini 3.1 Pro on agentic benchmarks (76.2% Terminal-Bench, 83.6% MCP Atlas, 84.2% CharXiv Reasoning)</li>
-          <li>"Bets next AI wave on agents, not chatbots" — agentic capability is the new battleground</li>
-          <li>Pricing $1.50 in / $9.00 out per 1 million tokens</li>
-        </ul>
-        <p style="margin-bottom:0;"><strong>The numbers vs. Mercury:</strong> Mercury is still ~3.5× faster on raw tokens per second (1,009 vs 289) and 6–12× cheaper ($0.25 / $0.75 vs $1.50 / $9.00). <em>But the gap is closing from the autoregressive side — and Google is now publicly framing speed as the next AI wave.</em></p></div>
 
         <h4 style="margin:18px 0 6px 0;font-size:13px;color:var(--accent);">Why autoregression stayed dominant so long</h4>
         <p style="font-size:13px;color:var(--ink-soft);margin-top:0;">(The rational reasons — not "everyone was wrong")</p>
