@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <meta name="robots" content="noindex, nofollow" />
-<title>Interview Study · Game Mode</title>
+<title>Study · Game Mode</title>
 <style>
   :root {
     --bg: #fafaf7;
@@ -1207,7 +1207,7 @@
 
   <header class="game-header">
     <div>
-      <h1>Diffusion-LLM Interview Study · Game Mode</h1>
+      <h1>Diffusion-LLM Study · Game Mode</h1>
       <div class="mode-toggle">Reveal one concept at a time. Pass each lesson's quiz to unlock the next. · <a href="index.html">↗ Switch to free-read mode</a></div>
     </div>
     <div class="score-strip">
@@ -1300,7 +1300,7 @@ const LESSONS = [
       {
         kind: 'mechanism',
         title: 'Mechanism — The cost collapse',
-        html: `<p>Cost to train a GPT-2-class model (1.5 billion parameters) — the single biggest "where the field is going" visual you can carry into the interview:</p>`,
+        html: `<p>Cost to train a GPT-2-class model (1.5 billion parameters) — the single biggest "where the field is going" visual you can to internalize:</p>`,
         visual: 'cost'
       },
       {
@@ -1376,7 +1376,7 @@ const LESSONS = [
       {
         kind: 'analogy',
         title: 'Analogy',
-        html: `<p>Autoregression is a <strong>single-file line through one doorway</strong>: each person (token) must pass before the next can start, no matter how many staff (compute) you hire.</p>
+        html: `<p>Autoregression is a <strong>single-file line through one doorway</strong>: each person (token) must pass before the next can start, no matter how many staff (compute) you assign.</p>
         <p>The Key/Value cache is giving each person a pre-filled form so the doorway moves faster — but it's still one doorway, one at a time, and now the filing cabinet (cache memory) is overflowing.</p>`,
       },
       {
@@ -1405,7 +1405,7 @@ const LESSONS = [
     short: 'L2 · Diffusion & score',
     title: 'Lesson 2 — Diffusion: noise → data via the score',
     spine: 'The model is the compass, not the map. This is the single concept the whole company rests on; spend the most time here.',
-    takeaway: 'The score = ∇ₓ log pₜ(x) — the compass toward "more data-like" at any noise level. Anderson\'s 1982 result: the reverse generative process depends on <em>nothing except the score</em>. One network, one job — be the compass.',
+    takeaway: 'The score = ∇ₓ log pₜ(x) — the compass toward "more data-like" at any noise level. Anderson\'s 1982 result: the reverse generative process depends on <em>nothing except the score</em>. One network, one task — be the compass.',
     bridge: 'Lesson 3 shows you how to walk with the compass — why a deterministic walk takes ~10 steps instead of ~1000 wobbly ones. <strong>Speed is structural, not optimized-fast.</strong>',
     sections: [
       {
@@ -1433,7 +1433,7 @@ const LESSONS = [
           <li><strong>so score</strong> = "the direction toward more data-like, at this noise level"</li>
         </ul>
         <p>The notation and the sentence are <em>the same thing</em> — say both.</p>
-        <div class="callout good"><strong>The punchline (why this is the whole learning problem):</strong> Anderson's 1982 result — the reverse of a noising process depends on <em>nothing except the score</em> at each noise level. So training reduces to: show noisy images, predict the compass direction, correct, repeat ("score matching"). <strong>One network, one job: be the compass.</strong></div>`,
+        <div class="callout good"><strong>The punchline (why this is the whole learning problem):</strong> Anderson's 1982 result — the reverse of a noising process depends on <em>nothing except the score</em> at each noise level. So training reduces to: show noisy images, predict the compass direction, correct, repeat ("score matching"). <strong>One network, one task: be the compass.</strong></div>`,
         visual: 'compass'
       },
       {
@@ -1539,7 +1539,7 @@ const LESSONS = [
           </tbody>
         </table>
         </div>
-        <div class="callout good" style="margin-top:14px;"><strong>The line to say in the room:</strong> "Attention is not what differs — both use it identically inside each forward pass. What differs is the generation loop wrapped around the forward passes: autoregression is a serial token chain; diffusion is a few parallel whole-sequence refinements. That's why FlashAttention helps both (shared primitive), while diffusion's speed comes from a different axis entirely — eliminating the chain, not speeding up attention."</div>`
+        <div class="callout good" style="margin-top:14px;"><strong>The key line:</strong> "Attention is not what differs — both use it identically inside each forward pass. What differs is the generation loop wrapped around the forward passes: autoregression is a serial token chain; diffusion is a few parallel whole-sequence refinements. That's why FlashAttention helps both (shared primitive), while diffusion's speed comes from a different axis entirely — eliminating the chain, not speeding up attention."</div>`
       },
     ],
     quiz: [
@@ -1556,7 +1556,7 @@ const LESSONS = [
     title: 'Lesson 4 — Control & alignment as near-free axes (the moat)',
     spine: 'The defensible product surface autoregressive incumbents can\'t cheaply copy. Speed gets competed away; this doesn\'t.',
     takeaway: 'Four near-free control axes — conditional generation, masked projection, Direct Preference Optimization, Scores as Actions — all reduce to "steer the compass you already learned." <em>Where</em> you apply control matters (40.45 success rate at init vs 3.38 mid-iteration).',
-    bridge: 'You\'ve earned all the technical concepts. <strong>Lesson 5 is the job</strong> — converting this lineage into a defensible ranking of use cases: framework, map, and the competitive reality of 2025–26.',
+    bridge: 'You\'ve earned all the technical concepts. <strong>Lesson 5 is the strategic application</strong> — converting this lineage into a defensible ranking of use cases: framework, map, and the competitive reality of 2025–26.',
     sections: [
       {
         kind: 'idea',
@@ -1588,7 +1588,7 @@ const LESSONS = [
         kind: 'analogy',
         title: 'Analogy',
         html: `<p><strong>Autoregressive control</strong> = a bouncer checking IDs one person at a time at the door (brittle decode-time filtering).</p>
-        <p><strong>Diffusion control</strong> = designing the room so only valid guests physically fit (Masked Temporal Interpolation Diffusion masking) + a cheap house-rules trainer (Direct Preference Optimization) instead of hiring a full security firm (the Proximal Policy Optimization / Reinforcement Learning from Human Feedback pipeline).</p>`
+        <p><strong>Diffusion control</strong> = designing the room so only valid guests physically fit (Masked Temporal Interpolation Diffusion masking) + a cheap house-rules trainer (Direct Preference Optimization) instead of contracting a full security firm (the Proximal Policy Optimization / Reinforcement Learning from Human Feedback pipeline).</p>`
       },
       {
         kind: 'impact',
@@ -1612,10 +1612,10 @@ const LESSONS = [
   {
     id: 'L5',
     short: 'L5 · Use cases & value',
-    title: 'Lesson 5 — Use cases & value (this is the job)',
-    spine: 'Converting the research lineage into a defensible ranking of use cases. This is what they\'re hiring you to do — arrive with a framework and a map, not a recital of their four use cases.',
+    title: 'Lesson 5 — Use cases & value',
+    spine: 'Converting the research lineage into a defensible ranking of use cases. Arrive with a framework and a map, not a recital of their four use cases.',
     takeaway: 'Three axes (immediate value · durability · feasibility) + one 4-factor scoring function + a use-case map (coding/editing top bet) + competitive reality (diffusion validated, speed contested) + your unique adjacency (constrained optimization).',
-    bridge: 'Framework + map ready. The Appendix is the delivery — three opener sentences, two questions to ask back, full scorecard for any dimension a founder presses on. <strong>Rehearse out loud.</strong>',
+    bridge: 'Framework + map ready. The Appendix is the delivery — three opener sentences, two questions to ask back, full scorecard for any dimension critics press on. <strong>Rehearse out loud.</strong>',
     sections: [
       {
         kind: 'idea',
@@ -1690,7 +1690,7 @@ const LESSONS = [
           <li><strong>Incumbents have no incentive to bet the company</strong> — full commitment to diffusion cannibalizes their frontier-autoregressive business.</li>
         </ul>
 
-        <h4 style="margin:18px 0 6px 0;font-size:13px;color:var(--accent);">The strategic asymmetry (the actual interview thesis)</h4>
+        <h4 style="margin:18px 0 6px 0;font-size:13px;color:var(--accent);">The strategic asymmetry (the actual strategic thesis)</h4>
         <div class="callout good"><strong>the lab's edge is not being the only believer — it's being the only player with no conflict and full focus.</strong> A frontier lab can't make diffusion its identity without cannibalizing frontier-autoregressive revenue and ecosystem; the lab has no such tension.</div>
         <p style="font-size:13px;margin-top:10px;"><strong>But this cuts both ways — the honest risks (in analysts' own words):</strong></p>
         <ul style="font-size:13px;">
@@ -1729,7 +1729,7 @@ const LESSONS = [
       },
       {
         kind: 'impact',
-        title: 'How to deliver this in the room',
+        title: 'Putting it together',
         html: `<ol>
           <li>Lead with the framework (three axes)</li>
           <li>Show you can <em>decompose</em> their coarse categories (agents/search aren't monoliths)</li>
@@ -1768,20 +1768,20 @@ const LESSONS = [
       { id: '5b', q: 'Why is "coding/editing" the top bet on all three axes — and why is "agentic loops" un-scoreable until decomposed?', a: 'Coding: demand is acute (in-flow pauses intolerable, clear developer-tools willingness-to-pay), the edge is structural (infill/next-edit needs both-sided context autoregression can\'t do natively — durable), and it\'s the model\'s most validated domain — all three axes green. "Agentic loops" spans short tool-use (H/M/H), long autonomous planning (H/H/M), and multi-agent (M/H/L); the axes diverge by fork, so a single score is meaningless.' },
       { id: '5c', q: 'Why does speed/cost belong to axis 1 (enabler) but NOT axis 2 (durability)?', a: 'Speed/cost make the use case viable now (relieve the latency/cost pain → drives current demand = axis 1), but every lab is chasing tokens per second, so a speed lead erodes — it is not a durable competitive moat (axis 2). Durability comes from structural edges (both-sided conditioning, near-free control) competitors can\'t cheaply copy.' },
       { id: '5d', q: 'Pitch the constrained-optimization adjacency in two sentences: the demand, and why it\'s a structural (durable) edge not a speed play.', a: 'Demand: vast latent/locked-up market in operations/scheduling/allocation where buyers currently need operations-research specialists — natural-language → solver → agent-refinement removes that gatekeeper. Durable because it\'s the structural-edge archetype (controllable, schema-constrained, both-sided iterative refinement), not a speed race — a competitor matching the model\'s tokens per second doesn\'t replicate the controllability that makes it work.' },
-      { id: '5e', q: 'Diffusion language models are now externally validated by Google (Gemini Diffusion), ByteDance (Seed Diffusion), and open-weight models (LLaDA 2.0) — why is that simultaneously <em>good</em> and <em>dangerous</em> for the lab, and what does it imply for how you\'d weight the prioritization function?', a: 'Good: the field is validated, the technical bet is no longer "lone bet" — easier customer education, easier hiring, easier capital. Dangerous: speed alone is contested (ByteDance Seed Diffusion already faster on paper than the model), Google has shipped a research model, open-weights pressure from below. Strategic asymmetry: the lab has no conflict (frontier labs would cannibalize their frontier-autoregressive revenue) and full focus — but well-funded entrants could narrow the speed gap (Google launched Gemini 3.5 Flash at 289 tokens/sec on May 19, 2026 — a 4× speed-up over prior frontier autoregressive models) and big labs may build their own diffusion variants. Implication for the prioritization function: weight toward use cases where structural edges (controllability + both-sided conditioning, Lesson 4) are the moat, not raw tokens per second. Use cases where structure dominates — coding/editing, long-horizon planning, constrained optimization — become higher priority; pure-speed use cases (voice) become more contested and need vertical execution speed (ship product while labs ship demos) as a defensive moat.' },
+      { id: '5e', q: 'Diffusion language models are now externally validated by Google (Gemini Diffusion), ByteDance (Seed Diffusion), and open-weight models (LLaDA 2.0) — why is that simultaneously <em>good</em> and <em>dangerous</em> for the lab, and what does it imply for how you\'d weight the prioritization function?', a: 'Good: the field is validated, the technical bet is no longer "lone bet" — easier customer education, easier recruiting, easier capital. Dangerous: speed alone is contested (ByteDance Seed Diffusion already faster on paper than the model), Google has shipped a research model, open-weights pressure from below. Strategic asymmetry: the lab has no conflict (frontier labs would cannibalize their frontier-autoregressive revenue) and full focus — but well-funded entrants could narrow the speed gap (Google launched Gemini 3.5 Flash at 289 tokens/sec on May 19, 2026 — a 4× speed-up over prior frontier autoregressive models) and big labs may build their own diffusion variants. Implication for the prioritization function: weight toward use cases where structural edges (controllability + both-sided conditioning, Lesson 4) are the moat, not raw tokens per second. Use cases where structure dominates — coding/editing, long-horizon planning, constrained optimization — become higher priority; pure-speed use cases (voice) become more contested and need vertical execution speed (ship product while labs ship demos) as a defensive moat.' },
     ]
   },
 
   {
     id: 'AP',
     short: 'Appendix',
-    title: 'Appendix — Interview Delivery (rehearse out loud)',
-    spine: 'Not a concept to internalize — a delivery script. No quiz; rehearse it out loud.',
-    takeaway: 'Delivery ready: three opener sentences memorized, two questions to ask back, the full scorecard for any dimension pressed on, engineer-round depth checks, and Decision Transformers as the one thing to skim before the founder round.',
+    title: 'Appendix — Talking points (rehearse out loud)',
+    spine: 'Quick-reference talking points. No quiz; rehearse out loud.',
+    takeaway: 'Delivery ready: three opener sentences memorized, two questions to ask back, the full scorecard for any dimension pressed on, engineer-round depth checks, and Decision Transformers as the one thing to skim for deeper context.',
     sections: [
       {
         kind: 'mechanism',
-        title: 'Three sentences that prove you read the lineage, not the abstracts',
+        title: 'Three sentences that capture the lineage',
         html: `<div class="appendix-block">
           <ol>
             <li>"FlashAttention's lesson — <em>wall-clock is the critical path, not floating-point operations</em> — is the same lesson as 'autoregression is serial': speed is a systems property. the lab already states this in the company blog post (95th-percentile latency under concurrency, not tokens per second)."</li>
@@ -1792,7 +1792,7 @@ const LESSONS = [
       },
       {
         kind: 'mechanism',
-        title: 'Two questions to ask them (signal product judgment)',
+        title: 'Two questions worth asking',
         html: `<div class="appendix-block">
           <ul>
             <li>"Of the four clusters, where is the latency → realized-revenue loop tightest <em>today</em>, and is model-development investment flowing there — or to the most defensible (structural-edge) one?"</li>
@@ -1802,8 +1802,8 @@ const LESSONS = [
       },
       {
         kind: 'mechanism',
-        title: 'Honest scorecard — every dimension a founder will press on',
-        html: `<p style="font-size:13px;color:var(--ink-soft);margin-bottom:10px;">Including where autoregression wins. <strong>State the autoregression-wins rows unprompted</strong> — that's the seniority signal. Use this as your reference for any dimension they push back on.</p>
+        title: 'Honest scorecard — every dimension worth defending',
+        html: `<p style="font-size:13px;color:var(--ink-soft);margin-bottom:10px;">Including where autoregression wins. <strong>State the autoregression-wins rows proactively</strong>. Use this as your reference for any dimension they push back on.</p>
         <div style="overflow-x:auto;">
         <table class="ucase-table scorecard" style="font-size:12px;">
           <thead>
@@ -1868,7 +1868,7 @@ const LESSONS = [
               <td><strong>Serving engineering</strong></td>
               <td>Mature, well-understood (vLLM, etc.)</td>
               <td>Bespoke kernels (FlashAttention's "new CUDA kernel per variant"); fewer off-the-shelf tools</td>
-              <td><span class="verdict-ar">Autoregression.</span> Real engineering-cost and hiring constraint — name it.</td>
+              <td><span class="verdict-ar">Autoregression.</span> Real engineering-cost and talent constraint — name it.</td>
             </tr>
           </tbody>
         </table>
@@ -1877,7 +1877,7 @@ const LESSONS = [
       },
       {
         kind: 'mechanism',
-        title: 'Engineer-round depth checks (from Lesson 1)',
+        title: 'Technical depth checks (from Lesson 1)',
         html: `<div class="appendix-block">
           <ul>
             <li>The three-line attention computation and why it's N×N</li>
@@ -1888,8 +1888,8 @@ const LESSONS = [
       },
       {
         kind: 'mechanism',
-        title: 'Gap to close on your own',
-        html: `<div class="callout warn">Decision Transformers is in the lab's founder bio but not in your uploads — reinforcement-learning-as-sequence-modeling connects to the agentic-loop thesis (Lesson 5). <strong>Skim before the founder round.</strong></div>`
+        title: 'Adjacent reading',
+        html: `<div class="callout warn">Decision Transformers connects to the agentic-loop thesis (Lesson 5) — reinforcement-learning-as-sequence-modeling. Worth skimming for deeper context.</div>`
       },
       {
         kind: 'mechanism',
@@ -1911,7 +1911,7 @@ const LESSONS = [
 /* =========================================================
    GAME STATE
    ========================================================= */
-const STORAGE_KEY = 'inception-study-game-v1';
+const STORAGE_KEY = 'diffusion-study-game-v1';
 let state = loadState();
 
 function loadState() {
@@ -2141,7 +2141,7 @@ function renderCompletion(wrap, lesson) {
     const final = document.createElement('div');
     final.style.textAlign = 'center';
     final.style.marginTop = '14px';
-    final.innerHTML = `<p style="font-size:14px;color:var(--ink-soft);">All ${LESSONS.length} lessons complete. Longest streak: <strong style="color:var(--accent)">${state.longestStreak}</strong>. Now rehearse out loud in <a href="index.html" style="color:var(--accent)">free-read mode</a> before the interview.</p>`;
+    final.innerHTML = `<p style="font-size:14px;color:var(--ink-soft);">All ${LESSONS.length} lessons complete. Longest streak: <strong style="color:var(--accent)">${state.longestStreak}</strong>. Now rehearse out loud in <a href="index.html" style="color:var(--accent)">free-read mode</a> for final review.</p>`;
     div.appendChild(final);
   }
 
@@ -2714,7 +2714,7 @@ function buildNoiseStrip(wrap, title) {
   desc.style.fontSize = '13px';
   desc.style.color = 'var(--ink-soft)';
   desc.style.marginBottom = '10px';
-  desc.innerHTML = 'Move the slider to add noise to a "photo". This direction is <strong>free</strong> — no model. The job of diffusion is learning to <em>reverse</em> this.';
+  desc.innerHTML = 'Move the slider to add noise to a "photo". This direction is <strong>free</strong> — no model. The task of diffusion is learning to <em>reverse</em> this.';
   wrap.appendChild(desc);
 
   const canvas = document.createElement('canvas');
