@@ -905,7 +905,7 @@
 <div class="shell">
 
   <header class="app-header">
-    <h1>Inception AI — Interview Study</h1>
+    <h1>Diffusion-LLM Interview Study</h1>
     <span class="sub">5 lessons + appendix · click bars to jump · <a href="game.html" style="color:var(--accent);text-decoration:none;">↗ Game mode</a></span>
   </header>
 
@@ -929,12 +929,12 @@ const LESSONS = [
     title: 'Lesson 0 — Foundations: what a language model actually is',
     spine: 'A modern language model is two things at once — a five-stage training pipeline and a stack of identical transformer blocks. Every later lesson in this guide attacks one of these boxes.',
     takeaway: 'A modern language model = a 5-stage training pipeline + a stack of identical transformer blocks. The model is one box; the pipeline is the product. Every later lesson attacks one box in this picture.',
-    bridge: 'Lesson 1 zooms into the <em>serve</em> stage — why autoregressive generation is a serial chain of N forward passes, and the bottleneck that defines the problem Inception exists to solve.',
+    bridge: 'Lesson 1 zooms into the <em>serve</em> stage — why autoregressive generation is a serial chain of N forward passes, and the bottleneck that defines the problem the lab exists to solve.',
     sections: [
       {
         kind: 'idea',
         title: 'The Idea',
-        html: `<p>To prioritize what Inception should build, you first need a clear picture of what a language model <em>is</em>. Two things at once:</p>
+        html: `<p>To prioritize what the lab should build, you first need a clear picture of what a language model <em>is</em>. Two things at once:</p>
         <ol>
           <li>A <strong>pipeline</strong> — five stages that turn raw text into a chat assistant.</li>
           <li>A <strong>model</strong> — a stack of identical transformer blocks doing next-token prediction.</li>
@@ -988,7 +988,7 @@ const LESSONS = [
           <li>training duration scales to be Chinchilla-optimal</li>
         </ul>
         <p>GPT-2 capability emerges around <strong>depth 24–26</strong>.</p>
-        <div class="callout good"><strong>Why this matters for an Inception product manager:</strong> You don't tune the autoregressive recipe anymore; you pick a budget. The commodity stage is settled, so the differentiator has moved up the stack — to model class (Inception's bet), serving, and control.</div>`,
+        <div class="callout good"><strong>Why this matters for a product manager:</strong> You don't tune the autoregressive recipe anymore; you pick a budget. The commodity stage is settled, so the differentiator has moved up the stack — to model class (the lab's bet), serving, and control.</div>`,
         visual: 'depth'
       },
       {
@@ -1011,22 +1011,22 @@ const LESSONS = [
       {
         kind: 'impact',
         title: 'Why this is Lesson 0',
-        html: `<p>Inception's Mercury 2 ran through this <em>exact same pipeline</em>, just with a <strong>diffusion</strong> model in the "predict next token" box. Every subsequent lesson attacks one specific stage:</p>
+        html: `<p>the lab's flagship diffusion model ran through this <em>exact same pipeline</em>, just with a <strong>diffusion</strong> model in the "predict next token" box. Every subsequent lesson attacks one specific stage:</p>
         <ul>
           <li><strong>Lesson 1</strong> — attacks <em>serve</em>, exposing the autoregressive bottleneck</li>
           <li><strong>Lessons 2–3</strong> — replace the <em>model class</em> inside the box</li>
           <li><strong>Lesson 4</strong> — collapses the <em>reinforcement learning stage</em> from a three-model pipeline to one loss</li>
           <li><strong>Lesson 5</strong> — picks which products this pipeline should build</li>
         </ul>
-        <div class="callout good"><strong>The frame:</strong> "Inception's bet is to swap one box — the model class — in a stack everyone else takes for granted. That swap propagates differently through training, serving, and control."</div>
+        <div class="callout good"><strong>The frame:</strong> "the lab's bet is to swap one box — the model class — in a stack everyone else takes for granted. That swap propagates differently through training, serving, and control."</div>
         <p style="font-size:12px;color:var(--ink-fainter);margin-top:14px;border-top:1px solid var(--line);padding-top:10px;">To see this concretely in code: Andrej Karpathy's <strong>nanoGPT</strong> implements the model in ~300 lines, and <strong>nanochat</strong> runs the full pipeline end-to-end on a single 8×H100 node for ~$48–$100.</p>`
       }
     ],
     quiz: [
       { id: '0a', q: 'Name the 5 stages of the nanochat pipeline and what each one teaches the model.', a: '(1) Tokenize — how to chunk text into reusable Byte-Pair Encoding pieces. (2) Pretrain — predict next token on raw web text → how language works. (3) Supervised fine-tuning — predict next token on chat-formatted conversations → assistant turn format. (4) Reinforcement learning (Direct Preference Optimization or Proximal Policy Optimization) — optimize against preference pairs → human taste/safety. (5) Serve — autoregressive decoding loop. Every stage is "predict next token" on increasingly-curated data; the data curriculum is the magic, not the loss.' },
       { id: '0b', q: 'Sketch the inside of a transformer block. What does each component do, and why are LayerNorm + residuals there?', a: 'Block recipe: x → LayerNorm → Attention → +residual → LayerNorm → feed-forward network → +residual. Attention mixes information across tokens (each token can look at every other). The feed-forward network (a multi-layer perceptron) does per-token "thinking" (2 layers, Gaussian Error Linear Unit activation, 4× expand). LayerNorm stabilizes activations before each sub-layer. Residuals (the +x) give gradients an "express lane" so the stack can be made very deep without signal loss.' },
-      { id: '0c', q: 'Why is "depth as the only knob" a meaningful fact about the field?', a: 'It means the autoregressive recipe has converged — width, heads, learning rate, schedule, training duration can all be derived from one number to be compute-optimal. Practitioners don\'t tune, they pick a budget. For an Inception product manager: the commodity autoregressive recipe is settled, so the place to compete has moved up the stack (model class, control surface, packaging) — exactly where Inception is playing.' },
-      { id: '0d', q: 'GPT-2 cost ~$43K to train in 2019; nanochat trains it for ~$100 in 2026. What\'s the implication for an Inception product manager?', a: '~400× cost collapse in 7 years from compounding hardware + algorithms + data quality. Implication: the frontier doesn\'t stay frontier — last year\'s premium capability becomes this year\'s commodity, which determines when a use-case unlocks for mass deployment. Inception\'s speed/cost edge has the same dynamic: it broadens the addressable market over time, but only the structural edges (Lesson 4) stay defensible as competitors catch up on raw efficiency.' },
+      { id: '0c', q: 'Why is "depth as the only knob" a meaningful fact about the field?', a: 'It means the autoregressive recipe has converged — width, heads, learning rate, schedule, training duration can all be derived from one number to be compute-optimal. Practitioners don\'t tune, they pick a budget. For a product manager: the commodity autoregressive recipe is settled, so the place to compete has moved up the stack (model class, control surface, packaging) — exactly where the lab is playing.' },
+      { id: '0d', q: 'GPT-2 cost ~$43K to train in 2019; nanochat trains it for ~$100 in 2026. What\'s the implication for a product manager?', a: '~400× cost collapse in 7 years from compounding hardware + algorithms + data quality. Implication: the frontier doesn\'t stay frontier — last year\'s premium capability becomes this year\'s commodity, which determines when a use-case unlocks for mass deployment. the lab\'s speed/cost edge has the same dynamic: it broadens the addressable market over time, but only the structural edges (Lesson 4) stay defensible as competitors catch up on raw efficiency.' },
     ]
   },
 
@@ -1036,13 +1036,13 @@ const LESSONS = [
     title: 'Lesson 1 — How generation works today, and why it\'s slow',
     spine: 'Every component here is a serial or memory bottleneck. This is the problem the entire company exists to solve — you cannot pitch the solution without owning the problem.',
     takeaway: 'Autoregression is N serial forward passes (token N waits for N−1). Attention is N×N. The Key/Value cache fixes redundant compute but NOT the chain — and creates a memory-bandwidth bottleneck of its own. More reasoning → more latency, structurally.',
-    bridge: 'You own the problem. Lesson 2 introduces the solution Inception bets the company on: <strong>diffusion</strong>, and the single concept the whole company rests on — the score.',
+    bridge: 'You own the problem. Lesson 2 introduces the solution the lab bets the company on: <strong>diffusion</strong>, and the single concept the whole company rests on — the score.',
     sections: [
       {
         kind: 'idea',
         title: 'The Idea',
         html: `<p>A standard large language model generates <strong>one token at a time, left to right</strong>: predict next token, append, feed back in, repeat. An N-token answer = <strong>N sequential forward passes</strong>. Token N's computation cannot begin until token N−1 exists.</p>
-        <p>This is not an implementation detail — it is the <em>definition</em> of autoregression, and it's the root of every speed problem Inception attacks.</p>`,
+        <p>This is not an implementation detail — it is the <em>definition</em> of autoregression, and it's the root of every speed problem the lab attacks.</p>`,
         visual: 'doorway'
       },
       {
@@ -1133,7 +1133,7 @@ const LESSONS = [
       {
         kind: 'mechanism',
         title: 'Mechanism — The unification (moat narrative)',
-        html: `<p>SMLD (Song & Ermon '19) and DDPM (Ho '20) <strong>aren't rival methods</strong> — they're discretizations of two specific SDEs:</p>
+        html: `<p>SMLD (Song et al. '19) and DDPM (Ho '20) <strong>aren't rival methods</strong> — they're discretizations of two specific SDEs:</p>
         <ul>
           <li><strong>VE</strong> (Variance Exploding) ↔ SMLD</li>
           <li><strong>VP</strong> (Variance Preserving) ↔ DDPM</li>
@@ -1156,7 +1156,7 @@ const LESSONS = [
           <li>Native infill/edit (Lesson 4)</li>
           <li>The basis for cheap control (Lesson 4)</li>
         </ul>
-        <p>Inception's own claim that diffusion language models "correct hallucinations" falls directly out of this.</p>`
+        <p>the lab's own claim that diffusion language models "correct hallucinations" falls directly out of this.</p>`
       },
     ],
     quiz: [
@@ -1178,7 +1178,7 @@ const LESSONS = [
         kind: 'idea',
         title: 'The Idea',
         html: `<p>"Sampling" = the procedure that walks from pure noise to a finished output by repeatedly applying the compass (Lesson 2).</p>
-        <p><strong>How</strong> you walk is where the entire Inception business lives.</p>`
+        <p><strong>How</strong> you walk is where the entire diffusion-LLM business lives.</p>`
       },
       {
         kind: 'mechanism',
@@ -1197,7 +1197,7 @@ const LESSONS = [
         title: 'Mechanism — Why diffusion is parallel (contrast with L1)',
         html: `<p>Autoregression = serial chain of length N.</p>
         <p>Diffusion's walk is different <em>in kind</em>: each denoising step refines the <strong>entire output at once</strong> — all tokens together — and there are only a <em>handful</em> of steps (the road).</p>
-        <div class="callout good">So "a few parallel refine-everything steps" instead of "N serial token-steps." <strong>This is the structural reason Mercury hits ~1,000 tokens per second</strong> — not doing the work faster, not doing it serially.</div>`
+        <div class="callout good">So "a few parallel refine-everything steps" instead of "N serial token-steps." <strong>This is the structural reason the model hits ~1,000 tokens per second</strong> — not doing the work faster, not doing it serially.</div>`
       },
       {
         kind: 'analogy',
@@ -1208,7 +1208,7 @@ const LESSONS = [
       {
         kind: 'impact',
         title: 'User Impact — The most important product insight',
-        html: `<p>The number of denoising steps is a <strong>continuous quality↔latency dial on ONE model</strong>. Mercury 2 ships this as "tunable reasoning."</p>
+        html: `<p>The number of denoising steps is a <strong>continuous quality↔latency dial on ONE model</strong>. the flagship diffusion model ships this as "tunable reasoning."</p>
         <p>One model family, sold at different frontier points:</p>
         <ul>
           <li>A <strong>voice customer</strong> buys fast/few-step</li>
@@ -1292,7 +1292,7 @@ const LESSONS = [
           <li>Schema-validity <em>structurally</em> (Masked Temporal Interpolation Diffusion–style masking)</li>
           <li>House-style via <em>cheap</em> Direct Preference Optimization tuning</li>
         </ul>
-        <p>= a tractable <strong>product tier</strong>, not a research engagement. Mercury 2 ships "schema-aligned JSON output."</p>
+        <p>= a tractable <strong>product tier</strong>, not a research engagement. the flagship diffusion model ships "schema-aligned JSON output."</p>
         <div class="callout good"><strong>This is a moat</strong> because it's near-free for diffusion and expensive/brittle for autoregression.</div>`
       },
     ],
@@ -1314,7 +1314,7 @@ const LESSONS = [
       {
         kind: 'idea',
         title: 'The Idea',
-        html: `<p>Inception's value prop has three dimensions:</p>
+        html: `<p>the lab's value prop has three dimensions:</p>
         <ul>
           <li><strong>Speed</strong> (strong)</li>
           <li><strong>Cost</strong> (strong)</li>
@@ -1327,17 +1327,17 @@ const LESSONS = [
       {
         kind: 'mechanism',
         title: 'Synthesis (the one-line deliverable)',
-        html: `<div class="callout good" style="font-size: 15px;"><strong>Prioritize where</strong> immediate user demand is high <strong>AND</strong> the advantage is structurally durable (not just a speed lead) <strong>AND</strong> Mercury's current quality envelope already clears the bar — and treat the speed/cost strengths as the <em>enabler</em> of axis 1, not the differentiator (that's axis 2).</div>`
+        html: `<div class="callout good" style="font-size: 15px;"><strong>Prioritize where</strong> immediate user demand is high <strong>AND</strong> the advantage is structurally durable (not just a speed lead) <strong>AND</strong> the model's current quality envelope already clears the bar — and treat the speed/cost strengths as the <em>enabler</em> of axis 1, not the differentiator (that's axis 2).</div>`
       },
       {
         kind: 'mechanism',
         title: 'The per-use-case scoring function (the multiplicative formula)',
-        html: `<p>The three axes prioritize <em>across</em> use cases. The preamble also names a four-factor function that scores any <em>single</em> use case for Inception fit:</p>
+        html: `<p>The three axes prioritize <em>across</em> use cases. The preamble also names a four-factor function that scores any <em>single</em> use case for product fit:</p>
         <div class="formula" style="font-size:13px;">score = (latency-sensitivity of value) × (reasoning quality required) × (calls per task) × (controllability need)</div>
         <ul>
           <li><strong>Latency-sensitivity of value</strong> — how much does user-perceived value drop with each second of wait? <em>Voice = high; offline batch = ~zero.</em></li>
-          <li><strong>Reasoning quality required</strong> — does the task need frontier-grade reasoning, or does fast-tier suffice? <em>High reasoning is harder for current Mercury.</em></li>
-          <li><strong>Calls per task</strong> — does the task make many model calls (agents, multi-hop) so latency/cost compound? <em>More calls = bigger Inception edge.</em></li>
+          <li><strong>Reasoning quality required</strong> — does the task need frontier-grade reasoning, or does fast-tier suffice? <em>High reasoning is harder for current speed-tier models.</em></li>
+          <li><strong>Calls per task</strong> — does the task make many model calls (agents, multi-hop) so latency/cost compound? <em>More calls = bigger diffusion-LLM edge.</em></li>
           <li><strong>Controllability need</strong> — schema validity, safety, format constraints? <em>High need = the structural moat applies.</em></li>
         </ul>
         <div class="callout good"><strong>Weighting:</strong> "weighted toward structural edges over speed edges." Controllability and many-calls are the <em>structural</em> multipliers; raw latency-sensitivity is the <em>speed</em> multiplier. Both matter — but the structural ones determine the <em>durable</em> bets (axis 2).</div>`
@@ -1357,7 +1357,7 @@ const LESSONS = [
             <tr>
               <td><strong>ByteDance</strong><br/><span style="font-size:11px;color:var(--ink-fainter);">Seed Diffusion</span></td>
               <td>2,146 tokens/sec on H20 graphics processors; claims new state of the art on the speed-quality Pareto frontier for code</td>
-              <td>Faster than Mercury on the headline number — <strong>speed alone is now contested</strong></td>
+              <td>Faster than the model on the headline number — <strong>speed alone is now contested</strong></td>
             </tr>
             <tr>
               <td><strong>LLaDA 2.0</strong><br/><span style="font-size:11px;color:var(--ink-fainter);">open-weight</span></td>
@@ -1374,7 +1374,7 @@ const LESSONS = [
           <li>"Bets next AI wave on agents, not chatbots" — agentic capability is the new battleground</li>
           <li>Pricing $1.50 in / $9.00 out per 1 million tokens</li>
         </ul>
-        <p style="margin-bottom:0;"><strong>The numbers vs. Mercury:</strong> Mercury still ~3.5× faster on raw tokens per second (1,009 vs 289) and 6–12× cheaper ($0.25 / $0.75 vs $1.50 / $9.00). <em>But the gap is closing from the autoregressive side — and Google is now publicly framing speed as the next AI wave.</em></p></div>
+        <p style="margin-bottom:0;"><strong>The numbers vs. the flagship:</strong> the lab's model is still ~3.5× faster on raw tokens per second (1,009 vs 289) and 6–12× cheaper ($0.25 / $0.75 vs $1.50 / $9.00). <em>But the gap is closing from the autoregressive side — and Google is now publicly framing speed as the next AI wave.</em></p></div>
 
         <h4 style="margin:18px 0 6px 0;font-size:13px;color:var(--accent);">Why autoregression stayed dominant so long</h4>
         <p style="font-size:13px;color:var(--ink-soft);margin-top:0;">(The rational reasons — not "everyone was wrong")</p>
@@ -1385,10 +1385,10 @@ const LESSONS = [
         </ul>
 
         <h4 style="margin:18px 0 6px 0;font-size:13px;color:var(--accent);">The strategic asymmetry (the actual interview thesis)</h4>
-        <div class="callout good"><strong>Inception's edge is not being the only believer — it's being the only player with no conflict and full focus.</strong> A frontier lab can't make diffusion its identity without cannibalizing frontier-autoregressive revenue and ecosystem; Inception has no such tension.</div>
+        <div class="callout good"><strong>the lab's edge is not being the only believer — it's being the only player with no conflict and full focus.</strong> A frontier lab can't make diffusion its identity without cannibalizing frontier-autoregressive revenue and ecosystem; the lab has no such tension.</div>
         <p style="font-size:13px;margin-top:10px;"><strong>But this cuts both ways — the honest risks (in analysts' own words):</strong></p>
         <ul style="font-size:13px;">
-          <li>If larger providers integrate parallel decoding or hybrid diffusion into existing models, Mercury's speed advantage could <em>narrow</em>.</li>
+          <li>If larger providers integrate parallel decoding or hybrid diffusion into existing models, the model's speed advantage could <em>narrow</em>.</li>
           <li>Open question whether big labs build their own — <em>Google already has one</em>.</li>
         </ul>
 
@@ -1398,27 +1398,27 @@ const LESSONS = [
       {
         kind: 'mechanism',
         title: 'Scores-as-Actions\' honest status (the axis-3 reality check)',
-        html: `<p>The parallel reality check on axis 3 (Mercury feasibility): Scores as Actions is the <em>theory</em> for fine-tuning a diffusion model toward production rewards (continuous-time analogue of Direct Preference Optimization's π_ref anchoring).</p>
+        html: `<p>The parallel reality check on axis 3 (model feasibility): Scores as Actions is the <em>theory</em> for fine-tuning a diffusion model toward production rewards (continuous-time analogue of Direct Preference Optimization's π_ref anchoring).</p>
         <p><strong>Framework-stage</strong> — experiments deferred to a forthcoming paper.</p>
         <div class="callout warn"><strong>Implication for your map:</strong> custom per-customer fine-tuning is a <em>roadmap</em> feasibility item, not a current one — which is why several high-durability forks in the map below are feasibility-gated (M), not green.</div>`
       },
       {
         kind: 'mechanism',
         title: 'Mechanism — The use-case map',
-        html: `<p>Inception's current four are not equally good bets, and "agents" and "search" are too coarse to score — they decompose:</p>`,
+        html: `<p>the lab's current four are not equally good bets, and "agents" and "search" are too coarse to score — they decompose:</p>`,
         visual: 'ucase'
       },
       {
         kind: 'mechanism',
         title: 'The adjacency you uniquely see',
-        html: `<p>The framework's value is spotting markets Inception <em>hasn't named</em>. The strongest, and the one you own:</p>
+        html: `<p>The framework's value is spotting markets the lab <em>hasn't named</em>. The strongest, and the one you own:</p>
         <div class="callout good"><strong>Language-model-mediated constrained optimization</strong> — natural-language → solver-shaped problem → agent-guided refinement.</div>
         <ul>
           <li><strong>Customer value: M→H</strong> — huge latent/locked-up demand (operations, scheduling, allocation — buyers who currently need operations-research specialists)</li>
           <li><strong>Durability: H</strong> — this is the <em>structural-edge</em> archetype (controllable, schema-constrained, both-sided refinement; not a speed play)</li>
-          <li><strong>Mercury feasibility: M</strong> — needs reliable structured output + tool use, both of which Mercury 2 ships, but tight-constraint fidelity is unproven</li>
+          <li><strong>model feasibility: M</strong> — needs reliable structured output + tool use, both of which the flagship diffusion model ships, but tight-constraint fidelity is unproven</li>
         </ul>
-        <p><em>This is your differentiated insight and your literal domain — Reasoning AI is agentic accessibility for optimization/graph/rules reasoners.</em> Frame it as "here's a market your value prop unlocks that isn't on the current list," not as a tangent.</p>
+        <p><em>This is a candidate's differentiated insight to bring in: a market the value prop unlocks that isn't on the current list.</em> Frame it as "here's a market your value prop unlocks that isn't on the current list," not as a tangent.</p>
         <p><strong>Other adjacencies to name lightly:</strong> structured data extraction / extract-transform-load at volume, real-time transcript and human-computer-interaction cleanup, edge / on-device given the efficiency profile.</p>`
       },
       {
@@ -1453,17 +1453,16 @@ const LESSONS = [
           <span class="stat-chip">OpenAI-API drop-in</span>
           <span class="stat-chip">AWS &amp; Azure</span>
           <span class="stat-chip"><strong>$0.25/$0.75</strong> per 1M in/out</span>
-          <span class="stat-chip">Menlo-led <strong>$50M</strong></span>
-          <span class="stat-chip">Snowflake &amp; Databricks Ventures</span>
+          <span class="stat-chip">Recent Series A funding</span>
         </div>`
       }
     ],
     quiz: [
-      { id: '5a', q: 'Name your three prioritization axes, and for each, which Inception value-prop dimension or technical lesson feeds it.', a: '(1) Immediate customer value/demand — fed by speed+cost (Inception\'s strengths relieve the pain) and how compounding the latency is (Lessons 1 and 3). (2) Long-term market given competition — fed by structural edge (Lessons 2 and 4): durable vs. a speed lead that erodes. (3) Mercury feasibility — fed by the quality tradeoff + step-count dial (Lesson 3), controllability (Lesson 4), and Scores as Actions being framework-stage (limits custom tuning).' },
-      { id: '5b', q: 'Why is "coding/editing" the top bet on all three axes — and why is "agentic loops" un-scoreable until decomposed?', a: 'Coding: demand is acute (in-flow pauses intolerable, clear developer-tools willingness-to-pay), the edge is structural (infill/next-edit needs both-sided context autoregression can\'t do natively — durable), and it\'s Mercury\'s most validated domain — all three axes green. "Agentic loops" spans short tool-use (H/M/H), long autonomous planning (H/H/M), and multi-agent (M/H/L); the axes diverge by fork, so a single score is meaningless.' },
+      { id: '5a', q: 'Name your three prioritization axes, and for each, which value-prop dimension or technical lesson feeds it.', a: '(1) Immediate customer value/demand — fed by speed+cost (the lab\'s strengths relieve the pain) and how compounding the latency is (Lessons 1 and 3). (2) Long-term market given competition — fed by structural edge (Lessons 2 and 4): durable vs. a speed lead that erodes. (3) model feasibility — fed by the quality tradeoff + step-count dial (Lesson 3), controllability (Lesson 4), and Scores as Actions being framework-stage (limits custom tuning).' },
+      { id: '5b', q: 'Why is "coding/editing" the top bet on all three axes — and why is "agentic loops" un-scoreable until decomposed?', a: 'Coding: demand is acute (in-flow pauses intolerable, clear developer-tools willingness-to-pay), the edge is structural (infill/next-edit needs both-sided context autoregression can\'t do natively — durable), and it\'s the model\'s most validated domain — all three axes green. "Agentic loops" spans short tool-use (H/M/H), long autonomous planning (H/H/M), and multi-agent (M/H/L); the axes diverge by fork, so a single score is meaningless.' },
       { id: '5c', q: 'Why does speed/cost belong to axis 1 (enabler) but NOT axis 2 (durability)?', a: 'Speed/cost make the use case viable now (relieve the latency/cost pain → drives current demand = axis 1), but every lab is chasing tokens per second, so a speed lead erodes — it is not a durable competitive moat (axis 2). Durability comes from structural edges (both-sided conditioning, near-free control) competitors can\'t cheaply copy.' },
-      { id: '5d', q: 'Pitch the constrained-optimization adjacency in two sentences: the demand, and why it\'s a structural (durable) edge not a speed play.', a: 'Demand: vast latent/locked-up market in operations/scheduling/allocation where buyers currently need operations-research specialists — natural-language → solver → agent-refinement removes that gatekeeper. Durable because it\'s the structural-edge archetype (controllable, schema-constrained, both-sided iterative refinement), not a speed race — a competitor matching Mercury\'s tokens per second doesn\'t replicate the controllability that makes it work.' },
-      { id: '5e', q: 'Diffusion language models are now externally validated by Google (Gemini Diffusion), ByteDance (Seed Diffusion), and open-weight models (LLaDA 2.0) — why is that simultaneously <em>good</em> and <em>dangerous</em> for Inception, and what does it imply for how you\'d weight the prioritization function?', a: 'Good: the field is validated, the technical bet is no longer "lone bet" — easier customer education, easier hiring, easier capital. Dangerous: speed alone is contested (ByteDance Seed Diffusion already faster on paper than Mercury), Google has shipped a research model, open-weights pressure from below. Strategic asymmetry: Inception has no conflict (frontier labs would cannibalize their frontier-autoregressive revenue) and full focus — but well-funded entrants could narrow the speed gap (Google launched Gemini 3.5 Flash at 289 tokens/sec on May 19, 2026 — a 4× speed-up over prior frontier autoregressive models) and big labs may build their own diffusion variants. Implication for the prioritization function: weight toward use cases where structural edges (controllability + both-sided conditioning, Lesson 4) are the moat, not raw tokens per second. Use cases where structure dominates — coding/editing, long-horizon planning, constrained optimization — become higher priority; pure-speed use cases (voice) become more contested and need vertical execution speed (ship product while labs ship demos) as a defensive moat.' },
+      { id: '5d', q: 'Pitch the constrained-optimization adjacency in two sentences: the demand, and why it\'s a structural (durable) edge not a speed play.', a: 'Demand: vast latent/locked-up market in operations/scheduling/allocation where buyers currently need operations-research specialists — natural-language → solver → agent-refinement removes that gatekeeper. Durable because it\'s the structural-edge archetype (controllable, schema-constrained, both-sided iterative refinement), not a speed race — a competitor matching the model\'s tokens per second doesn\'t replicate the controllability that makes it work.' },
+      { id: '5e', q: 'Diffusion language models are now externally validated by Google (Gemini Diffusion), ByteDance (Seed Diffusion), and open-weight models (LLaDA 2.0) — why is that simultaneously <em>good</em> and <em>dangerous</em> for the lab, and what does it imply for how you\'d weight the prioritization function?', a: 'Good: the field is validated, the technical bet is no longer "lone bet" — easier customer education, easier hiring, easier capital. Dangerous: speed alone is contested (ByteDance Seed Diffusion already faster on paper than the model), Google has shipped a research model, open-weights pressure from below. Strategic asymmetry: the lab has no conflict (frontier labs would cannibalize their frontier-autoregressive revenue) and full focus — but well-funded entrants could narrow the speed gap (Google launched Gemini 3.5 Flash at 289 tokens/sec on May 19, 2026 — a 4× speed-up over prior frontier autoregressive models) and big labs may build their own diffusion variants. Implication for the prioritization function: weight toward use cases where structural edges (controllability + both-sided conditioning, Lesson 4) are the moat, not raw tokens per second. Use cases where structure dominates — coding/editing, long-horizon planning, constrained optimization — become higher priority; pure-speed use cases (voice) become more contested and need vertical execution speed (ship product while labs ship demos) as a defensive moat.' },
     ]
   },
 
@@ -1479,7 +1478,7 @@ const LESSONS = [
         title: 'Three sentences that prove you read the lineage, not the abstracts',
         html: `<div class="appendix-block">
           <ol>
-            <li>"FlashAttention's lesson — <em>wall-clock is the critical path, not floating-point operations</em> — is the same lesson as 'autoregression is serial': speed is a systems property. Inception already states this in the Mercury 2 post (95th-percentile latency under concurrency, not tokens per second)."</li>
+            <li>"FlashAttention's lesson — <em>wall-clock is the critical path, not floating-point operations</em> — is the same lesson as 'autoregression is serial': speed is a systems property. the lab already states this in the company blog post (95th-percentile latency under concurrency, not tokens per second)."</li>
             <li>"Control is a near-free axis for diffusion: conditional generation with no retraining, output-space masking (and <em>where</em> you mask matters — initialization-mask 40 success rate vs mid-iteration 3 success rate collapse), Direct-Preference-Optimization-cheap preference tuning. That's the defensible surface, not raw speed."</li>
             <li>"Prioritize structural edges over speed edges: editing/infilling/planning need both-sided conditioning, which autoregression can't do natively. Speed gets competed away; structure is the moat."</li>
           </ol>
@@ -1520,8 +1519,8 @@ const LESSONS = [
             <tr>
               <td><strong>Peak quality, hardest reasoning</strong></td>
               <td>Frontier models are all autoregressive; most mature training/eval ecosystem. <em>Gemini 3.5 Flash (May 2026) beats Gemini 3.1 Pro on agentic benchmarks at 289 tokens/sec — the AR side is now racing on quality-at-speed too.</em></td>
-              <td>Competitive with the speed-optimized tier on Inception's headline benchmarks, but trails frontier-max</td>
-              <td><span class="verdict-ar">Autoregression at the frontier.</span> State this unprompted — Mercury 2 is 91 AIME / ~74 GPQA but competes in the fast tier, not frontier-max. Gemini 3.5 Flash specifically narrows the quality-at-speed gap.</td>
+              <td>Competitive with the speed-optimized tier on the lab's headline benchmarks, but trails frontier-max</td>
+              <td><span class="verdict-ar">Autoregression at the frontier.</span> State this unprompted — the flagship diffusion model is 91 AIME / ~74 GPQA but competes in the fast tier, not frontier-max. Gemini 3.5 Flash specifically narrows the quality-at-speed gap.</td>
             </tr>
             <tr>
               <td><strong>Both-sided conditioning</strong> (infill / edit / plan)</td>
@@ -1584,18 +1583,18 @@ const LESSONS = [
       {
         kind: 'mechanism',
         title: 'Gap to close on your own',
-        html: `<div class="callout warn">Decision Transformers is in Inception's founder bio but not in your uploads — reinforcement-learning-as-sequence-modeling connects to the agentic-loop thesis (Lesson 5). <strong>Skim before the founder round.</strong></div>`
+        html: `<div class="callout warn">Decision Transformers is in the lab's founder bio but not in your uploads — reinforcement-learning-as-sequence-modeling connects to the agentic-loop thesis (Lesson 5). <strong>Skim before the founder round.</strong></div>`
       },
       {
         kind: 'mechanism',
         title: 'Paper key',
         html: `<div class="stat-strip">
-          <span class="stat-chip"><strong>SDE</strong> Score-Based Generative Modeling via SDEs (Song, Ermon+, ICLR'21)</span>
-          <span class="stat-chip"><strong>FA</strong> FlashAttention (Dao, Ermon+, NeurIPS'22)</span>
-          <span class="stat-chip"><strong>DPO</strong> Direct Preference Optimization (Rafailov, Ermon+, NeurIPS'23)</span>
+          <span class="stat-chip"><strong>SDE</strong> Score-Based Generative Modeling via SDEs (Song, et al., ICLR'21)</span>
+          <span class="stat-chip"><strong>FA</strong> FlashAttention (Dao, et al., NeurIPS'22)</span>
+          <span class="stat-chip"><strong>DPO</strong> Direct Preference Optimization (Rafailov, et al., NeurIPS'23)</span>
           <span class="stat-chip"><strong>SAA</strong> Scores as Actions (Zhao, Tang+, '24)</span>
           <span class="stat-chip"><strong>MTID</strong> Masked Temporal Interpolation Diffusion (ICLR'25)</span>
-          <span class="stat-chip"><strong>M2</strong> Mercury 2 (Inception, Feb'26)</span>
+          <span class="stat-chip"><strong>Flagship</strong> the company's diffusion language model (released early 2026)</span>
         </div>`
       }
     ],
@@ -1974,7 +1973,7 @@ function buildPipeline(wrap, title) {
     { num: '4', name: 'Reinforcement Learning', teaches: '"human taste"',
       detail: '<h5>Reinforcement Learning</h5><p>Optimize against preference pairs (chosen vs. rejected). Two approaches:</p><ul><li><strong>Proximal Policy Optimization (the classic Reinforcement Learning from Human Feedback recipe):</strong> reward model + reinforcement learning loop (3 models, sampling in-loop, unstable)</li><li><strong>Direct Preference Optimization:</strong> one cross-entropy loss directly on the policy — no reward model, no sampling</li></ul><p><em>Lesson 4 dissects Direct Preference Optimization.</em></p>' },
     { num: '5', name: 'Serve', teaches: '(inference loop)',
-      detail: '<h5>Serve</h5><p>Autoregressive decoding: predict token, append, feed back in, repeat. Key/Value cache to avoid recomputation.</p><p><strong>This is where the entire Lesson 1 problem lives.</strong> N tokens out = N serial forward passes. Inception replaces this stage by replacing the model class.</p>' },
+      detail: '<h5>Serve</h5><p>Autoregressive decoding: predict token, append, feed back in, repeat. Key/Value cache to avoid recomputation.</p><p><strong>This is where the entire Lesson 1 problem lives.</strong> N tokens out = N serial forward passes. the lab replaces this stage by replacing the model class.</p>' },
   ];
 
   const flow = document.createElement('div');
@@ -2177,7 +2176,7 @@ function buildDepth(wrap, title) {
   note.className = 'callout';
   note.style.fontSize = '13px';
   note.style.marginTop = '14px';
-  note.innerHTML = '<strong>What this proves:</strong> the autoregressive training recipe has <em>converged</em>. You pick a budget, you get a model. Inception\'s opportunity is exactly because this stage is now commodity — the differentiator has moved up to model class + serving + control.';
+  note.innerHTML = '<strong>What this proves:</strong> the autoregressive training recipe has <em>converged</em>. You pick a budget, you get a model. the lab\'s opportunity is exactly because this stage is now commodity — the differentiator has moved up to model class + serving + control.';
   wrap.appendChild(note);
 
   return wrap;
@@ -2224,7 +2223,7 @@ function buildCostChart(wrap, title) {
   const callout = document.createElement('div');
   callout.className = 'callout good';
   callout.style.fontSize = '13px';
-  callout.innerHTML = '<strong>For an Inception PM:</strong> last year\'s frontier is this year\'s commodity. Speed/cost wins broaden the addressable market but get competed away. Only the <em>structural</em> edges (Lesson 4) stay defensible.';
+  callout.innerHTML = '<strong>For an the lab PM:</strong> last year\'s frontier is this year\'s commodity. Speed/cost wins broaden the addressable market but get competed away. Only the <em>structural</em> edges (Lesson 4) stay defensible.';
   wrap.appendChild(callout);
 
   return wrap;
@@ -2728,7 +2727,7 @@ function buildDial(wrap, title) {
   desc.style.fontSize = '13px';
   desc.style.color = 'var(--ink-soft)';
   desc.style.marginBottom = '10px';
-  desc.innerHTML = 'Mercury 2 ships "tunable reasoning" — the customer chooses a point on this curve. Voice → left edge, code-review → right edge. <strong>Same model.</strong>';
+  desc.innerHTML = 'the flagship diffusion model ships "tunable reasoning" — the customer chooses a point on this curve. Voice → left edge, code-review → right edge. <strong>Same model.</strong>';
   wrap.appendChild(desc);
 
   const svgNS = 'http://www.w3.org/2000/svg';
@@ -2836,7 +2835,7 @@ function buildControl4(wrap, title) {
     },
     {
       name: 'Direct Preference Optimization',
-      paper: 'Rafailov, Ermon+, NeurIPS\'23',
+      paper: 'Rafailov, et al., NeurIPS\'23',
       does: 'Preference alignment becomes a <em>single binary cross-entropy loss</em> — no reward model, no reinforcement learning, no sampling loop.',
       vsAR: '<strong>vs. autoregressive (Reinforcement Learning from Human Feedback):</strong> three models (supervised-fine-tuned base + reward model + policy) + Proximal Policy Optimization loop with in-loop sampling. Unstable.'
     },
@@ -2966,7 +2965,7 @@ function buildAxes(wrap, title) {
       n: '1',
       title: 'Immediate customer value',
       ask: 'How acute is the pain today? How many users? Willingness to pay?',
-      fed: 'Fed by: speed + cost (Inception\'s strengths) + how compounding the latency is (Lessons 1 and 3)',
+      fed: 'Fed by: speed + cost (the lab\'s strengths) + how compounding the latency is (Lessons 1 and 3)',
     },
     {
       n: '2',
@@ -2976,8 +2975,8 @@ function buildAxes(wrap, title) {
     },
     {
       n: '3',
-      title: 'Mercury feasibility',
-      ask: 'Can Mercury 2 deliver this now given the quality tradeoff?',
+      title: 'model feasibility',
+      ask: 'Can the flagship diffusion model deliver this now given the quality tradeoff?',
       fed: 'Fed by: quality benchmarks + step-count dial (Lesson 3), controllability (Lesson 4), Scores as Actions still framework-stage.',
     }
   ];
@@ -3038,7 +3037,7 @@ function buildUseCases(wrap, title) {
     <span class="pill m">M→H</span>
     <span class="pill h">H</span>
     <span class="pill m">M</span>
-    &nbsp;— the structural-edge archetype, your literal domain (RAI).`;
+    &nbsp;— the structural-edge archetype, an adjacency the value-prop unlocks.`;
   wrap.appendChild(adj);
 
   return wrap;
