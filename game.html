@@ -3513,14 +3513,16 @@ function buildPassK(wrap, title) {
   readouts.innerHTML = `
     <div class="depth-cell" style="border-left:4px solid var(--accent);text-align:left;padding-left:12px;">
       <div class="label">pass@k at k=10</div>
-      <div class="val" id="pk-passat10" style="font-size:18px;">—</div>
+      <div class="val pk-passat10" style="font-size:18px;">—</div>
     </div>
     <div class="depth-cell" style="border-left:4px solid var(--bad);text-align:left;padding-left:12px;">
       <div class="label">pass^k at k=10</div>
-      <div class="val" id="pk-passcaret10" style="font-size:18px;color:var(--bad);">—</div>
+      <div class="val pk-passcaret10" style="font-size:18px;color:var(--bad);">—</div>
     </div>
   `;
   wrap.appendChild(readouts);
+  const passAtEl = readouts.querySelector('.pk-passat10');
+  const passCarEl = readouts.querySelector('.pk-passcaret10');
 
   const callout = document.createElement('div');
   callout.className = 'callout';
@@ -3624,8 +3626,8 @@ function buildPassK(wrap, title) {
     svg.appendChild(dot2);
 
     // Update readouts
-    document.getElementById('pk-passat10').textContent = (passAt10 * 100).toFixed(passAt10 > 0.999 ? 3 : 2) + '%';
-    document.getElementById('pk-passcaret10').textContent = (passCar10 * 100).toFixed(passCar10 < 0.01 ? 3 : 2) + '%';
+    passAtEl.textContent = (passAt10 * 100).toFixed(passAt10 > 0.999 ? 3 : 2) + '%';
+    passCarEl.textContent = (passCar10 * 100).toFixed(passCar10 < 0.01 ? 3 : 2) + '%';
   }
 
   slider.oninput = e => {
