@@ -1034,7 +1034,7 @@ const LESSONS = [
     id: 'L1',
     short: 'L1 · Autoregression is slow',
     title: 'Lesson 1 — How generation works today, and why it\'s slow',
-    spine: 'Every component here is a serial or memory bottleneck. This is the problem the entire company exists to solve — you cannot pitch the solution without owning the problem.',
+    spine: 'Every component here is a serial or memory bottleneck. This is the problem the entire company exists to solve — the solution doesn't land without owning the problem first.',
     takeaway: 'Autoregression is N serial forward passes (token N waits for N−1). Attention is N×N. The Key/Value cache fixes redundant compute but NOT the chain — and creates a memory-bandwidth bottleneck of its own. More reasoning → more latency, structurally.',
     bridge: 'You own the problem. Lesson 2 introduces the solution Inception bets the company on: <strong>diffusion</strong>, and the single concept the whole company rests on — the score.',
     sections: [
@@ -1138,7 +1138,7 @@ const LESSONS = [
           <li><strong>VE</strong> (Variance Exploding) ↔ SMLD</li>
           <li><strong>VP</strong> (Variance Preserving) ↔ DDPM</li>
         </ul>
-        <div class="callout"><strong>Honest caveat to quote:</strong> <em>no universally best SDE</em> — "VE typically… better sample quality… but worse likelihoods than VP/sub-VP." Practitioners experiment per domain. (Quoting this signals you read past the abstract.)</div>`
+        <div class="callout"><strong>Honest caveat:</strong> <em>no universally best SDE</em> — "VE typically… better sample quality… but worse likelihoods than VP/sub-VP." Practitioners experiment per domain.</div>`
       },
       {
         kind: 'analogy',
@@ -1307,9 +1307,9 @@ const LESSONS = [
     id: 'L5',
     short: 'L5 · Use cases & value',
     title: 'Lesson 5 — Use cases & value',
-    spine: 'Converting the research lineage into a defensible ranking of use cases. Arrive at a framework and a map — not a recital of their four use cases — by reasoning from the lineage.',
-    takeaway: 'Three axes (immediate value · durability · feasibility) + one 4-factor scoring function + a use-case map (coding/editing top bet) + competitive reality (diffusion validated, speed contested) + your unique adjacency (constrained optimization).',
-    bridge: 'Framework + map in hand. The Appendix is the talking-points reference — three opener sentences, two questions worth asking, full scorecard for any dimension worth defending.',
+    spine: 'Converting the research lineage into a defensible ranking of use cases. Arrive at a framework and a map — not a recital of the four named use cases — by reasoning from the lineage.',
+    takeaway: 'Three axes (immediate value · durability · feasibility) + one 4-factor scoring function + a use-case map (coding/editing top bet) + competitive reality (diffusion validated, speed contested) + the structural-edge adjacency (constrained optimization).',
+    bridge: 'Framework + map in hand. The Appendix is the talking-points reference — three opener sentences, two open questions worth raising, full scorecard for any dimension the debate hinges on.',
     sections: [
       {
         kind: 'idea',
@@ -1400,12 +1400,12 @@ const LESSONS = [
         title: 'Scores-as-Actions\' honest status (the axis-3 reality check)',
         html: `<p>The parallel reality check on axis 3 (Mercury feasibility): Scores as Actions is the <em>theory</em> for fine-tuning a diffusion model toward production rewards (continuous-time analogue of Direct Preference Optimization's π_ref anchoring).</p>
         <p><strong>Framework-stage</strong> — experiments deferred to a forthcoming paper.</p>
-        <div class="callout warn"><strong>Implication for your map:</strong> custom per-customer fine-tuning is a <em>roadmap</em> feasibility item, not a current one — which is why several high-durability forks in the map below are feasibility-gated (M), not green.</div>`
+        <div class="callout warn"><strong>Implication for the use-case map:</strong> custom per-customer fine-tuning is a <em>roadmap</em> feasibility item, not a current one — which is why several high-durability forks in the map below are feasibility-gated (M), not green.</div>`
       },
       {
         kind: 'mechanism',
         title: 'Mechanism — The use-case map',
-        html: `<p>Inception's current four are not equally good bets, and "agents" and "search" are too coarse to score — they decompose:</p>`,
+        html: `<p>The four currently-named use cases are not equally good bets, and "agents" and "search" are too coarse to score — they decompose:</p>`,
         visual: 'ucase'
       },
       {
@@ -1458,10 +1458,10 @@ const LESSONS = [
       }
     ],
     quiz: [
-      { id: '5a', q: 'Name your three prioritization axes, and for each, which value-prop dimension or technical lesson feeds it.', a: '(1) Immediate customer value/demand — fed by speed+cost (Inception\'s strengths relieve the pain) and how compounding the latency is (Lessons 1 and 3). (2) Long-term market given competition — fed by structural edge (Lessons 2 and 4): durable vs. a speed lead that erodes. (3) Mercury feasibility — fed by the quality tradeoff + step-count dial (Lesson 3), controllability (Lesson 4), and Scores as Actions being framework-stage (limits custom tuning).' },
+      { id: '5a', q: 'Name the three prioritization axes, and for each, which value-prop dimension or technical lesson feeds it.', a: '(1) Immediate customer value/demand — fed by speed+cost (Inception\'s strengths relieve the pain) and how compounding the latency is (Lessons 1 and 3). (2) Long-term market given competition — fed by structural edge (Lessons 2 and 4): durable vs. a speed lead that erodes. (3) Mercury feasibility — fed by the quality tradeoff + step-count dial (Lesson 3), controllability (Lesson 4), and Scores as Actions being framework-stage (limits custom tuning).' },
       { id: '5b', q: 'Why is "coding/editing" the top bet on all three axes — and why is "agentic loops" un-scoreable until decomposed?', a: 'Coding: demand is acute (in-flow pauses intolerable, clear developer-tools willingness-to-pay), the edge is structural (infill/next-edit needs both-sided context autoregression can\'t do natively — durable), and it\'s the model\'s most validated domain — all three axes green. "Agentic loops" spans short tool-use (H/M/H), long autonomous planning (H/H/M), and multi-agent (M/H/L); the axes diverge by fork, so a single score is meaningless.' },
       { id: '5c', q: 'Why does speed/cost belong to axis 1 (enabler) but NOT axis 2 (durability)?', a: 'Speed/cost make the use case viable now (relieve the latency/cost pain → drives current demand = axis 1), but every lab is chasing tokens per second, so a speed lead erodes — it is not a durable competitive moat (axis 2). Durability comes from structural edges (both-sided conditioning, near-free control) competitors can\'t cheaply copy.' },
-      { id: '5d', q: 'Pitch the constrained-optimization adjacency in two sentences: the demand, and why it\'s a structural (durable) edge not a speed play.', a: 'Demand: vast latent/locked-up market in operations/scheduling/allocation where buyers currently need operations-research specialists — natural-language → solver → agent-refinement removes that gatekeeper. Durable because it\'s the structural-edge archetype (controllable, schema-constrained, both-sided iterative refinement), not a speed race — a competitor matching the model\'s tokens per second doesn\'t replicate the controllability that makes it work.' },
+      { id: '5d', q: 'Describe the constrained-optimization adjacency in two sentences: the demand, and why it\'s a structural (durable) edge not a speed play.', a: 'Demand: vast latent/locked-up market in operations/scheduling/allocation where buyers currently need operations-research specialists — natural-language → solver → agent-refinement removes that gatekeeper. Durable because it\'s the structural-edge archetype (controllable, schema-constrained, both-sided iterative refinement), not a speed race — a competitor matching the model\'s tokens per second doesn\'t replicate the controllability that makes it work.' },
       { id: '5e', q: 'Diffusion language models are now externally validated by Google (Gemini Diffusion), ByteDance (Seed Diffusion), and open-weight models (LLaDA 2.0) — why is that simultaneously <em>good</em> and <em>dangerous</em> for Inception, and what does it imply for how you\'d weight the prioritization function?', a: 'Good: the field is validated, the technical bet is no longer "lone bet" — easier customer education, easier recruiting, easier capital. Dangerous: speed alone is contested (ByteDance Seed Diffusion already faster on paper than Mercury), Google has shipped a research model, open-weights pressure from below. Strategic asymmetry: Inception has no conflict (frontier labs would cannibalize their frontier-autoregressive revenue) and full focus — but well-funded entrants could narrow the speed gap (Google launched Gemini 3.5 Flash at 289 tokens/sec on May 19, 2026 — a 4× speed-up over prior frontier autoregressive models) and big labs may build their own diffusion variants. Implication for the prioritization function: weight toward use cases where structural edges (controllability + both-sided conditioning, Lesson 4) are the moat, not raw tokens per second. Use cases where structure dominates — coding/editing, long-horizon planning, constrained optimization — become higher priority; pure-speed use cases (voice) become more contested and need vertical execution speed (ship product while labs ship demos) as a defensive moat.' },
     ]
   },
@@ -1471,7 +1471,7 @@ const LESSONS = [
     short: 'Appendix',
     title: 'Appendix — Talking points (quick-reference summary)',
     spine: 'Quick-reference summary of the argument. No quiz; say each line in your own words to test fluency.',
-    takeaway: 'Talking points ready: three opener sentences, two questions worth asking, the full scorecard for any dimension, technical depth checks, and Decision Transformers as one paper to read for deeper ML context.',
+    takeaway: 'Talking points ready: three opener sentences, two open questions worth raising, the full scorecard for any dimension, technical depth checks, and Decision Transformers as one paper to read for deeper ML context.',
     sections: [
       {
         kind: 'mechanism',
@@ -1486,7 +1486,7 @@ const LESSONS = [
       },
       {
         kind: 'mechanism',
-        title: 'Two questions worth asking',
+        title: 'Two open questions worth raising',
         html: `<div class="appendix-block">
           <ul>
             <li>"Of the four clusters, where is the latency → realized-revenue loop tightest <em>today</em>, and is model-development investment flowing there — or to the most defensible (structural-edge) one?"</li>
@@ -1496,7 +1496,7 @@ const LESSONS = [
       },
       {
         kind: 'mechanism',
-        title: 'Honest scorecard — every dimension worth defending',
+        title: 'Honest scorecard — every dimension the debate hinges on',
         html: `<p style="font-size:13px;color:var(--ink-soft);margin-bottom:10px;">Including where autoregression wins. <strong>State the autoregression-wins rows proactively</strong>. Use this as your reference for any dimension they push back on.</p>
         <div style="overflow-x:auto;">
         <table class="ucase-table scorecard" style="font-size:12px;">
