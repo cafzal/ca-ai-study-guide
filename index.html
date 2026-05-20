@@ -1014,6 +1014,19 @@ const LESSONS = [
         </ul>
         <div class="callout good"><strong>The frame:</strong> "Inception's bet is to swap one box — the model class — in a stack everyone else takes for granted. That swap propagates differently through training, serving, and control."</div>
         <p style="font-size:12px;color:var(--ink-fainter);margin-top:14px;border-top:1px solid var(--line);padding-top:10px;">To see this concretely in code: Andrej Karpathy's <strong>nanoGPT</strong> implements the model in ~300 lines, and <strong>nanochat</strong> runs the full pipeline end-to-end on a single 8×H100 node for ~$48–$100.</p>`
+      },
+      {
+        kind: 'mechanism',
+        title: 'Paper key',
+        html: `<p style="font-size:13px;color:var(--ink-soft);margin-bottom:8px;">The six papers and one product that this guide references. Diffusion-LLM lineage as it stands in 2026:</p>
+        <div class="stat-strip">
+          <span class="stat-chip"><strong>SDE</strong> Score-Based Generative Modeling via SDEs (Song, et al., ICLR'21)</span>
+          <span class="stat-chip"><strong>FA</strong> FlashAttention (Dao, et al., NeurIPS'22)</span>
+          <span class="stat-chip"><strong>DPO</strong> Direct Preference Optimization (Rafailov, et al., NeurIPS'23)</span>
+          <span class="stat-chip"><strong>SAA</strong> Scores as Actions (Zhao, Tang+, '24)</span>
+          <span class="stat-chip"><strong>MTID</strong> Masked Temporal Interpolation Diffusion (ICLR'25)</span>
+          <span class="stat-chip"><strong>Flagship</strong> Inception's Mercury 2, the company's diffusion language model (released early 2026)</span>
+        </div>`
       }
     ],
     quiz: [
@@ -1424,10 +1437,85 @@ const LESSONS = [
           <li>Flag the feasibility-gated upside (long-horizon agents)</li>
           <li>Close with the unnamed adjacency the framework surfaces (constrained optimization)</li>
         </ol>`
+      },
+      {
+        kind: 'mechanism',
+        title: 'Honest scorecard — every dimension the debate hinges on',
+        html: `<p style="font-size:13px;color:var(--ink-soft);margin-bottom:10px;">Including where autoregression wins. The autoregression-wins rows are the load-bearing concessions that make the argument honest.</p>
+        <div style="overflow-x:auto;">
+        <table class="ucase-table scorecard" style="font-size:12px;">
+          <thead>
+            <tr><th style="width:18%">Dimension</th><th style="width:26%">Autoregressive</th><th style="width:26%">Diffusion</th><th style="width:30%">Verdict / nuance to say</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Generation latency</strong></td>
+              <td>Serial chain of N forward passes; Key/Value cache patches redundant compute, not the chain</td>
+              <td>A few parallel refine-all-tokens steps (~10–20)</td>
+              <td><span class="verdict-diff">Diffusion, structurally.</span> ~1,009 vs ~89 tokens/sec (Haiku 4.5), ~71 (GPT-5 Mini). Not "optimized faster" — a different generation loop.</td>
+            </tr>
+            <tr>
+              <td><strong>Cost / token</strong></td>
+              <td>Scales with serial passes + Key/Value-cache memory bandwidth at long context / high concurrency</td>
+              <td>Fewer steps, parallelizable; no growing Key/Value chain</td>
+              <td><span class="verdict-diff">Diffusion.</span> ~$0.25 / $0.75 per 1 million in/out. Same root cause as the latency one.</td>
+            </tr>
+            <tr>
+              <td><strong>Peak quality, hardest reasoning</strong></td>
+              <td>Frontier models are all autoregressive; most mature training/eval ecosystem. <em>Gemini 3.5 Flash (May 2026) beats Gemini 3.1 Pro on agentic benchmarks at 289 tokens/sec — the AR side is now racing on quality-at-speed too.</em></td>
+              <td>Competitive with the speed-optimized tier on Mercury's headline benchmarks, but trails frontier-max</td>
+              <td><span class="verdict-ar">Autoregression at the frontier.</span> Be candid about this — Mercury is 91 AIME / ~74 GPQA but competes in the fast tier, not frontier-max. Gemini 3.5 Flash specifically narrows the quality-at-speed gap.</td>
+            </tr>
+            <tr>
+              <td><strong>Both-sided conditioning</strong> (infill / edit / plan)</td>
+              <td>Left-to-right only — cannot natively condition on tokens after the cursor</td>
+              <td>Holds the whole sequence; conditions on both sides by construction</td>
+              <td><span class="verdict-diff">Diffusion, structurally.</span> The durable moat — code next-edit, infill, whole-plan refinement.</td>
+            </tr>
+            <tr>
+              <td><strong>Self-correction / hallucination</strong></td>
+              <td>Commits each token irrevocably; errors cascade forward</td>
+              <td>Re-touches all positions every step; early errors editable</td>
+              <td><span class="verdict-diff">Diffusion.</span> A consequence of the loop, not a feature.</td>
+            </tr>
+            <tr>
+              <td><strong>Controllability</strong> (schema / JSON / safety)</td>
+              <td>Decode-time constraints — brittle, bolted-on</td>
+              <td>Masked projection + conditional generation from one model, near-free</td>
+              <td><span class="verdict-diff">Diffusion.</span> But placement matters (Masked Temporal Interpolation Diffusion: init-mask 40 success rate vs mid-iteration 3 success rate collapse).</td>
+            </tr>
+            <tr>
+              <td><strong>Alignment / fine-tuning maturity</strong></td>
+              <td>Huge ecosystem — Reinforcement Learning from Human Feedback, Direct Preference Optimization, tooling, known recipes</td>
+              <td>Direct-Preference-Optimization-style cheap alignment applies in principle; Scores as Actions (diffusion-native reinforcement learning) is framework-stage, experiments deferred</td>
+              <td><span class="verdict-ar">Autoregression today.</span> Honest gap — diffusion-language-model custom-tuning is roadmap, not shipped.</td>
+            </tr>
+            <tr>
+              <td><strong>Quality/latency tunability</strong></td>
+              <td>Fixed serial cost; quality bought with more tokens = more latency (the reasoning tax)</td>
+              <td>Step-count is a continuous dial on one model</td>
+              <td><span class="verdict-diff">Diffusion.</span> A pricing/packaging lever autoregression can't replicate.</td>
+            </tr>
+            <tr>
+              <td><strong>Ecosystem / drop-in risk</strong></td>
+              <td>Universal — every tool, every integration assumes autoregression</td>
+              <td>OpenAI-API compatible (technical drop-in); commercially still a "why diffusion" education cost</td>
+              <td><span class="verdict-split">Autoregression for inertia.</span> Diffusion de-risks the technical switch but not the commercial one.</td>
+            </tr>
+            <tr>
+              <td><strong>Serving engineering</strong></td>
+              <td>Mature, well-understood (vLLM, etc.)</td>
+              <td>Bespoke kernels (FlashAttention's "new CUDA kernel per variant"); fewer off-the-shelf tools</td>
+              <td><span class="verdict-ar">Autoregression.</span> Real engineering-cost and talent constraint — name it.</td>
+            </tr>
+          </tbody>
+        </table>
+        </div>
+        <div class="callout good" style="font-size:13px;margin-top:14px;"><strong>Tally:</strong> 6 diffusion wins (latency, cost, both-sided conditioning, self-correction, controllability, tunability), 3 autoregression wins (peak quality, alignment maturity, serving), 1 inertial autoregression lead (ecosystem). <em>Both-sided conditioning + controllability are the structural ones — what makes the moat durable.</em></div>`
       }
     ],
     quiz: [
-      { id: '5a', q: 'Name the three prioritization axes, and for each, which value-prop dimension or technical lesson feeds it.', a: '(1) Immediate customer value/demand — fed by speed+cost (Inception\'s strengths relieve the pain) and how compounding the latency is (Lessons 1 and 3). (2) Long-term market given competition — fed by structural edge (Lessons 2 and 4): durable vs. a speed lead that erodes. (3) Technical feasibility — fed by the quality tradeoff + step-count dial (Lesson 3), controllability (Lesson 4), and Scores as Actions being framework-stage (limits custom tuning).' },
+      { id: '5a', q: 'Name the three prioritization axes, and for each, which value-prop dimension or technical lesson feeds it.', a: '(1) Immediate customer value/demand — fed by speed+cost (the diffusion-LLM strengths that relieve latency/cost pain) and how compounding the latency is (Lessons 1 and 3). (2) Long-term market given competition — fed by structural edge (Lessons 2 and 4): durable vs. a speed lead that erodes. (3) Technical feasibility — fed by the quality tradeoff + step-count dial (Lesson 3), controllability (Lesson 4), and Scores as Actions being framework-stage (limits custom tuning).' },
       { id: '5b', q: 'Why is "coding/editing" the top bet on all three axes — and why is "agentic loops" un-scoreable until decomposed?', a: 'Coding: demand is acute (in-flow pauses intolerable, clear developer-tools willingness-to-pay), the edge is structural (infill/next-edit needs both-sided context autoregression can\'t do natively — durable), and it\'s the model\'s most validated domain — all three axes green. "Agentic loops" spans short tool-use (H/M/H), long autonomous planning (H/H/M), and multi-agent (M/H/L); the axes diverge by fork, so a single score is meaningless.' },
       { id: '5c', q: 'Why does speed/cost belong to axis 1 (enabler) but NOT axis 2 (durability)?', a: 'Speed/cost make the use case viable now (relieve the latency/cost pain → drives current demand = axis 1), but every lab is chasing tokens per second, so a speed lead erodes — it is not a durable competitive moat (axis 2). Durability comes from structural edges (both-sided conditioning, near-free control) competitors can\'t cheaply copy.' },
       { id: '5d', q: 'Describe the constrained-optimization adjacency in two sentences: the demand, and why it\'s a structural (durable) edge not a speed play.', a: 'Demand: vast latent/locked-up market in operations/scheduling/allocation where buyers currently need operations-research specialists — natural-language → solver → agent-refinement removes that gatekeeper. Durable because it\'s the structural-edge archetype (controllable, schema-constrained, both-sided iterative refinement), not a speed race — a competitor matching the model\'s tokens per second doesn\'t replicate the controllability that makes it work.' },
@@ -1441,7 +1529,7 @@ const LESSONS = [
     title: 'Lesson 6 — Evaluating AI agents',
     spine: 'Agent evals are the operational layer where research meets product — multi-turn, stateful, non-deterministic. The grammar for measuring capability, catching regressions, and turning user signals into model improvements.',
     takeaway: 'Three grader types (code-based / model-based / human), capability vs regression evals, pass@k vs pass^k for stochastic outputs, and a Swiss-cheese stack (evals + monitoring + A/B + feedback + human review). The eval harness measures the model AND the agent harness wrapped around it.',
-    bridge: 'The Appendix has the three load-bearing claims and the full scorecard for any dimension the debate hinges on.',
+    bridge: 'All lessons covered — fundamentals, the comparison, and the eval methodology that ties model improvement to product judgment.',
     sections: [
       {
         kind: 'idea',
@@ -1566,131 +1654,6 @@ const LESSONS = [
       { id: '6e', q: 'A task scores 0% pass@100. What\'s the most likely diagnosis, and what should you check before concluding the agent can\'t do it?', a: 'Most often a broken task, not an incapable agent — common causes are ambiguous specifications, a specification–grader mismatch (the spec asks one thing but the grader checks another), or missing information the agent needs to infer intent. Before concluding incapacity: confirm two domain experts agree on the pass/fail verdict, verify the grader matches the spec, and read transcripts to see whether the agent is producing reasonable outputs that the grader is rejecting.' }
     ]
   },
-
-  {
-    id: 'AP',
-    short: 'Appendix',
-    title: 'Appendix — Reference notes',
-    spine: 'Reference notes — the three load-bearing claims, the scorecard, technical depth checks, and adjacent reading.',
-    takeaway: 'Reference covered: the three load-bearing claims, the full scorecard for any dimension, technical depth checks, and Decision Transformers as one paper to read for deeper ML context.',
-    sections: [
-      {
-        kind: 'mechanism',
-        title: 'Three load-bearing claims of the argument',
-        html: `<div class="appendix-block">
-          <ol>
-            <li>"FlashAttention's lesson — <em>wall-clock is the critical path, not floating-point operations</em> — is the same lesson as 'autoregression is serial': speed is a systems property. Inception already states this in the company blog post (95th-percentile latency under concurrency, not tokens per second)."</li>
-            <li>"Control is a near-free axis for diffusion: conditional generation with no retraining, output-space masking (and <em>where</em> you mask matters — initialization-mask 40 success rate vs mid-iteration 3 success rate collapse), Direct-Preference-Optimization-cheap preference tuning. That's the defensible surface, not raw speed."</li>
-            <li>"Prioritize structural edges over speed edges: editing/infilling/planning need both-sided conditioning, which autoregression can't do natively. Speed gets competed away; structure is the moat."</li>
-          </ol>
-        </div>`
-      },
-      {
-        kind: 'mechanism',
-        title: 'Honest scorecard — every dimension the debate hinges on',
-        html: `<p style="font-size:13px;color:var(--ink-soft);margin-bottom:10px;">Including where autoregression wins. The autoregression-wins rows are the load-bearing concessions that make the argument honest.</p>
-        <div style="overflow-x:auto;">
-        <table class="ucase-table scorecard" style="font-size:12px;">
-          <thead>
-            <tr><th style="width:18%">Dimension</th><th style="width:26%">Autoregressive</th><th style="width:26%">Diffusion</th><th style="width:30%">Verdict / nuance to say</th></tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td><strong>Generation latency</strong></td>
-              <td>Serial chain of N forward passes; Key/Value cache patches redundant compute, not the chain</td>
-              <td>A few parallel refine-all-tokens steps (~10–20)</td>
-              <td><span class="verdict-diff">Diffusion, structurally.</span> ~1,009 vs ~89 tokens/sec (Haiku 4.5), ~71 (GPT-5 Mini). Not "optimized faster" — a different generation loop.</td>
-            </tr>
-            <tr>
-              <td><strong>Cost / token</strong></td>
-              <td>Scales with serial passes + Key/Value-cache memory bandwidth at long context / high concurrency</td>
-              <td>Fewer steps, parallelizable; no growing Key/Value chain</td>
-              <td><span class="verdict-diff">Diffusion.</span> ~$0.25 / $0.75 per 1 million in/out. Same root cause as the latency one.</td>
-            </tr>
-            <tr>
-              <td><strong>Peak quality, hardest reasoning</strong></td>
-              <td>Frontier models are all autoregressive; most mature training/eval ecosystem. <em>Gemini 3.5 Flash (May 2026) beats Gemini 3.1 Pro on agentic benchmarks at 289 tokens/sec — the AR side is now racing on quality-at-speed too.</em></td>
-              <td>Competitive with the speed-optimized tier on Mercury's headline benchmarks, but trails frontier-max</td>
-              <td><span class="verdict-ar">Autoregression at the frontier.</span> Be candid about this — Mercury is 91 AIME / ~74 GPQA but competes in the fast tier, not frontier-max. Gemini 3.5 Flash specifically narrows the quality-at-speed gap.</td>
-            </tr>
-            <tr>
-              <td><strong>Both-sided conditioning</strong> (infill / edit / plan)</td>
-              <td>Left-to-right only — cannot natively condition on tokens after the cursor</td>
-              <td>Holds the whole sequence; conditions on both sides by construction</td>
-              <td><span class="verdict-diff">Diffusion, structurally.</span> The durable moat — code next-edit, infill, whole-plan refinement.</td>
-            </tr>
-            <tr>
-              <td><strong>Self-correction / hallucination</strong></td>
-              <td>Commits each token irrevocably; errors cascade forward</td>
-              <td>Re-touches all positions every step; early errors editable</td>
-              <td><span class="verdict-diff">Diffusion.</span> A consequence of the loop, not a feature.</td>
-            </tr>
-            <tr>
-              <td><strong>Controllability</strong> (schema / JSON / safety)</td>
-              <td>Decode-time constraints — brittle, bolted-on</td>
-              <td>Masked projection + conditional generation from one model, near-free</td>
-              <td><span class="verdict-diff">Diffusion.</span> But placement matters (Masked Temporal Interpolation Diffusion: init-mask 40 success rate vs mid-iteration 3 success rate collapse).</td>
-            </tr>
-            <tr>
-              <td><strong>Alignment / fine-tuning maturity</strong></td>
-              <td>Huge ecosystem — Reinforcement Learning from Human Feedback, Direct Preference Optimization, tooling, known recipes</td>
-              <td>Direct-Preference-Optimization-style cheap alignment applies in principle; Scores as Actions (diffusion-native reinforcement learning) is framework-stage, experiments deferred</td>
-              <td><span class="verdict-ar">Autoregression today.</span> Honest gap — diffusion-language-model custom-tuning is roadmap, not shipped.</td>
-            </tr>
-            <tr>
-              <td><strong>Quality/latency tunability</strong></td>
-              <td>Fixed serial cost; quality bought with more tokens = more latency (the reasoning tax)</td>
-              <td>Step-count is a continuous dial on one model</td>
-              <td><span class="verdict-diff">Diffusion.</span> A pricing/packaging lever autoregression can't replicate.</td>
-            </tr>
-            <tr>
-              <td><strong>Ecosystem / drop-in risk</strong></td>
-              <td>Universal — every tool, every integration assumes autoregression</td>
-              <td>OpenAI-API compatible (technical drop-in); commercially still a "why diffusion" education cost</td>
-              <td><span class="verdict-split">Autoregression for inertia.</span> Diffusion de-risks the technical switch but not the commercial one.</td>
-            </tr>
-            <tr>
-              <td><strong>Serving engineering</strong></td>
-              <td>Mature, well-understood (vLLM, etc.)</td>
-              <td>Bespoke kernels (FlashAttention's "new CUDA kernel per variant"); fewer off-the-shelf tools</td>
-              <td><span class="verdict-ar">Autoregression.</span> Real engineering-cost and talent constraint — name it.</td>
-            </tr>
-          </tbody>
-        </table>
-        </div>
-        <div class="callout good" style="font-size:13px;margin-top:14px;"><strong>Tally:</strong> 6 diffusion wins (latency, cost, both-sided conditioning, self-correction, controllability, tunability), 3 autoregression wins (peak quality, alignment maturity, serving), 1 inertial autoregression lead (ecosystem). <em>Both-sided conditioning + controllability are the structural ones — what makes the moat durable, per Lesson 5.</em></div>`
-      },
-      {
-        kind: 'mechanism',
-        title: 'Technical depth checks (from Lesson 1)',
-        html: `<div class="appendix-block">
-          <ul>
-            <li>The three-line attention computation and why it's N×N</li>
-            <li>What the Key/Value cache fixes vs. doesn't and the bandwidth bottleneck it creates</li>
-            <li>The forward/backward asymmetry FlashAttention's recomputation exploits</li>
-          </ul>
-        </div>`
-      },
-      {
-        kind: 'mechanism',
-        title: 'Adjacent reading',
-        html: `<div class="callout warn">Decision Transformers connects to the agentic-loop thesis (Lesson 5) — reinforcement-learning-as-sequence-modeling. Worth skimming for deeper context.</div>`
-      },
-      {
-        kind: 'mechanism',
-        title: 'Paper key',
-        html: `<div class="stat-strip">
-          <span class="stat-chip"><strong>SDE</strong> Score-Based Generative Modeling via SDEs (Song, et al., ICLR'21)</span>
-          <span class="stat-chip"><strong>FA</strong> FlashAttention (Dao, et al., NeurIPS'22)</span>
-          <span class="stat-chip"><strong>DPO</strong> Direct Preference Optimization (Rafailov, et al., NeurIPS'23)</span>
-          <span class="stat-chip"><strong>SAA</strong> Scores as Actions (Zhao, Tang+, '24)</span>
-          <span class="stat-chip"><strong>MTID</strong> Masked Temporal Interpolation Diffusion (ICLR'25)</span>
-          <span class="stat-chip"><strong>Flagship</strong> the company's diffusion language model (released early 2026)</span>
-        </div>`
-      }
-    ],
-    quiz: []
-  }
 ];
 
 /* =========================================================
@@ -3056,7 +3019,7 @@ function buildAxes(wrap, title) {
       n: '1',
       title: 'Immediate customer value',
       ask: 'How acute is the pain today? How many users? Willingness to pay?',
-      fed: 'Fed by: speed + cost (Inception\'s strengths) + how compounding the latency is (Lessons 1 and 3)',
+      fed: 'Fed by: speed + cost (the diffusion-LLM strengths) + how compounding the latency is (Lessons 1 and 3)',
     },
     {
       n: '2',
