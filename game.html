@@ -1444,13 +1444,35 @@ const LESSONS = [
       },
       {
         kind: 'mechanism',
-        title: 'Mechanism — The unification (moat narrative)',
-        html: `<p>SMLD (Song et al. '19) and DDPM (Ho '20) <strong>aren't rival methods</strong> — they're discretizations of two specific SDEs:</p>
+        title: 'Mechanism — Three lenses, one recipe',
+        html: `<p>DDPM, Score-SDE, and Flow Matching are three views of the <em>same</em> forward Gaussian noising process. They share the same one-liner:</p>
+        <div class="formula">x<sub>t</sub> = α<sub>t</sub> · x<sub>0</sub> + σ<sub>t</sub> · ε</div>
+        <p>Only the <strong>noise schedule</strong> (α<sub>t</sub>, σ<sub>t</sub>) and <strong>what the network predicts</strong> differ:</p>
+        <table class="ucase-table" style="margin-top:8px;">
+          <thead><tr><th>Lens</th><th>What the network predicts</th></tr></thead>
+          <tbody>
+            <tr><td><strong>DDPM</strong> (Ho '20)</td><td>The noise ε that was added (or equivalently the clean x<sub>0</sub>)</td></tr>
+            <tr><td><strong>Score-SDE</strong> (Song et al. '21)</td><td>The score ∇<sub>x</sub> log p<sub>t</sub>(x) — <em>the compass</em></td></tr>
+            <tr><td><strong>Flow Matching</strong> (Lipman et al. '23)</td><td>The velocity v<sub>t</sub>(x) — the instantaneous push toward data</td></tr>
+          </tbody>
+        </table>
+        <p>These targets are largely <strong>interconvertible parameterizations</strong> of the same density evolution. Knowing one lets you recover the others.</p>
+        <p>Three schedule families (the α<sub>t</sub>, σ<sub>t</sub> choices to recognize by name):</p>
         <ul>
-          <li><strong>VE</strong> (Variance Exploding) ↔ SMLD</li>
-          <li><strong>VP</strong> (Variance Preserving) ↔ DDPM</li>
+          <li><strong>Variance Preserving (VP)</strong>: α<sub>t</sub>² + σ<sub>t</sub>² = 1. DDPM uses this with linear-β or cosine. Total variance held constant; signal-to-noise shifts.</li>
+          <li><strong>Variance Exploding (VE)</strong>: α<sub>t</sub> = 1 (signal untouched), σ<sub>t</sub> grows large. Data progressively buried under stronger noise. Used by EDM.</li>
+          <li><strong>Linear Interpolation</strong>: α<sub>t</sub> = 1−t, σ<sub>t</sub> = t. Used by Flow Matching / Rectified Flow.</li>
         </ul>
-        <div class="callout"><strong>Honest caveat:</strong> <em>no universally best SDE</em> — "VE typically… better sample quality… but worse likelihoods than VP/sub-VP." Practitioners experiment per domain.</div>`
+        <div class="callout"><strong>Honest caveat:</strong> no universally best schedule — VE typically gives better sample quality; VP/sub-VP give better likelihoods. Practitioners experiment per domain.</div>`
+      },
+      {
+        kind: 'mechanism',
+        title: 'Mechanism — The conditional trick (why diffusion is trainable at all)',
+        html: `<p>The single deepest training move in modern diffusion. Name it explicitly — it\'s what turns score matching from a theoretical curiosity into a regression problem.</p>
+        <p><strong>The problem:</strong> the <em>marginal</em> target at a noisy point x<sub>t</sub> — the true score, true velocity, or true reverse kernel — is <strong>intractable</strong>. It averages over all clean x<sub>0</sub> that could have produced x<sub>t</sub>.</p>
+        <p><strong>The fix:</strong> condition on a specific x<sub>0</sub>. The <em>conditional</em> target is closed-form Gaussian — easy to compute, easy to regress against. Train on the conditional.</p>
+        <p><strong>Why the substitution is legitimate:</strong> the conditional and marginal objectives differ only by a constant <em>independent of model parameters</em>. They share the same optimum.</p>
+        <div class="callout good"><strong>Without the conditional trick, DDPM / score matching / flow matching are theoretical curiosities, not regression problems.</strong> The trick is what makes any of them practical.</div>`
       },
       {
         kind: 'analogy',
@@ -1475,6 +1497,8 @@ const LESSONS = [
       { id: '2a', q: 'What is the score, in one sentence — and why does estimating it constitute the <em>entire</em> diffusion learning problem?', a: 'The score = ∇ₓ log p<sub>t</sub>(x), the direction that makes data more data-like at noise level t (the compass). Anderson\'s result makes the reverse generative process depend only on it, so learning the compass is sufficient to generate — there is nothing else to learn.' },
       { id: '2b', q: 'How do SMLD and DDPM relate, and what are the two SDEs?', a: 'They are discretizations of two SDEs: SMLD ↔ Variance Exploding (VE), DDPM ↔ Variance Preserving (VP). No SDE is universally best (VE better samples, VP better likelihoods).' },
       { id: '2c', q: 'Why does "refine the whole output iteratively" let diffusion fix mistakes when autoregression structurally can\'t?', a: 'Autoregression commits each token left-to-right and can never revisit it; diffusion holds the whole output and re-touches all of it every denoising step, so an early error gets edited out by a later pass.' },
+      { id: '2d', q: 'What is the <strong>conditional trick</strong> — what intractable thing does it replace, and why is the substitution legitimate?', a: 'The marginal target (true score / velocity / reverse kernel) at a noisy point xₜ is intractable because it averages over all clean x₀ that could have produced xₜ. The trick: condition on a specific x₀ — the conditional target is closed-form Gaussian, easy to compute and regress against. Legitimate because the conditional and marginal objectives differ only by a constant independent of model parameters, so they share the same optimum. Without this substitution, DDPM / score matching / flow matching are theoretical curiosities, not regression problems.' },
+      { id: '2e', q: 'DDPM, Score-SDE, and Flow Matching predict different things. What does each predict, and what shared mechanism makes them all trainable?', a: 'DDPM predicts the noise ε that was added (or equivalently the clean x₀). Score-SDE predicts the score ∇ₓ log pₜ(x) — the compass. Flow Matching predicts the velocity vₜ(x) — the instantaneous push toward data. All three share the same forward rule xₜ = αₜ·x₀ + σₜ·ε; only the schedule (αₜ, σₜ) and the prediction target differ. The shared mechanism making them all trainable is the conditional trick — conditioning on a specific x₀ to get a closed-form Gaussian target. The targets are interconvertible parameterizations of the same density evolution.' },
     ]
   },
 
@@ -1496,13 +1520,33 @@ const LESSONS = [
         kind: 'mechanism',
         title: 'Mechanism — Stochastic vs. deterministic walk',
         html: `<p>The original SDE is a <strong>noisy walk</strong>: compass direction + a bit of randomness each step — arrives, but wanders, many steps.</p>
-        <p>The key discovery: every noisy walk has a <strong>deterministic twin</strong> — the <em>probability-flow ODE</em> — visiting the <em>same distribution of destinations</em> but as a <em>straight surveyed road</em>.</p>
+        <p>The key discovery: every noisy walk has a <strong>deterministic twin</strong> — the <em>probability-flow ODE (PF-ODE)</em> — visiting the <em>same marginal density family</em> p<sub>t</sub>, but with no randomness.</p>
+        <div class="callout warn" style="font-size:13px;"><strong>Sharpening (matters for the engineer round):</strong> the reverse-time SDE and the PF-ODE are <em>not</em> time-reversed versions of the same trajectory. They are two different dynamics that <em>happen to share the same marginal family</em> p<sub>t</sub> — in opposite time directions. The reverse-time SDE remains stochastic. The PF-ODE is deterministic and reversible — integrable in either direction.</div>
+        <p>PF-ODE wins in practice: no stochastic term to handle numerically; classical ODE solvers (Euler is one model call per step, Heun is two model calls with much better accuracy) plug in directly; and crucially — PF-ODE <strong>enables distillation and flow-map acceleration</strong> (next section).</p>
         <ul>
-          <li><strong>SDE paper:</strong> >90% fewer steps, no quality loss on the road vs. the stagger.</li>
-          <li><strong>Masked Temporal Interpolation Diffusion</strong> independently uses the same idea via the <strong>Denoising Diffusion Implicit Models</strong> sampler (deterministic non-Markovian reverse): "completed in 10 steps… 20× faster sampling."</li>
+          <li><strong>Score-SDE result:</strong> >90% fewer steps on the ODE road vs. the SDE stagger, no quality loss.</li>
+          <li><strong>Masked Temporal Interpolation Diffusion</strong> independently uses the same idea via the <strong>Denoising Diffusion Implicit Models</strong> sampler: "completed in 10 steps… 20× faster sampling."</li>
         </ul>
         <p>Same idea, two papers.</p>`,
         visual: 'walks'
+      },
+      {
+        kind: 'mechanism',
+        title: 'Mechanism — Flow map models (the next speed unlock beyond DDIM)',
+        html: `<p>DDIM is the <em>current</em> sampling-speed frontier. <strong>The next one is learning the time-jump operator directly.</strong></p>
+        <p>Standard diffusion sampling is fundamentally iterative: even with DDIM, you need dozens to hundreds of steps because you\'re solving a differential equation step by step. <strong>Flow map models attack this directly</strong> — instead of learning infinitesimal updates and integrating, learn the PF-ODE\'s time-jump operator Ψ<sub>s→t</sub>: <em>"take me from time s to time t in one shot."</em></p>
+        <p>Three families:</p>
+        <table class="ucase-table" style="margin-top:8px;">
+          <thead><tr><th>Family</th><th>What it learns</th><th>Self-consistency property</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Consistency Models (CM)</strong></td><td>The jump straight to t=0 (clean)</td><td>Any two points on the same trajectory must land at the same endpoint at t=0</td></tr>
+            <tr><td><strong>Consistency Trajectory Models (CTM)</strong></td><td>The general jump s→t (not just s→0)</td><td>Semigroup property — a long jump must equal two short jumps stitched at any intermediate u. <em>(CM = CTM with terminal time fixed at 0.)</em></td></tr>
+            <tr><td><strong>Mean Flow (MF)</strong></td><td>The <em>average velocity</em> over the interval (more stable training target)</td><td>Reconstruct via x<sub>t</sub> ≈ x<sub>s</sub> + (t−s)·h<sub>θ</sub>(x<sub>s</sub>, s, t)</td></tr>
+          </tbody>
+        </table>
+        <p><strong>The goal:</strong> replace many tiny solver steps with a few large, accurate jumps — potentially <em>one-step</em> generation from noise to data.</p>
+        <div class="callout warn"><strong>Honest status:</strong> flow maps are research direction, not most diffusion products\' current sampling stack. The framing: <strong>DDIM was the last decade\'s speed unlock; flow maps are the next one.</strong> If they mature, they remove diffusion\'s last remaining speed compromise — the iterative-solver constraint.</div>
+        <div class="callout"><strong>Subtle depth trap:</strong> Flow Matching uses linear interpolation x<sub>t</sub> = (1−t)x<sub>0</sub> + tε for individual coupled (x<sub>0</sub>, ε) samples. The <em>conditional</em> paths are perfectly straight lines — by construction. <em>But</em> the <strong>marginal velocity field</strong> the sampler actually follows is <em>curved</em>, because it averages over all (x<sub>0</sub>, ε) pairs at a given x<sub>t</sub>. Linear interpolation describes the motion of individual samples, not the evolution of the full probability distribution. <strong>A linear noise schedule does not, on its own, straighten the ODE trajectories or guarantee fewer sampling steps.</strong> Easy to assume the opposite.</div>`
       },
       {
         kind: 'mechanism',
@@ -1553,6 +1597,8 @@ const LESSONS = [
       { id: '3b', q: 'Denoising Diffusion Implicit Models vs. probability-flow ordinary differential equation — same idea or different? Justify in one sentence.', a: 'Same core idea: a deterministic sampler reaching good outputs in few steps (Denoising Diffusion Implicit Models = deterministic non-Markovian reverse process; probability-flow ordinary differential equation = its continuous-time formulation).' },
       { id: '3c', q: 'Why is diffusion parallel where autoregression is serial — and what does that structurally enable for pricing?', a: 'Each diffusion step refines the whole output at once and there are only a handful of steps, vs. autoregression\'s length-N serial token chain. This makes step-count a continuous quality/latency dial on one model — a packaging/pricing lever (sell different frontier points to different segments) that autoregression\'s fixed serial chain can\'t offer.' },
       { id: '3d', q: 'In one sentence, what\'s the <em>same</em> and what\'s <em>different</em> between autoregression and diffusion at the mechanics level — and why does this distinction matter for how FlashAttention helps each one?', a: 'Same: attention (QKᵀ → softmax → PV) runs identically inside every forward pass in both. Different: the generation loop wrapped around the forward passes — autoregression is a serial token chain (N passes for N tokens, each waiting on the prior), diffusion is a few parallel whole-sequence refinements (~10–20 steps that re-touch all positions). FlashAttention helps both because it optimizes the shared attention primitive; diffusion\'s speed advantage comes from a different axis entirely — eliminating the serial chain, not speeding up attention.' },
+      { id: '3e', q: 'What are <strong>flow map models</strong>, what do they unlock beyond DDIM, and how should you frame their status?', a: 'Flow map models (Consistency Models, Consistency Trajectory Models, Mean Flow) learn the PF-ODE\'s time-jump operator Ψ_{s→t} directly — "take me from time s to time t in one shot" — instead of integrating infinitesimal updates step by step. Goal: replace many tiny solver steps with a few large accurate jumps, potentially one-step generation. Status: research direction, not most diffusion products\' current sampling stack. Frame as: DDIM is the current speed frontier; flow maps are the next one. If they mature, they remove diffusion\'s last remaining speed compromise — the iterative-solver constraint.' },
+      { id: '3f', q: 'Flow Matching uses linear interpolation between data and noise (xₜ = (1−t)x₀ + tε). Does that mean the ODE trajectories the sampler follows are straight? Why or why not?', a: 'No. The <em>conditional</em> paths (for a specific x₀, ε pair) are perfectly straight by construction. But the <em>marginal</em> velocity field the sampler actually follows is curved, because it averages over all (x₀, ε) pairs that could have produced a given xₜ. Linear interpolation describes the motion of individual coupled samples, not the evolution of the full probability distribution. A linear noise schedule does not, on its own, straighten the ODE trajectories or guarantee fewer sampling steps — a common assumption-trap.' },
     ]
   },
 
@@ -1785,10 +1831,13 @@ const LESSONS = [
       },
       {
         kind: 'mechanism',
-        title: 'Scores-as-Actions\' honest status (the axis-3 reality check)',
-        html: `<p>The parallel reality check on axis 3 (technical feasibility): Scores as Actions is the <em>theory</em> for fine-tuning a diffusion model toward production rewards (continuous-time analogue of Direct Preference Optimization's π_ref anchoring).</p>
-        <p><strong>Framework-stage</strong> — experiments deferred to a forthcoming paper.</p>
-        <div class="callout warn"><strong>Implication for the use-case map:</strong> custom per-customer fine-tuning is a <em>roadmap</em> feasibility item, not a current one — which is why several high-durability forks in the map below are feasibility-gated (M), not green.</div>`
+        title: 'Axis-3 reality check (two framework-stage research lines)',
+        html: `<p>Two research directions affect axis-3 (technical feasibility) for diffusion language models. Both are <em>framework-stage</em> — promising, not shipped.</p>
+        <ul>
+          <li><strong>Scores as Actions</strong> — the theory for fine-tuning a diffusion model toward production rewards (continuous-time analogue of Direct Preference Optimization\'s π_ref anchoring). Affects <em>per-customer fine-tuning</em> feasibility.</li>
+          <li><strong>Flow maps</strong> (Consistency Models, Consistency Trajectory Models, Mean Flow — see Lesson 3) — the next sampling-speed unlock beyond DDIM. Affects <em>real-time-frontier-quality</em> feasibility.</li>
+        </ul>
+        <div class="callout warn"><strong>Implication for the use-case map:</strong> custom per-customer fine-tuning and real-time-frontier-quality use cases (voice especially) are <em>roadmap</em> feasibility items, not current ones — which is why several high-durability forks in the map below are feasibility-gated (M), not green. Naming both unprompted signals depth.</div>`
       },
       {
         kind: 'mechanism',
