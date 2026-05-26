@@ -1884,7 +1884,7 @@ const LESSONS = [
     title: 'Lesson 6 — Evaluating AI agents',
     spine: 'Agent evals are the operational layer where research meets product — multi-turn, stateful, non-deterministic. The grammar for measuring capability, catching regressions, and turning user signals into model improvements.',
     takeaway: 'Three grader types (code-based / model-based / human), capability vs regression evals, pass@k vs pass^k for stochastic outputs, and a Swiss-cheese stack (evals + monitoring + A/B + feedback + human review). The eval harness measures the model AND the agent harness wrapped around it.',
-    bridge: 'All lessons covered — fundamentals, the comparison, and the eval methodology that ties model improvement to product judgment.',
+    bridge: 'The References tab lists every paper, benchmark, blog post, and product cited across the guide — useful for reading further.',
     sections: [
       {
         kind: 'idea',
@@ -2010,6 +2010,100 @@ const LESSONS = [
       { id: '6e', q: 'A task scores 0% pass@100. What\'s the most likely diagnosis, and what should you check before concluding the agent can\'t do it?', a: 'Most often a broken task, not an incapable agent — common causes are ambiguous specifications, a specification–grader mismatch (the spec asks one thing but the grader checks another), or missing information the agent needs to infer intent. Before concluding incapacity: confirm two domain experts agree on the pass/fail verdict, verify the grader matches the spec, and read transcripts to see whether the agent is producing reasonable outputs that the grader is rejecting.' }
     ]
   },
+
+  {
+    id: 'REF',
+    short: 'References',
+    title: 'References — public sources',
+    spine: 'Every paper, benchmark, blog post, and product cited across the guide. Grouped by category.',
+    sections: [
+      {
+        kind: 'mechanism',
+        title: 'Foundational diffusion papers',
+        html: `<ul>
+          <li><strong>SMLD</strong> — Song &amp; Ermon, <em>Generative Modeling by Estimating Gradients of the Data Distribution</em> (NeurIPS 2019). The score-matching foundation.</li>
+          <li><strong>DDPM</strong> — Ho, Jain, Abbeel, <em>Denoising Diffusion Probabilistic Models</em> (NeurIPS 2020).</li>
+          <li><strong>Score-SDE</strong> — Song et al., <em>Score-Based Generative Modeling through Stochastic Differential Equations</em> (ICLR 2021). The SDE unification of SMLD and DDPM.</li>
+          <li><strong>DDIM</strong> — Song, Meng, Ermon, <em>Denoising Diffusion Implicit Models</em> (ICLR 2021). The deterministic non-Markovian sampler.</li>
+          <li><strong>Flow Matching</strong> — Lipman et al., <em>Flow Matching for Generative Modeling</em> (ICLR 2023).</li>
+          <li><strong>Rectified Flow</strong> — Liu, Gong, Liu, <em>Flow Straight and Fast: Learning to Generate and Transfer Data with Rectified Flow</em> (ICLR 2023).</li>
+        </ul>`
+      },
+      {
+        kind: 'mechanism',
+        title: 'Diffusion language models (the dLLM emergence)',
+        html: `<ul>
+          <li><strong>MDLM</strong> — Sahoo et al. (Kuleshov lab), <em>Simple and Effective Masked Diffusion Language Models</em> (NeurIPS 2024). Proved diffusion language models could match autoregression on text.</li>
+          <li><strong>Block Diffusion</strong> — Arriola et al. (Kuleshov lab), <em>Block Diffusion: Interpolating Between Autoregressive and Diffusion Language Models</em> (ICLR 2025). The hybrid block-AR pattern for long-form.</li>
+          <li><strong>LLaDA</strong> / <strong>LLaDA 2.0</strong> — Nie et al., <em>Large Language Diffusion Models</em>. The largest open-weight text-diffusion model.</li>
+          <li><strong>MTID</strong> — <em>Masked Temporal Interpolation Diffusion</em> (ICLR 2025). The mask-placement ablation (40.45 vs 3.38 success rate).</li>
+        </ul>`
+      },
+      {
+        kind: 'mechanism',
+        title: 'Forward-looking research (sampling-speed and fine-tuning)',
+        html: `<ul>
+          <li><strong>Consistency Models (CM)</strong> — Song et al., <em>Consistency Models</em> (ICML 2023). One-step jump to clean.</li>
+          <li><strong>Consistency Trajectory Models (CTM)</strong> — Kim et al., <em>Consistency Trajectory Models</em> (ICLR 2024). General s→t jump with semigroup property.</li>
+          <li><strong>Mean Flow</strong> — Geng et al., <em>Mean Flows for One-step Generative Modeling</em> (2025).</li>
+          <li><strong>Scores as Actions (SAA)</strong> — Zhao, Tang et al. (2024). Diffusion-native reinforcement-learning fine-tuning.</li>
+          <li><strong>Tracing the Principles of Diffusion</strong> — ICLR 2026 blog post. The "three lenses, one recipe" unification of DDPM, Score-SDE, and Flow Matching.</li>
+        </ul>`
+      },
+      {
+        kind: 'mechanism',
+        title: 'Adjacent ML foundations',
+        html: `<ul>
+          <li><strong>Anderson 1982</strong> — <em>Reverse-Time Diffusion Equation Models</em>. The reverse generative process depends only on the score.</li>
+          <li><strong>Bradley-Terry 1952</strong> — pairwise comparison model from preferences literature, used in the DPO derivation.</li>
+          <li><strong>FlashAttention</strong> — Dao et al., <em>FlashAttention: Fast and Memory-Efficient Exact Attention with IO-Awareness</em> (NeurIPS 2022).</li>
+          <li><strong>DPO</strong> — Rafailov et al., <em>Direct Preference Optimization: Your Language Model is Secretly a Reward Model</em> (NeurIPS 2023).</li>
+          <li><strong>Chinchilla</strong> — Hoffmann et al., <em>Training Compute-Optimal Large Language Models</em> (NeurIPS 2022). The compute-optimal scaling law.</li>
+          <li><strong>GPT-2</strong> — Radford et al., <em>Language Models are Unsupervised Multitask Learners</em> (OpenAI 2019). The 124M / 1.5B reference points.</li>
+          <li><strong>Decision Transformers</strong> — Chen et al., <em>Decision Transformer: Reinforcement Learning via Sequence Modeling</em> (NeurIPS 2021). Reinforcement-learning-as-sequence-modeling.</li>
+        </ul>`
+      },
+      {
+        kind: 'mechanism',
+        title: 'Engineering articles &amp; open-source code',
+        html: `<ul>
+          <li><strong>nanoGPT</strong> — Andrej Karpathy. <a href="https://github.com/karpathy/nanoGPT" target="_blank">github.com/karpathy/nanoGPT</a>. GPT-2 reference implementation in ~300 lines.</li>
+          <li><strong>nanochat</strong> — Andrej Karpathy. <a href="https://github.com/karpathy/nanochat" target="_blank">github.com/karpathy/nanochat</a>. Full ChatGPT-clone pipeline runnable for ~$48–$100.</li>
+          <li><strong>Demystifying Evals for AI Agents</strong> — Anthropic Engineering Blog. <a href="https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents" target="_blank">anthropic.com/engineering/demystifying-evals-for-ai-agents</a>. The eval methodology underlying Lesson 6.</li>
+          <li><strong>vLLM</strong> — <a href="https://github.com/vllm-project/vllm" target="_blank">github.com/vllm-project/vllm</a>. Mature autoregressive serving stack referenced in the scorecard.</li>
+        </ul>`
+      },
+      {
+        kind: 'mechanism',
+        title: 'Benchmarks referenced',
+        html: `<ul>
+          <li><strong>Coding:</strong> SWE-bench Verified, Terminal-Bench, LiveCodeBench, CoPilot Arena</li>
+          <li><strong>Reasoning:</strong> AIME, GPQA Diamond</li>
+          <li><strong>Instruction-following:</strong> IFBench</li>
+          <li><strong>Conversational / agentic:</strong> 𝜏-Bench, τ²-Bench</li>
+          <li><strong>Research / search:</strong> BrowseComp</li>
+          <li><strong>Computer use:</strong> WebArena, OSWorld</li>
+          <li><strong>Agentic depth (Gemini 3.5 Flash claims):</strong> MCP Atlas, GDPval-AA, CharXiv Reasoning</li>
+          <li><strong>Eval-methodology research examples:</strong> CORE-Bench, METR Time Horizon (Lesson 6 pitfalls)</li>
+        </ul>`
+      },
+      {
+        kind: 'mechanism',
+        title: 'Products &amp; models cited',
+        html: `<ul>
+          <li><strong>Inception Mercury 2</strong> (Feb 2026). The reference diffusion language model.</li>
+          <li><strong>Google DeepMind — Gemini Diffusion</strong>. Experimental diffusion research model.</li>
+          <li><strong>Google — Gemini 3.5 Flash</strong> (May 2026, I/O launch). Autoregressive side of the speed race.</li>
+          <li><strong>Google — Gemini 3.1 Pro</strong>. Benchmark comparison point.</li>
+          <li><strong>ByteDance — Seed Diffusion</strong>. 2,146 tokens/sec on H20.</li>
+          <li><strong>Anthropic — Claude Haiku 4.5</strong>. Speed-tier autoregressive comparison.</li>
+          <li><strong>OpenAI — GPT-5 Mini</strong>. Speed-tier autoregressive comparison.</li>
+          <li><strong>Alibaba — Qwen3 30B</strong>. Open-weight comparison point for LLaDA 2.0.</li>
+        </ul>`
+      }
+    ],
+    quiz: []
+  }
 ];
 
 /* =========================================================
