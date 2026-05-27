@@ -1531,6 +1531,37 @@ const LESSONS = [
         visual: 'walks'
       },
       {
+        kind: 'analogy',
+        title: 'Analogy — Pile A to Pile B (the flow, intuitively)',
+        html: `<p>Imagine two piles of LEGO bricks:</p>
+        <ul>
+          <li><strong>Pile A</strong> — a simple jumble of random, uniformly-colored bricks. Easy to describe. <em>(Pure Gaussian noise.)</em></li>
+          <li><strong>Pile B</strong> — a complicated pile that looks like real pictures, sentences, or any data you care about. <em>(The data distribution.)</em></li>
+        </ul>
+        <p>The goal: learn a smooth line — a "flow" — that moves every brick from Pile A to its right place in Pile B. If you can learn that line, you start with a random brick (noise) and follow it to end up with a realistic one (a generated sample).</p>
+        <p>Mathematically, the line is the <strong>probability-flow ODE</strong>:</p>
+        <div class="formula" style="font-size:14px;">dx/dt = f<sub>θ</sub>(x(t), t)</div>
+        <p>where x(t=1) is pure Gaussian noise, x(t=0) is a clean sample, and f<sub>θ</sub> is a neural-network-parameterized vector field.</p>
+        <p><strong>Flow Matching</strong> trains this network by matching its vector field against the true field of a known simple diffusion (closed-form):</p>
+        <div class="formula" style="font-size:12px;">L = E<sub>x₀,t</sub> ‖f<sub>θ</sub>(x(t), t) − f<sub>true</sub>(x(t), t)‖²</div>
+        <p>After training, integrating from t=1 down to t=0 in many small steps gives a clean sample. Each step is a tiny nudge along the line.</p>
+        <pre style="font-family:'SF Mono',Menlo,monospace;font-size:11px;line-height:1.5;background:var(--code);color:var(--ink);padding:14px;border-radius:6px;margin:12px 0;overflow-x:auto;">
+[ Pure Gaussian noise  ]   t = 1
+        │
+        ▼  (tiny step guided by f<sub>θ</sub>)
+[ Slightly less noisy  ]   t = 0.9
+        │
+        ▼
+[ ...                  ]   t = 0.5
+        │
+        ▼
+[ Almost clean         ]   t = 0.1
+        │
+        ▼
+[ Final realistic sample ] t = 0</pre>
+        <p>The set of all those arrows together forms a <strong>flow map</strong>: a continuous mapping from noise space to data space. <em>This is the picture to hold in your head before the next section — which dissects how flow-map <em>models</em> accelerate the integration from "many small steps" to "a few large jumps."</em></p>`
+      },
+      {
         kind: 'mechanism',
         title: 'Mechanism — Flow map models (the next speed unlock beyond DDIM)',
         html: `<p>DDIM is the <em>current</em> sampling-speed frontier. <strong>The next one is learning the time-jump operator directly.</strong></p>
